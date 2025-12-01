@@ -1,6 +1,7 @@
 version: 0.4.6
 
 namespace: eventlane
+project: eventlane
 
 services:
   - name: server
