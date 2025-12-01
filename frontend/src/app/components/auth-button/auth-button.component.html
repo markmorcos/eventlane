@@ -1,0 +1,24 @@
+<div class="auth-button">
+  @if (currentUser(); as user) {
+  <span class="user-email">{{ user.email }}</span>
+  <button class="secondary" (click)="signOut()">Sign Out</button>
+  } @else {
+  <button class="primary" (click)="showSignIn = !showSignIn">Sign In</button>
+
+  @if (showSignIn) {
+  <div class="sign-in-form">
+    <input
+      type="email"
+      [(ngModel)]="email"
+      placeholder="Enter your email"
+      (keyup.enter)="sendSignInLink()"
+    />
+    <button class="primary" (click)="sendSignInLink()" [disabled]="!email">
+      Send Sign-In Link
+    </button>
+    @if (emailSent) {
+    <p class="success-message">Check your email for the sign-in link!</p>
+    }
+  </div>
+  } }
+</div>

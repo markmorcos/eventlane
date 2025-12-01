@@ -1,0 +1,43 @@
+<div class="events-list">
+  <div class="header">
+    <h2>Events</h2>
+    @if (authService.isAuthenticated()) {
+    <button class="primary" routerLink="/events/create">Create Event</button>
+    }
+  </div>
+
+  <div class="events-grid">
+    @for (event of events(); track event.slug) {
+    <div class="card event-card" [routerLink]="['/events', event.slug]">
+      <h3>{{ event.title }}</h3>
+      <div class="event-info">
+        <div class="info-row">
+          <span class="label">Capacity:</span>
+          <span>{{ event.confirmedCount }} / {{ event.capacity }}</span>
+        </div>
+        @if (event.waitlistCount > 0) {
+        <div class="info-row">
+          <span class="label">Waitlist:</span>
+          <span>{{ event.waitlistCount }}</span>
+        </div>
+        }
+        <div class="info-row">
+          <span class="label">Status:</span>
+          <span
+            class="badge"
+            [class.confirmed]="event.confirmedCount < event.capacity"
+            [class.waitlisted]="event.confirmedCount >= event.capacity"
+          >
+            {{
+              event.confirmedCount < event.capacity ? "Space Available" : "Full"
+            }}
+          </span>
+        </div>
+      </div>
+      @if (event.isAdmin) {
+      <span class="admin-badge">Admin</span>
+      }
+    </div>
+    }
+  </div>
+</div>

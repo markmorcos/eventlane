@@ -1,0 +1,16 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Queue Stack Icon -->
+  <g id="queue-icon">
+    <!-- Confirmed (green) -->
+    <rect x="10" y="15" width="35" height="8" rx="2" fill="#2ECB70"/>
+    <!-- Waitlist (amber) -->
+    <rect x="10" y="26" width="35" height="8" rx="2" fill="#FFB020"/>
+    <!-- Full (red) -->
+    <rect x="10" y="37" width="35" height="8" rx="2" fill="#FF4F4F"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="60" y="38" font-family="Inter, sans-serif" font-size="24" font-weight="800" fill="#1A1D23">
+    EventLane
+  </text>
+</svg>

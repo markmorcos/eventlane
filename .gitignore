@@ -1,0 +1,38 @@
+# Backend
+backend/build/
+backend/.gradle/
+backend/out/
+backend/bin/
+*.class
+*.log
+*.jar
+*.war
+*.ear
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.vscode/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+*.local
+
+# Firebase
+firebase-credentials.json
+service-account*.json

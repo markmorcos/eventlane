@@ -1,0 +1,203 @@
+.how-it-works {
+  background: white;
+  padding: 6rem 2rem;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a1d23;
+  text-align: center;
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: #666;
+  text-align: center;
+  margin: 0 0 4rem 0;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.step {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #2d5bff, #1e3fcc);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(45, 91, 255, 0.3);
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1d23;
+  margin: 0 0 0.75rem 0;
+}
+
+.step-description {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.step-visual {
+  margin-top: 1.5rem;
+}
+
+.mockup-card {
+  background: #f7f8fa;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 300px;
+}
+
+.mockup-input {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.mockup-button {
+  background: #2d5bff;
+  color: white;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.mockup-link {
+  background: #f7f8fa;
+  border: 2px solid #2d5bff;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 0.875rem;
+  color: #2d5bff;
+  font-weight: 600;
+}
+
+.mockup-dashboard {
+  display: flex;
+  gap: 1rem;
+  max-width: 400px;
+}
+
+.mockup-stat {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mockup-stat.confirmed {
+  border-left: 4px solid #2ecb70;
+}
+
+.mockup-stat.waitlist {
+  border-left: 4px solid #ffb020;
+}
+
+.mockup-stat .label {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.mockup-stat .value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a1d23;
+}
+
+.step-connector {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(to bottom, #2d5bff, transparent);
+  margin-left: 31px;
+  opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+  .how-it-works {
+    padding: 4rem 1.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .step {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .step-number {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+
+  .step-connector {
+    margin-left: 23px;
+  }
+
+  .mockup-card,
+  .mockup-link,
+  .mockup-dashboard {
+    max-width: 100%;
+  }
+
+  .mockup-dashboard {
+    flex-direction: column;
+  }
+}

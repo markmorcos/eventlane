@@ -1,0 +1,87 @@
+<div class="create-event">
+  <div class="header">
+    <h2>Create New Event</h2>
+    <button class="secondary" routerLink="/events">Back to Events</button>
+  </div>
+
+  @if (isAuthenticated()) {
+  <div class="card">
+    <form (ngSubmit)="createEvent()">
+      <div class="form-group">
+        <label for="title">Event Title *</label>
+        <input
+          id="title"
+          type="text"
+          [(ngModel)]="title"
+          name="title"
+          placeholder="Summer Tech Conference 2025"
+          (input)="generateSlug()"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="slug">URL Slug *</label>
+        <input
+          id="slug"
+          type="text"
+          [(ngModel)]="slug"
+          name="slug"
+          placeholder="summer-tech-conference-2025"
+          pattern="[a-z0-9-]+"
+          required
+        />
+        <small>Only lowercase letters, numbers, and hyphens</small>
+      </div>
+
+      <div class="form-group">
+        <label for="capacity">Capacity *</label>
+        <input
+          id="capacity"
+          type="number"
+          [(ngModel)]="capacity"
+          name="capacity"
+          min="1"
+          required
+        />
+        <small>Maximum number of confirmed attendees</small>
+      </div>
+
+      <div class="form-group">
+        <label for="adminEmails">Additional Admin Emails (Optional)</label>
+        <input
+          id="adminEmails"
+          type="text"
+          [(ngModel)]="adminEmails"
+          name="adminEmails"
+          placeholder="admin1@example.com, admin2@example.com"
+        />
+        <small
+          >Comma-separated list of email addresses (you'll be added
+          automatically)</small
+        >
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="primary"
+          [disabled]="!title || !slug || capacity < 1 || submitting"
+        >
+          {{ submitting ? "Creating..." : "Create Event" }}
+        </button>
+      </div>
+
+      @if (message) {
+      <p [class.error]="isError" [class.success]="!isError" class="message">
+        {{ message }}
+      </p>
+      }
+    </form>
+  </div>
+  } @else {
+  <div class="card auth-required">
+    <p>Please sign in to create events.</p>
+  </div>
+  }
+</div>

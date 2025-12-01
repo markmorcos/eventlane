@@ -1,0 +1,69 @@
+<div class="app-container" [class.landing-page]="isLandingPage">
+  @if (!isLandingPage) {
+  <header>
+    <div class="container header-content">
+      <a routerLink="/" class="logo">
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 60 60"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line
+            x1="10"
+            y1="20"
+            x2="50"
+            y2="20"
+            stroke="#2D5BFF"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="10"
+            y1="40"
+            x2="50"
+            y2="40"
+            stroke="#2D5BFF"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="10"
+            y1="30"
+            x2="20"
+            y2="30"
+            stroke="#2D5BFF"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <line
+            x1="25"
+            y1="30"
+            x2="35"
+            y2="30"
+            stroke="#2D5BFF"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <line
+            x1="40"
+            y1="30"
+            x2="50"
+            y2="30"
+            stroke="#2D5BFF"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        <span class="logo-text">EventLane</span>
+      </a>
+      <app-auth-button></app-auth-button>
+    </div>
+  </header>
+  }
+
+  <main [class.with-header]="!isLandingPage">
+    <router-outlet></router-outlet>
+  </main>
+</div>

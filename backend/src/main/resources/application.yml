@@ -1,0 +1,23 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/rsvp}
+  security:
+    filter:
+      order: 10
+
+server:
+  port: 8080
+
+socket:
+  port: 8081
+  host: 0.0.0.0
+
+firebase:
+  project-id: eventlane-cd9d2
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:firebase-service-account.json}
+
+logging:
+  level:
+    io.eventlane: DEBUG
+    org.springframework.data.mongodb: DEBUG

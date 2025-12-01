@@ -1,0 +1,83 @@
+@if (event(); as evt) {
+<div class="event-detail">
+  <div class="card">
+    <div class="header">
+      <h2>{{ evt.title }}</h2>
+      @if (evt.isAdmin) {
+      <button class="secondary" [routerLink]="['/admin/events', evt.slug]">
+        Manage Event
+      </button>
+      }
+    </div>
+
+    <div class="event-stats">
+      <div class="stat">
+        <span class="label">Capacity:</span>
+        <span class="value">{{ evt.confirmedCount }} / {{ evt.capacity }}</span>
+      </div>
+      @if (evt.waitlistCount > 0) {
+      <div class="stat">
+        <span class="label">Waitlist:</span>
+        <span class="value">{{ evt.waitlistCount }}</span>
+      </div>
+      }
+      <div class="stat">
+        <span class="label">Status:</span>
+        <span
+          class="badge"
+          [class.confirmed]="evt.confirmedCount < evt.capacity"
+          [class.waitlisted]="evt.confirmedCount >= evt.capacity"
+        >
+          {{ evt.confirmedCount < evt.capacity ? "Space Available" : "Full" }}
+        </span>
+      </div>
+    </div>
+
+    @if (isAuthenticated()) {
+    <div class="actions">
+      @if (!evt.currentUserAttendee) {
+      <div>
+        <input
+          type="text"
+          [(ngModel)]="userName"
+          placeholder="Your name"
+          class="name-input"
+        />
+        <button
+          class="primary"
+          (click)="rsvp()"
+          [disabled]="!userName || submitting"
+        >
+          {{ submitting ? "Processing..." : "RSVP" }}
+        </button>
+      </div>
+      } @else {
+      <div class="rsvp-status">
+        <p>
+          Your status:
+          <span
+            class="badge"
+            [class.confirmed]="evt.currentUserAttendee.status === 'CONFIRMED'"
+            [class.waitlisted]="evt.currentUserAttendee.status === 'WAITLISTED'"
+          >
+            {{ evt.currentUserAttendee.status }}
+          </span>
+        </p>
+        <button class="danger" (click)="cancel()" [disabled]="submitting">
+          {{ submitting ? "Processing..." : "Cancel RSVP" }}
+        </button>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="auth-prompt">
+      <p>Please sign in to RSVP for this event.</p>
+    </div>
+    } @if (message) {
+    <p [class.error]="isError" [class.success]="!isError" class="message">
+      {{ message }}
+    </p>
+    }
+  </div>
+</div>
+}

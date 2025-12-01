@@ -1,0 +1,36 @@
+.auth-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.user-email {
+  margin-right: 10px;
+  font-weight: 500;
+  color: var(--dark-text);
+}
+
+.sign-in-form {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 300px;
+}
+
+.sign-in-form input {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.success-message {
+  margin-top: 10px;
+  color: var(--signal-green);
+  font-size: 14px;
+}

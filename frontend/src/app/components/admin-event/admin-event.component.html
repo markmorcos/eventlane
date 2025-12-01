@@ -1,0 +1,149 @@
+@if (event(); as evt) {
+<div class="admin-event">
+  <div class="header">
+    <h2>Manage: {{ evt.title }}</h2>
+    <button class="secondary" [routerLink]="['/events', evt.slug]">
+      Back to Event
+    </button>
+  </div>
+
+  <div class="card">
+    <h3>Capacity Management</h3>
+    <div class="capacity-control">
+      <input
+        type="number"
+        [(ngModel)]="newCapacity"
+        min="0"
+        placeholder="New capacity"
+      />
+      <button
+        class="primary"
+        (click)="updateCapacity()"
+        [disabled]="submitting"
+      >
+        Update Capacity
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Confirmed Attendees ({{ attendees().confirmed.length }})</h3>
+    @if (attendees().confirmed.length) {
+    <div class="attendees-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Registered</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (attendee of attendees().confirmed; track attendee.id) {
+          <tr>
+            <td>{{ attendee.name }}</td>
+            <td>{{ attendee.email }}</td>
+            <td>{{ attendee.createdAt | date : "short" }}</td>
+            <td>
+              <button
+                class="danger small"
+                (click)="removeAttendee(attendee.id)"
+              >
+                Remove
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    } @else {
+    <p>No confirmed attendees</p>
+    }
+  </div>
+
+  <div class="card">
+    <h3>Waitlist ({{ attendees().waitlisted.length }})</h3>
+    @if (attendees().waitlisted.length) {
+    <div class="attendees-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Registered</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (attendee of attendees().waitlisted; track attendee.id; let i =
+          $index) {
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ attendee.name }}</td>
+            <td>{{ attendee.email }}</td>
+            <td>{{ attendee.createdAt | date : "short" }}</td>
+            <td>
+              <button
+                class="danger small"
+                (click)="removeAttendee(attendee.id)"
+              >
+                Remove
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    } @else {
+    <p>No waitlisted attendees</p>
+    }
+  </div>
+
+  <div class="card">
+    <h3>Admin Management</h3>
+    @if (admins.length) {
+    <div class="admin-list">
+      @for (admin of admins; track admin) {
+      <div class="admin-item">
+        <span>{{ admin }}</span>
+        @if (admins.length > 1) {
+        <button class="danger small" (click)="removeAdmin(admin)">
+          Remove
+        </button>
+        }
+      </div>
+      }
+    </div>
+    }
+    <div class="add-admin">
+      <input
+        type="email"
+        [(ngModel)]="newAdminEmail"
+        placeholder="Admin email"
+      />
+      <button
+        class="primary"
+        (click)="addAdmin()"
+        [disabled]="!newAdminEmail || submitting"
+      >
+        Add Admin
+      </button>
+    </div>
+  </div>
+
+  <div class="card danger-zone">
+    <h3>Danger Zone</h3>
+    <button class="danger" (click)="deleteEvent()">Delete Event</button>
+  </div>
+
+  @if (message) {
+  <p [class.error]="isError" [class.success]="!isError" class="message">
+    {{ message }}
+  </p>
+  }
+</div>
+}
