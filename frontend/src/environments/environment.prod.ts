@@ -9,6 +9,6 @@ export const environment = {
     appId: "1:908395301644:web:ab2b230ea3db66cd0c1729",
     measurementId: "G-JLN3Q4W8FN",
   },
-  apiBaseUrl: "/api",
-  wsBaseUrl: "/socket.io",
+  apiBaseUrl: "https://eventlane.io/api",
+  wsBaseUrl: "https://eventlane.io",
 };

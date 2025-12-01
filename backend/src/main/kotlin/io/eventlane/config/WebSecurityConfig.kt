@@ -30,7 +30,7 @@ class WebSecurityConfig(
                     // Public endpoints
                     .requestMatchers(HttpMethod.GET, "/api/events").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/events/{slug}").permitAll()
-                    .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/socket.io/**").permitAll()
                     .requestMatchers("/error").permitAll()
                     // All other endpoints require authentication
                     .anyRequest().authenticated()
@@ -43,7 +43,7 @@ class WebSecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:4200", "http://localhost:8080")
+        configuration.allowedOrigins = listOf("http://localhost:4200", "http://localhost:8080", "https://eventlane.io")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true

@@ -1,0 +1,59 @@
+version: 0.4.6
+
+namespace: eventlane
+
+services:
+  - name: server
+    image: ghcr.io/markmorcos/eventlane-server
+    context: backend
+    port: 8080
+    env:
+      - name: MONGODB_URI
+        valueFrom:
+          secretKeyRef:
+            name: mongodb-credentials
+            key: MONGODB_URI
+      - name: FIREBASE_PROJECT_ID
+        value: eventlane-cd9d2
+      - name: FIREBASE_CREDENTIALS_PATH
+        value: /secrets/firebase-service-account.json
+    volumes:
+      - name: firebase-credentials
+        secret:
+          secretName: firebase-credentials
+        mountPath: /secrets
+    ingress:
+      host: eventlane.io
+      path: /api/?(.*)
+      pathType: Prefix
+  - name: websocket
+    image: ghcr.io/markmorcos/eventlane-server
+    context: backend
+    port: 8081
+    env:
+      - name: MONGODB_URI
+        valueFrom:
+          secretKeyRef:
+            name: mongodb-credentials
+            key: MONGODB_URI
+      - name: FIREBASE_PROJECT_ID
+        value: eventlane-cd9d2
+      - name: FIREBASE_CREDENTIALS_PATH
+        value: /secrets/firebase-service-account.json
+    volumes:
+      - name: firebase-credentials
+        secret:
+          secretName: firebase-credentials
+        mountPath: /secrets
+    ingress:
+      host: eventlane.io
+      path: /socket.io/?(.*)
+      pathType: Prefix
+  - name: web
+    image: ghcr.io/markmorcos/eventlane-web
+    context: frontend
+    port: 80
+    ingress:
+      host: eventlane.io
+      path: /?(.*)
+      pathType: Prefix
