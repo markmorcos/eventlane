@@ -2,7 +2,7 @@ import { Injectable, signal } from "@angular/core";
 import { ApiService } from "./api.service";
 import { WebSocketService } from "./websocket.service";
 import * as Models from "../models/event.models";
-import { firstValueFrom, Subscription } from "rxjs";
+import { firstValueFrom } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -16,9 +16,6 @@ export class EventStateService {
   });
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
-
-  private eventSummarySubscription?: Subscription;
-  private eventAttendeesSubscription?: Subscription;
 
   constructor(
     private apiService: ApiService,
@@ -48,33 +45,22 @@ export class EventStateService {
       const event = await firstValueFrom(this.apiService.getEvent(slug));
       this.currentEvent.set(event!);
 
-      await this.wsService.connect();
+      this.wsService.connect();
 
-      // Unsubscribe from previous event subscriptions
-      if (this.eventSummarySubscription) {
-        this.eventSummarySubscription.unsubscribe();
-      }
-
-      // Subscribe to event summary updates (STOMP destination)
-      this.eventSummarySubscription = this.wsService
-        .subscribe<Models.EventSummary>(`/topic/event/${event!.id}/summary`)
-        .subscribe({
-          next: async (summary) => {
-            console.log("Received WebSocket summary update", summary);
-            try {
-              const updatedEvent = await firstValueFrom(
-                this.apiService.getEvent(slug)
-              );
-              this.currentEvent.set(updatedEvent!);
-            } catch (err) {
-              console.error(
-                "Error reloading event after WebSocket update:",
-                err
-              );
-            }
-          },
-          error: (err) => console.error("WebSocket error:", err),
-        });
+      this.wsService.subscribe(
+        `/topic/event/${event!.id}/summary`,
+        async (summary: Models.EventSummary) => {
+          console.log("Received WebSocket summary update", summary);
+          try {
+            const updatedEvent = await firstValueFrom(
+              this.apiService.getEvent(slug)
+            );
+            this.currentEvent.set(updatedEvent!);
+          } catch (err) {
+            console.error("Error reloading event after WebSocket update:", err);
+          }
+        }
+      );
     } catch (err: any) {
       console.error("Error loading event:", err);
       this.error.set("Failed to load event");
@@ -90,37 +76,25 @@ export class EventStateService {
       );
       this.currentAttendees.set(attendees!);
 
-      await this.wsService.connect();
+      this.wsService.connect();
 
-      // Unsubscribe from previous attendees subscriptions
-      if (this.eventAttendeesSubscription) {
-        this.eventAttendeesSubscription.unsubscribe();
-      }
-
-      // Subscribe to attendees updates (STOMP destination)
-      this.eventAttendeesSubscription = this.wsService
-        .subscribe<Models.Attendees>(`/topic/event/${eventId}/attendees`)
-        .subscribe({
-          next: (attendees) => {
-            console.log("Received WebSocket attendees update", attendees);
-            this.currentAttendees.set(attendees);
-          },
-          error: (err) => console.error("WebSocket error:", err),
-        });
+      this.wsService.subscribe(
+        `/topic/event/${eventId}/attendees`,
+        (attendees: Models.Attendees) => {
+          console.log("Received WebSocket attendees update", attendees);
+          this.currentAttendees.set(attendees);
+        }
+      );
     } catch (err: any) {
       console.error("Error loading attendees:", err);
     }
   }
 
   leaveEventRoom(): void {
-    // Cleanup subscriptions (no explicit room leaving needed with STOMP)
-    if (this.eventSummarySubscription) {
-      this.eventSummarySubscription.unsubscribe();
-      this.eventSummarySubscription = undefined;
-    }
-    if (this.eventAttendeesSubscription) {
-      this.eventAttendeesSubscription.unsubscribe();
-      this.eventAttendeesSubscription = undefined;
+    const currentEventId = this.currentEvent()?.id;
+    if (currentEventId) {
+      this.wsService.unsubscribe(`/topic/event/${currentEventId}/summary`);
+      this.wsService.unsubscribe(`/topic/event/${currentEventId}/attendees`);
     }
 
     this.currentEvent.set(null);

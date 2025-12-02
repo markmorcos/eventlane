@@ -1,14 +1,14 @@
 <div class="create-event">
   <div class="header">
     <h2>Create New Event</h2>
-    <button class="secondary" routerLink="/events">Back to Events</button>
+    <button class="secondary" routerLink="/events">Back to events</button>
   </div>
 
   @if (isAuthenticated()) {
   <div class="card">
     <form (ngSubmit)="createEvent()">
       <div class="form-group">
-        <label for="title">Event Title *</label>
+        <label for="title">Event title *</label>
         <input
           id="title"
           type="text"
@@ -21,7 +21,7 @@
       </div>
 
       <div class="form-group">
-        <label for="slug">URL Slug *</label>
+        <label for="slug">Unique event name *</label>
         <input
           id="slug"
           type="text"
@@ -48,7 +48,7 @@
       </div>
 
       <div class="form-group">
-        <label for="adminEmails">Additional Admin Emails (Optional)</label>
+        <label for="adminEmails">Additional admin emails (optional)</label>
         <input
           id="adminEmails"
           type="text"
