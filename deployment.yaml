@@ -25,8 +25,8 @@ services:
         mountPath: /secrets
     ingress:
       host: eventlane.io
-      path: /api
-      pathType: Prefix
+      path: /api/?(.*)
+      pathType: ImplementationSpecific
   - name: websocket
     image: ghcr.io/markmorcos/eventlane-server
     context: backend
@@ -48,13 +48,13 @@ services:
         mountPath: /secrets
     ingress:
       host: eventlane.io
-      path: /socket.io
-      pathType: Prefix
+      path: /socket.io/?(.*)
+      pathType: ImplementationSpecific
   - name: web
     image: ghcr.io/markmorcos/eventlane-web
     context: frontend
     port: 80
     ingress:
       host: eventlane.io
-      path: /
-      pathType: Prefix
+      path: /?(.*)
+      pathType: ImplementationSpecific
