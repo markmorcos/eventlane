@@ -21,7 +21,6 @@ export class WebSocketService {
         return;
       }
 
-      // Create STOMP client with SockJS
       this.client = new Client({
         webSocketFactory: () => new SockJS(environment.wsBaseUrl),
         reconnectDelay: 5000,

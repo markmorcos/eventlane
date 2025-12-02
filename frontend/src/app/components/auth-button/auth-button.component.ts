@@ -1,37 +1,26 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-auth-button",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: "./auth-button.component.html",
   styleUrls: ["./auth-button.component.scss"],
 })
 export class AuthButtonComponent {
   currentUser = this.authService.currentUser;
-  email = "";
-  showSignIn = false;
-  emailSent = false;
+  authLoading = this.authService.authLoading;
 
   constructor(private authService: AuthService) {}
 
-  async sendSignInLink() {
-    if (!this.email) return;
-
+  async signInWithGoogle() {
     try {
-      await this.authService.sendSignInLinkToEmail(this.email);
-      this.emailSent = true;
-      setTimeout(() => {
-        this.showSignIn = false;
-        this.emailSent = false;
-        this.email = "";
-      }, 3000);
+      await this.authService.signInWithGoogle();
     } catch (error) {
-      console.error("Error sending sign-in link:", error);
-      alert("Failed to send sign-in link. Please try again.");
+      console.error("Error signing in with Google:", error);
+      alert("Failed to sign in. Please try again.");
     }
   }
 

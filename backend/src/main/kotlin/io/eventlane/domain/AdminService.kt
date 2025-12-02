@@ -76,6 +76,10 @@ class AdminService(
         
         optimisticRetry.doWithRetry(slug) { event ->
             val normalizedEmail = adminEmailToRemove.lowercase()
+
+            if (event.admins[0] == normalizedEmail) {
+                throw BadRequestException("Cannot remove the primary admin from an event")
+            }
             
             if (event.admins.size == 1) {
                 throw BadRequestException("Cannot remove the last admin from an event")

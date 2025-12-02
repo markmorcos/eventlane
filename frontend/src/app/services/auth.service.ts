@@ -2,9 +2,8 @@ import { Injectable, signal, computed } from "@angular/core";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut,
   User,
   Auth,
@@ -16,59 +15,33 @@ export class AuthService {
   private auth: Auth;
   private authInitialized = false;
   private authInitPromise: Promise<void>;
+  private googleProvider: GoogleAuthProvider;
 
   readonly currentUser = signal<User | null>(null);
+  readonly authLoading = signal<boolean>(true);
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
   readonly userEmail = computed(() => this.currentUser()?.email ?? null);
 
   constructor() {
     const app = initializeApp(environment.firebase);
     this.auth = getAuth(app);
+    this.googleProvider = new GoogleAuthProvider();
 
     this.authInitPromise = new Promise<void>((resolve) => {
-      const unsubscribe = this.auth.onAuthStateChanged((user) => {
+      this.auth.onAuthStateChanged((user) => {
         this.currentUser.set(user);
 
         if (!this.authInitialized) {
           this.authInitialized = true;
+          this.authLoading.set(false);
           resolve();
-          unsubscribe();
-
-          this.auth.onAuthStateChanged((user) => {
-            this.currentUser.set(user);
-          });
         }
       });
     });
   }
 
-  async sendSignInLinkToEmail(email: string): Promise<void> {
-    const actionCodeSettings = {
-      url: window.location.origin + "/auth/callback",
-      handleCodeInApp: true,
-    };
-
-    await sendSignInLinkToEmail(this.auth, email, actionCodeSettings);
-    window.localStorage.setItem("emailForSignIn", email);
-  }
-
-  async completeSignInWithEmailLink(url: string): Promise<User> {
-    if (!isSignInWithEmailLink(this.auth, url)) {
-      throw new Error("Invalid sign-in link");
-    }
-
-    let email = window.localStorage.getItem("emailForSignIn");
-    if (!email) {
-      email = window.prompt("Please provide your email for confirmation");
-    }
-
-    if (!email) {
-      throw new Error("Email is required");
-    }
-
-    const result = await signInWithEmailLink(this.auth, email, url);
-    window.localStorage.removeItem("emailForSignIn");
-
+  async signInWithGoogle(): Promise<User> {
+    const result = await signInWithPopup(this.auth, this.googleProvider);
     return result.user;
   }
 

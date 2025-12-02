@@ -34,7 +34,7 @@
           [class.confirmed]="evt.confirmedCount < evt.capacity"
           [class.waitlisted]="evt.confirmedCount >= evt.capacity"
         >
-          {{ evt.confirmedCount < evt.capacity ? "Space Available" : "Full" }}
+          {{ evt.confirmedCount < evt.capacity ? "Space available" : "Full" }}
         </span>
       </div>
     </div>
@@ -42,7 +42,7 @@
     @if (isAuthenticated()) {
     <div class="actions">
       @if (!evt.currentUserAttendee) {
-      <div>
+      <div class="rsvp-form">
         <input
           type="text"
           [(ngModel)]="userName"
@@ -66,7 +66,7 @@
             [class.confirmed]="evt.currentUserAttendee.status === 'CONFIRMED'"
             [class.waitlisted]="evt.currentUserAttendee.status === 'WAITLISTED'"
           >
-            {{ evt.currentUserAttendee.status }}
+            {{ evt.currentUserAttendee.status | titlecase }}
           </span>
         </p>
         <button class="danger" (click)="cancel()" [disabled]="submitting">

@@ -31,12 +31,5 @@ export const routes: Routes = [
         (m) => m.AdminEventComponent
       ),
   },
-  {
-    path: "auth/callback",
-    loadComponent: () =>
-      import("./components/auth-callback/auth-callback.component").then(
-        (m) => m.AuthCallbackComponent
-      ),
-  },
   { path: "**", redirectTo: "/" },
 ];

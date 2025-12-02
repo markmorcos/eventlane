@@ -1,6 +1,13 @@
-import { Component, OnInit, OnDestroy, effect } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  signal,
+  effect,
+  computed,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterLink, ActivatedRoute, Router } from "@angular/router";
+import { RouterLink, ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
 import { ApiService } from "../../services/api.service";
@@ -18,18 +25,26 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   event = this.eventStateService.currentEvent;
   isAuthenticated = this.authService.isAuthenticated;
 
-  userName = "";
+  currentUserName = computed(
+    () => this.authService.currentUser()?.displayName || ""
+  );
+  userName = signal(this.currentUserName());
   submitting = false;
   message = "";
   isError = false;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private authService: AuthService,
     private apiService: ApiService,
     private eventStateService: EventStateService
-  ) {}
+  ) {
+    effect(
+      () =>
+        this.userName.set(this.authService.currentUser()?.displayName ?? ""),
+      { allowSignalWrites: true }
+    );
+  }
 
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
@@ -37,7 +52,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
     const evt = this.event();
     if (evt?.currentUserAttendee) {
-      this.userName = evt.currentUserAttendee.name;
+      this.userName.set(evt.currentUserAttendee.name);
     }
   }
 
@@ -54,10 +69,8 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
     try {
       const result = await firstValueFrom(
-        this.apiService.rsvp(evt.slug, { name: this.userName })
+        this.apiService.rsvp(evt.slug, { name: this.userName() })
       );
-
-      this.showMessage(`RSVP successful! Status: ${result!.status}`, false);
     } catch (error: any) {
       console.error("RSVP error:", error);
       this.showMessage(error.error?.message || "Failed to RSVP", true);
@@ -77,9 +90,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
     try {
       await firstValueFrom(this.apiService.cancel(evt.slug));
-      // WebSocket will automatically update the event
-      this.userName = "";
-      this.showMessage("RSVP cancelled successfully", false);
+      this.userName.set(this.currentUserName());
     } catch (error: any) {
       console.error("Cancel error:", error);
       this.showMessage(error.error?.message || "Failed to cancel RSVP", true);

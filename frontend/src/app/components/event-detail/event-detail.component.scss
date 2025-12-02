@@ -37,10 +37,14 @@ h2 {
 
 .actions {
   margin-top: 30px;
+
+  .rsvp-form {
+    display: flex;
+    gap: 10px;
+  }
 }
 
 .name-input {
-  margin-bottom: 10px;
   max-width: 300px;
 }
 
@@ -66,14 +70,14 @@ h2 {
   margin-top: 20px;
   padding: 15px;
   border-radius: 8px;
-}
 
-.message.success {
-  background: #d4edda;
-  color: #155724;
-}
+  &.success {
+    background: #d4edda;
+    color: #155724;
+  }
 
-.message.error {
-  background: #f8d7da;
-  color: #721c24;
+  &.error {
+    background: #f8d7da;
+    color: #721c24;
+  }
 }

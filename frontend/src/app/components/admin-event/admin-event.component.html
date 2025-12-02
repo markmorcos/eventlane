@@ -8,7 +8,15 @@
   </div>
 
   <div class="card">
-    <h3>Capacity Management</h3>
+    <div class="capacity-warning">
+      <p class="info-text">
+        <strong>Note:</strong> Adjusting capacity will automatically manage
+        attendee status. Reducing capacity moves confirmed attendees to the
+        waitlist, while increasing capacity promotes waitlisted attendees to
+        confirmed status.
+      </p>
+    </div>
+    <h3>Capacity management</h3>
     <div class="capacity-control">
       <input
         type="number"
@@ -21,13 +29,13 @@
         (click)="updateCapacity()"
         [disabled]="submitting"
       >
-        Update Capacity
+        Update capacity
       </button>
     </div>
   </div>
 
   <div class="card">
-    <h3>Confirmed Attendees ({{ attendees().confirmed.length }})</h3>
+    <h3>Confirmed attendees ({{ attendees().confirmed.length }})</h3>
     @if (attendees().confirmed.length) {
     <div class="attendees-table">
       <table>
@@ -64,7 +72,7 @@
   </div>
 
   <div class="card">
-    <h3>Waitlist ({{ attendees().waitlisted.length }})</h3>
+    <h3>Waitlisted attendees ({{ attendees().waitlisted.length }})</h3>
     @if (attendees().waitlisted.length) {
     <div class="attendees-table">
       <table>
@@ -104,13 +112,13 @@
   </div>
 
   <div class="card">
-    <h3>Admin Management</h3>
+    <h3>Admin management</h3>
     @if (admins.length) {
     <div class="admin-list">
       @for (admin of admins; track admin) {
       <div class="admin-item">
         <span>{{ admin }}</span>
-        @if (admins.length > 1) {
+        @if (admins.length > 1 && admin !== admins[0]) {
         <button class="danger small" (click)="removeAdmin(admin)">
           Remove
         </button>
@@ -130,14 +138,14 @@
         (click)="addAdmin()"
         [disabled]="!newAdminEmail || submitting"
       >
-        Add Admin
+        Add admin
       </button>
     </div>
   </div>
 
   <div class="card danger-zone">
-    <h3>Danger Zone</h3>
-    <button class="danger" (click)="deleteEvent()">Delete Event</button>
+    <h3>Danger zone</h3>
+    <button class="danger" (click)="deleteEvent()">Delete event</button>
   </div>
 
   @if (message) {
