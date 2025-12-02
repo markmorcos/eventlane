@@ -14,7 +14,6 @@ export interface EventSummary {
   capacity: number;
   confirmedCount: number;
   waitlistCount: number;
-  isAdmin: boolean;
   createdAt: string;
 }
 

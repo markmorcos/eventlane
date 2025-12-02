@@ -12,7 +12,6 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Event endpoints
   getAllEvents(): Observable<Models.EventSummary[]> {
     return this.http.get<Models.EventSummary[]>(`${this.apiUrl}/events`);
   }
@@ -27,7 +26,6 @@ export class ApiService {
     );
   }
 
-  // RSVP endpoints
   rsvp(
     slug: string,
     request: Models.RsvpRequest
@@ -45,7 +43,6 @@ export class ApiService {
     );
   }
 
-  // Admin endpoints
   createEvent(
     request: Models.CreateEventRequest
   ): Observable<Models.EventDetail> {

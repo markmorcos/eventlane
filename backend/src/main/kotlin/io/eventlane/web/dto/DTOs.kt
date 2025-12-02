@@ -16,7 +16,6 @@ data class EventSummaryDTO(
     val capacity: Int,
     val confirmedCount: Int,
     val waitlistCount: Int,
-    val isAdmin: Boolean,
     val createdAt: Long
 )
 

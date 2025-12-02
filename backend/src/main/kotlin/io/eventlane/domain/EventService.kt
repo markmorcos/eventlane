@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service
 class EventService(
     private val eventRepository: EventRepository
 ) {
-    fun getAllEvents(): List<EventDocument> {
-        return eventRepository.findAll()
+    fun getEventsByAdmin(adminEmail: String): List<EventDocument> {
+        return eventRepository.findByAdminsContaining(adminEmail)
     }
     
     fun getEventBySlug(slug: String): EventDocument {

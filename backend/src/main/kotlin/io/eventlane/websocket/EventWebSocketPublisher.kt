@@ -20,12 +20,10 @@ class EventWebSocketPublisher(
             
             logger.info("Publishing update for event $slug (ID: $eventId)")
             
-            // Publish summary update to /topic/event/{eventId}/summary
-            val summaryDto = DtoMapper.toEventSummaryDTO(event, false)
+            val summaryDto = DtoMapper.toEventSummaryDTO(event)
             messagingTemplate.convertAndSend("/topic/event/$eventId/summary", summaryDto)
             logger.info("Published summary update for event $slug")
             
-            // Publish attendees update to /topic/event/{eventId}/attendees
             val attendeesDto = DtoMapper.toAttendeesDTO(event)
             messagingTemplate.convertAndSend("/topic/event/$eventId/attendees", attendeesDto)
             logger.info("Published attendees update for event $slug")

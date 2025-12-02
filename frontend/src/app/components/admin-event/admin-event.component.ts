@@ -29,7 +29,6 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private eventStateService: EventStateService
   ) {
-    // Watch for event changes
     effect(() => {
       const evt = this.event();
       if (evt) {

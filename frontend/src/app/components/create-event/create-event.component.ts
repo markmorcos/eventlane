@@ -64,10 +64,7 @@ export class CreateEventComponent {
 
       this.showMessage("Event created successfully!", false);
 
-      // Navigate to the new event after a short delay
-      setTimeout(() => {
-        this.router.navigate(["/events", event.slug]);
-      }, 1500);
+      this.router.navigate(["/events", event.slug]);
     } catch (error: any) {
       console.error("Create event error:", error);
       this.showMessage(error.error?.message || "Failed to create event", true);

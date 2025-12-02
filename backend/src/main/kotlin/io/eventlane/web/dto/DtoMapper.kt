@@ -16,7 +16,7 @@ object DtoMapper {
         )
     }
     
-    fun toEventSummaryDTO(event: EventDocument, isAdmin: Boolean): EventSummaryDTO {
+    fun toEventSummaryDTO(event: EventDocument): EventSummaryDTO {
         val confirmedCount = event.confirmedList.size
         val waitlistCount = event.waitingList.size
         
@@ -27,7 +27,6 @@ object DtoMapper {
             capacity = event.capacity,
             confirmedCount = confirmedCount,
             waitlistCount = waitlistCount,
-            isAdmin = isAdmin,
             createdAt = event.createdAt.toEpochMilli()
         )
     }

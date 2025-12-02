@@ -3,12 +3,16 @@
   align-items: center;
   gap: 10px;
   position: relative;
+  flex-wrap: wrap;
 }
 
 .user-email {
   margin-right: 10px;
   font-weight: 500;
   color: var(--dark-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sign-in-form {
@@ -33,4 +37,50 @@
   margin-top: 10px;
   color: var(--signal-green);
   font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .auth-button {
+    gap: 8px;
+  }
+
+  .user-email {
+    font-size: 0.875rem;
+    max-width: 150px;
+    margin-right: 8px;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .sign-in-form {
+    min-width: 280px;
+    right: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-button {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .user-email {
+    font-size: 0.8rem;
+    max-width: 120px;
+  }
+
+  button {
+    padding: 0.4rem 0.875rem;
+    font-size: 0.8rem;
+  }
+
+  .sign-in-form {
+    min-width: calc(100vw - 40px);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
 }

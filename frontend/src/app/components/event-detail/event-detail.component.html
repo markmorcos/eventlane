@@ -1,11 +1,17 @@
 @if (event(); as evt) {
 <div class="event-detail">
+  <div class="header">
+    <h2>Event details</h2>
+
+    <button class="secondary" routerLink="/events">Back to events</button>
+  </div>
+
   <div class="card">
     <div class="header">
       <h2>{{ evt.title }}</h2>
       @if (evt.isAdmin) {
       <button class="secondary" [routerLink]="['/admin/events', evt.slug]">
-        Manage Event
+        Manage event
       </button>
       }
     </div>

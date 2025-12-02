@@ -6,6 +6,27 @@
     }
   </div>
 
+  @if (events().length === 0 && !loading()) {
+  <div class="empty-state">
+    <svg
+      width="120"
+      height="120"
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="60" cy="60" r="50" fill="#F0F4FF" />
+      <path
+        d="M40 50h40M40 60h20M45 70h30"
+        stroke="#2D5BFF"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+    </svg>
+    <h3>Create your first event now!</h3>
+    <p>You can create and manage events once you sign in.</p>
+  </div>
+  } @else {
   <div class="events-grid">
     @for (event of events(); track event.slug) {
     <div class="card event-card" [routerLink]="['/events', event.slug]">
@@ -29,15 +50,13 @@
             [class.waitlisted]="event.confirmedCount >= event.capacity"
           >
             {{
-              event.confirmedCount < event.capacity ? "Space Available" : "Full"
+              event.confirmedCount < event.capacity ? "Space available" : "Full"
             }}
           </span>
         </div>
       </div>
-      @if (event.isAdmin) {
-      <span class="admin-badge">Admin</span>
-      }
     </div>
     }
   </div>
+  }
 </div>

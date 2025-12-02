@@ -21,13 +21,11 @@ class EventController(
     fun getAllEvents(
         @AuthenticationPrincipal user: SecurityUser?
     ): List<EventSummaryDTO> {
-        val events = eventService.getAllEvents()
-        return events.map { event ->
-            val isAdmin = user?.let { 
-                eventPermissionService.isAdmin(event.slug, it.email) 
-            } ?: false
-            DtoMapper.toEventSummaryDTO(event, isAdmin)
+        if (user == null) {
+            return emptyList()
         }
+        val events = eventService.getEventsByAdmin(user.email)
+        return events.map(DtoMapper::toEventSummaryDTO)
     }
     
     @GetMapping("/{slug}")
@@ -47,7 +45,6 @@ class EventController(
         @PathVariable slug: String,
         @AuthenticationPrincipal user: SecurityUser
     ): AttendeesDTO {
-        // Only admins can view full attendee list
         eventPermissionService.requireAdmin(slug, user.email)
         val event = eventService.getEventBySlug(slug)
         return DtoMapper.toAttendeesDTO(event)

@@ -62,14 +62,41 @@ main.with-header {
 
 @media (max-width: 768px) {
   .header-content {
-    padding: 0 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .logo {
+    gap: 0.5rem;
+
+    svg {
+      width: 32px;
+      height: 32px;
+    }
   }
 
   .logo-text {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
   }
 
   main.with-header {
-    padding: 1.5rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    padding: 0 1rem;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+
+  header {
+    padding: 0.75rem 0;
+  }
+
+  main.with-header {
+    padding: 1rem 0.5rem;
   }
 }

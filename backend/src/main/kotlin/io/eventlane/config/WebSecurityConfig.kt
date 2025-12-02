@@ -30,7 +30,7 @@ class WebSecurityConfig(
                     // Public endpoints
                     .requestMatchers(HttpMethod.GET, "/api/events").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/events/{slug}").permitAll()
-                    .requestMatchers("/socket.io/**").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
                     .requestMatchers("/error").permitAll()
                     // All other endpoints require authentication
                     .anyRequest().authenticated()

@@ -3,6 +3,7 @@ backend/build/
 backend/.gradle/
 backend/out/
 backend/bin/
+backend/firebase-service-account.json
 *.class
 *.log
 *.jar
