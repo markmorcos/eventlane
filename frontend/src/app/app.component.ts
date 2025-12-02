@@ -8,11 +8,18 @@ import {
 import { filter } from "rxjs/operators";
 import { CommonModule } from "@angular/common";
 import { AuthButtonComponent } from "./components/auth-button/auth-button.component";
+import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.component";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, AuthButtonComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    AuthButtonComponent,
+    CookieBannerComponent,
+  ],
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })

@@ -1,0 +1,12 @@
+<div *ngIf="showBanner()" class="cookie-banner">
+  <div class="cookie-content">
+    <p>
+      We only use essential cookies necessary for authentication and session
+      management. No tracking or analytics cookies are used. Learn more in our
+      <a routerLink="/cookie-policy">Cookie Policy</a>.
+    </p>
+    <div class="cookie-actions">
+      <button class="primary" (click)="acceptCookies()">Got it</button>
+    </div>
+  </div>
+</div>
