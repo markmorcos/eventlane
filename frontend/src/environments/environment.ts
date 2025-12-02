@@ -10,5 +10,5 @@ export const environment = {
     measurementId: "G-H6RMHDPLRF",
   },
   apiBaseUrl: "http://localhost:8080/api",
-  wsBaseUrl: "http://localhost:8081",
+  wsBaseUrl: "http://localhost:8080/ws",
 };

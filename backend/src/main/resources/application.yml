@@ -9,10 +9,6 @@ spring:
 server:
   port: 8080
 
-socket:
-  port: 8081
-  host: 0.0.0.0
-
 firebase:
   project-id: ${FIREBASE_PROJECT_ID:eventlane-cd9d2}
   credentials-path: ${FIREBASE_CREDENTIALS_PATH:firebase-service-account.json}

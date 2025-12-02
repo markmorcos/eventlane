@@ -25,30 +25,7 @@ services:
         mountPath: /secrets
     ingress:
       host: eventlane.io
-      path: /api/?(.*)
-      pathType: ImplementationSpecific
-  - name: websocket
-    image: ghcr.io/markmorcos/eventlane-server
-    context: backend
-    port: 8081
-    env:
-      - name: MONGODB_URI
-        valueFrom:
-          secretKeyRef:
-            name: mongodb-credentials
-            key: MONGODB_URI
-      - name: FIREBASE_PROJECT_ID
-        value: eventlane-cd9d2
-      - name: FIREBASE_CREDENTIALS_PATH
-        value: /secrets/firebase-service-account.json
-    volumes:
-      - name: firebase-credentials
-        secret:
-          secretName: firebase-credentials
-        mountPath: /secrets
-    ingress:
-      host: eventlane.io
-      path: /socket.io/?(.*)
+      path: /(api|ws)/?(.*)
       pathType: ImplementationSpecific
   - name: web
     image: ghcr.io/markmorcos/eventlane-web

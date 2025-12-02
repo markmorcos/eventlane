@@ -5,6 +5,9 @@ import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { routes } from "./app/app.routes";
 import { authInterceptor } from "./app/interceptors/auth.interceptor";
 
+// Polyfill for SockJS
+(window as any).global = window;
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),

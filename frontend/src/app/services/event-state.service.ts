@@ -55,12 +55,12 @@ export class EventStateService {
         this.eventSummarySubscription.unsubscribe();
       }
 
-      // Subscribe to event summary updates
+      // Subscribe to event summary updates (STOMP destination)
       this.eventSummarySubscription = this.wsService
-        .subscribe<Models.EventSummary>(`event:summary`)
+        .subscribe<Models.EventSummary>(`/topic/event/${event!.id}/summary`)
         .subscribe({
           next: async (summary) => {
-            console.log("Received WebSocket event:summary update", summary);
+            console.log("Received WebSocket summary update", summary);
             try {
               const updatedEvent = await firstValueFrom(
                 this.apiService.getEvent(slug)
@@ -75,9 +75,6 @@ export class EventStateService {
           },
           error: (err) => console.error("WebSocket error:", err),
         });
-
-      const roomName = `event:${event!.id}`;
-      this.wsService.joinRoom(roomName);
     } catch (err: any) {
       console.error("Error loading event:", err);
       this.error.set("Failed to load event");
@@ -100,31 +97,23 @@ export class EventStateService {
         this.eventAttendeesSubscription.unsubscribe();
       }
 
-      // Subscribe to attendees updates
+      // Subscribe to attendees updates (STOMP destination)
       this.eventAttendeesSubscription = this.wsService
-        .subscribe<Models.Attendees>(`event:attendees`)
+        .subscribe<Models.Attendees>(`/topic/event/${eventId}/attendees`)
         .subscribe({
           next: (attendees) => {
-            console.log("Received WebSocket event:attendees update", attendees);
+            console.log("Received WebSocket attendees update", attendees);
             this.currentAttendees.set(attendees);
           },
           error: (err) => console.error("WebSocket error:", err),
         });
-
-      const roomName = `event:${eventId}`;
-      this.wsService.joinRoom(roomName);
     } catch (err: any) {
       console.error("Error loading attendees:", err);
     }
   }
 
   leaveEventRoom(): void {
-    const event = this.currentEvent();
-    if (event) {
-      this.wsService.leaveRoom(`event:${event.id}`);
-    }
-
-    // Cleanup subscriptions
+    // Cleanup subscriptions (no explicit room leaving needed with STOMP)
     if (this.eventSummarySubscription) {
       this.eventSummarySubscription.unsubscribe();
       this.eventSummarySubscription = undefined;

@@ -10,5 +10,5 @@ export const environment = {
     measurementId: "G-JLN3Q4W8FN",
   },
   apiBaseUrl: "https://eventlane.io/api",
-  wsBaseUrl: "https://eventlane.io",
+  wsBaseUrl: "https://eventlane.io/ws",
 };

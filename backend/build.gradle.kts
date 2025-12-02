@@ -23,9 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    
-    // Socket.IO
-    implementation("com.corundumstudio.socketio:netty-socketio:2.0.9")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
     
     // Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
