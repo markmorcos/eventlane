@@ -31,13 +31,13 @@ object DtoMapper {
         )
     }
     
-    fun toEventDetailDTO(event: EventDocument, isAdmin: Boolean, userId: String? = null): EventDetailDTO {
+    fun toEventDetailDTO(event: EventDocument, isAdmin: Boolean, email: String? = null): EventDetailDTO {
         val confirmedCount = event.confirmedList.size
         val waitlistCount = event.waitingList.size
         
-        val currentUserAttendee = userId?.let { uid ->
-            event.confirmedList.find { it.userId == uid }?.let { toAttendeeDTO(it, "CONFIRMED") }
-                ?: event.waitingList.find { it.userId == uid }?.let { toAttendeeDTO(it, "WAITLISTED") }
+        val currentUserAttendee = email?.let { userEmail ->
+            event.confirmedList.find { it.email == userEmail }?.let { toAttendeeDTO(it, "CONFIRMED") }
+                ?: event.waitingList.find { it.email == userEmail }?.let { toAttendeeDTO(it, "WAITLISTED") }
         }
         
         return EventDetailDTO(

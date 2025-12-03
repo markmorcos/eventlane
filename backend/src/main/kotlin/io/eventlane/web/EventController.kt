@@ -37,7 +37,7 @@ class EventController(
         val isAdmin = user?.let { 
             eventPermissionService.isAdmin(slug, it.email) 
         } ?: false
-        return DtoMapper.toEventDetailDTO(event, isAdmin, user?.uid)
+        return DtoMapper.toEventDetailDTO(event, isAdmin, user?.email)
     }
     
     @GetMapping("/{slug}/attendees")
