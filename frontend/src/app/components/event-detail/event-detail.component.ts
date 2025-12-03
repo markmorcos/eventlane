@@ -51,7 +51,6 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     await firstValueFrom(
       this.apiService.rsvp(evt.slug, { name: this.userName() })
     );
-    this.userName.set("");
   }
 
   async cancel() {

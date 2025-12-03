@@ -58,11 +58,14 @@ export class AuthService {
     return token;
   }
 
-  async getDisplayName(): Promise<string | null> {
+  async getDisplayName() {
     await this.authInitPromise;
+    return this.currentUser()?.displayName;
+  }
 
-    const user = this.currentUser();
-    return user ? user.displayName : null;
+  async getUserEmail() {
+    await this.authInitPromise;
+    return this.currentUser()?.email;
   }
 
   async signOut() {

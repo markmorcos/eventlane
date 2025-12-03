@@ -1,17 +1,19 @@
 import { inject, Injectable, signal } from "@angular/core";
+import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 import { EventDetail } from "../models/event.models";
 
 import { ApiService } from "./api.service";
 import { WebSocketService } from "./websocket.service";
-import { AuthService } from "./auth.service";
+import { EventListStore } from "./event-list.store";
 
 @Injectable({ providedIn: "root" })
 export class EventDetailStore {
   private apiService = inject(ApiService);
   private wsService = inject(WebSocketService);
-  private authService = inject(AuthService);
+  private eventListStore = inject(EventListStore);
+  private router = inject(Router);
 
   readonly event = signal<EventDetail | null>(null);
   readonly loading = signal(false);
@@ -23,17 +25,25 @@ export class EventDetailStore {
       this.error.set(null);
 
       const event = await firstValueFrom(this.apiService.getEvent(slug));
+
       this.event.set(event);
 
       if (consecutiveLoad) return;
 
       this.wsService.connect();
-      this.wsService.subscribe(
-        `/topic/event/${event!.id}/details`,
-        async (event: EventDetail) => this.loadEvent(slug, true)
+      this.wsService.subscribe(`/topic/event/${slug}/details`, () =>
+        this.loadEvent(slug, true)
       );
+      this.wsService.subscribe(`/topic/event/${slug}/deleted`, () => {
+        this.eventListStore.loadAllEvents();
+        this.router.navigate(["/events"]);
+      });
+      this.wsService.subscribe(`/topic/event/${slug}/admin-removed`, () => {
+        this.loadEvent(slug, true);
+      });
     } catch (error) {
       this.error.set(`Failed to load event: ${error}`);
+      this.router.navigate(["/events"]);
     } finally {
       this.loading.set(false);
     }
@@ -74,11 +84,11 @@ export class EventDetailStore {
   }
 
   leaveEventRoom() {
-    const currentEventId = this.event()?.id;
-    if (currentEventId) {
-      this.wsService.unsubscribe(`/topic/event/${currentEventId}/summary`);
-      this.wsService.unsubscribe(`/topic/event/${currentEventId}/attendees`);
-      this.wsService.unsubscribe(`/topic/event/${currentEventId}/admins`);
+    const slug = this.event()?.slug;
+    if (slug) {
+      this.wsService.unsubscribe(`/topic/event/${slug}/details`);
+      this.wsService.unsubscribe(`/topic/event/${slug}/deleted`);
+      this.wsService.unsubscribe(`/topic/event/${slug}/admin-removed`);
     }
 
     this.event.set(null);

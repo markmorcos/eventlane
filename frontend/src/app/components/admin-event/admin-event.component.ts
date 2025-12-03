@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { AdminsStore } from "../../services/admins.store";
 import { AttendeesStore } from "../../services/attendees.store";
 import { EventDetailStore } from "../../services/event-detail.store";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-admin-event",
@@ -27,7 +28,9 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   private eventDetailStore = inject(EventDetailStore);
   private attendeesStore = inject(AttendeesStore);
   private adminsStore = inject(AdminsStore);
+  private authService = inject(AuthService);
 
+  email = this.authService.userEmail;
   event = this.eventDetailStore.event;
   attendees = this.attendeesStore.attendees;
   admins = this.adminsStore.admins;
@@ -55,8 +58,8 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
     this.newCapacity.set(evt.capacity);
     Promise.all([
-      this.attendeesStore.loadAttendees(slug, evt.id),
-      this.adminsStore.loadAdmins(slug, evt.id),
+      this.attendeesStore.loadAttendees(slug),
+      this.adminsStore.loadAdmins(slug),
     ]);
   }
 
@@ -85,6 +88,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     if (!evt || !this.newAdminEmail()) return;
 
     this.adminsStore.addAdmin(evt.slug, this.newAdminEmail());
+    this.newAdminEmail.set("");
   }
 
   async removeAdmin(adminEmail: string) {

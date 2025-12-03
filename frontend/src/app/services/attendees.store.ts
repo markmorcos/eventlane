@@ -15,7 +15,7 @@ export class AttendeesStore {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
-  async loadAttendees(slug: string, eventId: string): Promise<void> {
+  async loadAttendees(slug: string) {
     try {
       this.loading.set(true);
       this.error.set(null);
@@ -27,7 +27,7 @@ export class AttendeesStore {
 
       this.wsService.connect();
       this.wsService.subscribe(
-        `/topic/event/${eventId}/attendees`,
+        `/topic/event/${slug}/attendees`,
         (attendees: Attendees) => this.attendees.set(attendees)
       );
     } catch (error) {

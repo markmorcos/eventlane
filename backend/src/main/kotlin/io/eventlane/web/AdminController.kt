@@ -4,6 +4,7 @@ import io.eventlane.auth.SecurityUser
 import io.eventlane.domain.AdminService
 import io.eventlane.domain.CapacityService
 import io.eventlane.domain.EventPermissionService
+import io.eventlane.domain.EventService
 import io.eventlane.web.dto.*
 import io.eventlane.websocket.EventWebSocketPublisher
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -15,6 +16,7 @@ class AdminController(
     private val adminService: AdminService,
     private val capacityService: CapacityService,
     private val eventPermissionService: EventPermissionService,
+    private val eventService: EventService,
     private val wsPublisher: EventWebSocketPublisher
 ) {
     
@@ -78,7 +80,7 @@ class AdminController(
         @AuthenticationPrincipal user: SecurityUser
     ) {
         adminService.removeAdmin(slug, email, user.email)
-        wsPublisher.publishEventUpdate(slug)
+        wsPublisher.publishAdminRemoved(slug, email)
     }
     
     @DeleteMapping("/events/{slug}/attendees/{attendeeId}")

@@ -142,9 +142,11 @@
     </div>
   </div>
 
+  @if (email() === admins()[0]) {
   <div class="card danger-zone">
     <h3>Danger zone</h3>
     <button class="danger" (click)="deleteEvent()">Delete event</button>
   </div>
+  }
 </div>
 }
