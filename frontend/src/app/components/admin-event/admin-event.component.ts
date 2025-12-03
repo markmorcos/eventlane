@@ -1,10 +1,18 @@
-import { Component, OnInit, OnDestroy, effect } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  signal,
+  computed,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink, ActivatedRoute, Router } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { firstValueFrom } from "rxjs";
-import { ApiService } from "../../services/api.service";
-import { EventStateService } from "../../services/event-state.service";
+
+import { AdminsStore } from "../../services/admins.store";
+import { AttendeesStore } from "../../services/attendees.store";
+import { EventDetailStore } from "../../services/event-detail.store";
 
 @Component({
   selector: "app-admin-event",
@@ -14,87 +22,53 @@ import { EventStateService } from "../../services/event-state.service";
   styleUrls: ["./admin-event.component.scss"],
 })
 export class AdminEventComponent implements OnInit, OnDestroy {
-  event = this.eventStateService.currentEvent;
-  attendees = this.eventStateService.currentAttendees;
-  admins: string[] = [];
-  newCapacity: number = 0;
-  newAdminEmail = "";
-  submitting = false;
-  message = "";
-  isError = false;
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private eventDetailStore = inject(EventDetailStore);
+  private attendeesStore = inject(AttendeesStore);
+  private adminsStore = inject(AdminsStore);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private apiService: ApiService,
-    private eventStateService: EventStateService
-  ) {
-    effect(() => {
-      const evt = this.event();
-      if (evt) {
-        this.newCapacity = evt.capacity;
-        if (!evt.isAdmin) {
-          this.router.navigate(["/events", evt.slug]);
-        }
-      }
-    });
-  }
+  event = this.eventDetailStore.event;
+  attendees = this.attendeesStore.attendees;
+  admins = this.adminsStore.admins;
+  updating = computed(() =>
+    [
+      this.eventDetailStore.loading(),
+      this.attendeesStore.loading(),
+      this.adminsStore.loading(),
+    ].some(Boolean)
+  );
+
+  newCapacity = signal(0);
+  newAdminEmail = signal("");
 
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
 
-    await this.eventStateService.loadEvent(slug);
+    await this.eventDetailStore.loadEvent(slug);
 
     const evt = this.event();
-    if (evt) {
-      await this.eventStateService.loadAttendees(slug, evt.id);
-      this.loadAdmins(slug);
+    if (!evt?.isAdmin) {
+      this.router.navigate(["/events", evt?.slug]);
+      return;
     }
+
+    this.newCapacity.set(evt.capacity);
+    Promise.all([
+      this.attendeesStore.loadAttendees(slug, evt.id),
+      this.adminsStore.loadAdmins(slug, evt.id),
+    ]);
   }
 
   ngOnDestroy() {
-    this.eventStateService.leaveEventRoom();
-  }
-
-  loadAdmins(slug: string) {
-    this.apiService.getAdmins(slug).subscribe({
-      next: (admins) => {
-        this.admins = admins;
-      },
-      error: (error) => {
-        console.error("Error loading admins:", error);
-      },
-    });
+    this.eventDetailStore.leaveEventRoom();
   }
 
   async updateCapacity() {
     const evt = this.event();
-    if (!evt || this.newCapacity < 0) return;
+    if (!evt || this.newCapacity() < 0) return;
 
-    this.submitting = true;
-
-    try {
-      const result = await firstValueFrom(
-        this.apiService.updateCapacity(evt.slug, {
-          capacity: this.newCapacity,
-        })
-      );
-
-      let msg = "Capacity updated successfully";
-      if (result!.promoted.length > 0) {
-        msg += ` (${result!.promoted.length} promoted from waitlist)`;
-      }
-      if (result!.demoted.length > 0) {
-        msg += ` (${result!.demoted.length} moved to waitlist)`;
-      }
-
-      this.showMessage(msg, false);
-    } catch (error: any) {
-      console.error("Error updating capacity:", error);
-      this.showMessage("Failed to update capacity", true);
-    } finally {
-      this.submitting = false;
-    }
+    this.eventDetailStore.updateCapacity(this.newCapacity());
   }
 
   async removeAttendee(attendeeId: string) {
@@ -103,88 +77,37 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
     if (!confirm("Are you sure you want to remove this attendee?")) return;
 
-    try {
-      await firstValueFrom(
-        this.apiService.removeAttendee(evt.slug, attendeeId)
-      );
-      this.showMessage("Attendee removed successfully", false);
-    } catch (error: any) {
-      console.error("Error removing attendee:", error);
-      this.showMessage("Failed to remove attendee", true);
-    }
+    this.attendeesStore.removeAttendee(evt.slug, attendeeId);
   }
 
   async addAdmin() {
     const evt = this.event();
-    if (!evt || !this.newAdminEmail) return;
+    if (!evt || !this.newAdminEmail()) return;
 
-    this.submitting = true;
-
-    try {
-      await firstValueFrom(
-        this.apiService.addAdmin(evt.slug, {
-          adminEmail: this.newAdminEmail,
-        })
-      );
-
-      this.admins.push(this.newAdminEmail);
-      this.newAdminEmail = "";
-      this.showMessage("Admin added successfully", false);
-    } catch (error: any) {
-      console.error("Error adding admin:", error);
-      this.showMessage("Failed to add admin", true);
-    } finally {
-      this.submitting = false;
-    }
+    this.adminsStore.addAdmin(evt.slug, this.newAdminEmail());
   }
 
   async removeAdmin(adminEmail: string) {
     const evt = this.event();
     if (!evt) return;
 
-    if (this.admins.length === 1) {
-      this.showMessage("Cannot remove the last admin", true);
-      return;
-    }
-
     if (!confirm(`Remove ${adminEmail} as admin?`)) return;
 
-    try {
-      await firstValueFrom(
-        this.apiService.removeAdmin(evt.slug, { adminEmail })
-      );
-      this.admins = this.admins.filter((a) => a !== adminEmail);
-      this.showMessage("Admin removed successfully", false);
-    } catch (error: any) {
-      console.error("Error removing admin:", error);
-      this.showMessage("Failed to remove admin", true);
-    }
+    this.adminsStore.removeAdmin(evt.slug, adminEmail);
   }
 
   async deleteEvent() {
     const evt = this.event();
     if (!evt) return;
 
-    const confirmed = confirm(
-      `Are you sure you want to delete "${evt.title}"? This action cannot be undone.`
-    );
+    if (
+      !confirm(
+        `Are you sure you want to delete "${evt.title}"? This action cannot be undone.`
+      )
+    )
+      return;
 
-    if (!confirmed) return;
-
-    try {
-      await firstValueFrom(this.apiService.deleteEvent(evt.slug));
-      this.router.navigate(["/events"]);
-    } catch (error: any) {
-      console.error("Error deleting event:", error);
-      this.showMessage("Failed to delete event", true);
-    }
-  }
-
-  showMessage(msg: string, error: boolean) {
-    this.message = msg;
-    this.isError = error;
-    setTimeout(() => {
-      this.message = "";
-    }, 5000);
+    await this.eventDetailStore.deleteEvent(evt.slug);
+    this.router.navigate(["/events"]);
   }
 }

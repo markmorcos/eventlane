@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+
 import { environment } from "../../environments/environment";
 
 @Injectable({
@@ -27,7 +28,6 @@ export class WebSocketService {
       onConnect: () => {
         console.log("WebSocket connected");
         this.connected = true;
-        // Re-subscribe to all previous subscriptions
         this.resubscribeAll();
       },
       onDisconnect: () => {

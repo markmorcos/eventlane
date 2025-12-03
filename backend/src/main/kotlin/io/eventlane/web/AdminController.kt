@@ -44,7 +44,6 @@ class AdminController(
     ): UpdateCapacityResponseDTO {
         val result = capacityService.updateCapacity(slug, request.capacity, user.email)
         
-        // Publish WebSocket updates
         wsPublisher.publishEventUpdate(slug)
         
         return UpdateCapacityResponseDTO(
@@ -72,13 +71,13 @@ class AdminController(
         wsPublisher.publishEventUpdate(slug)
     }
     
-    @DeleteMapping("/events/{slug}/admins")
+    @DeleteMapping("/events/{slug}/admins/{email}")
     fun removeAdmin(
         @PathVariable slug: String,
-        @RequestBody request: AdminEmailRequestDTO,
+        @PathVariable email: String,
         @AuthenticationPrincipal user: SecurityUser
     ) {
-        adminService.removeAdmin(slug, request.adminEmail, user.email)
+        adminService.removeAdmin(slug, email, user.email)
         wsPublisher.publishEventUpdate(slug)
     }
     
@@ -86,12 +85,10 @@ class AdminController(
     fun removeAttendee(
         @PathVariable slug: String,
         @PathVariable attendeeId: String,
-        @RequestParam(defaultValue = "true") promoteNext: Boolean,
         @AuthenticationPrincipal user: SecurityUser
     ): CancelResponseDTO {
-        val result = adminService.removeAttendee(slug, attendeeId, promoteNext, user.email)
+        val result = adminService.removeAttendee(slug, attendeeId, user.email)
         
-        // Publish WebSocket updates
         wsPublisher.publishEventUpdate(slug)
         
         return CancelResponseDTO(

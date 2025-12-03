@@ -8,6 +8,7 @@ import {
   User,
   Auth,
 } from "firebase/auth";
+
 import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
@@ -27,7 +28,7 @@ export class AuthService {
     this.auth = getAuth(app);
     this.googleProvider = new GoogleAuthProvider();
 
-    this.authInitPromise = new Promise<void>((resolve) => {
+    this.authInitPromise = new Promise((resolve) => {
       this.auth.onAuthStateChanged((user) => {
         this.currentUser.set(user);
 
@@ -40,7 +41,7 @@ export class AuthService {
     });
   }
 
-  async signInWithGoogle(): Promise<User> {
+  async signInWithGoogle() {
     const result = await signInWithPopup(this.auth, this.googleProvider);
     return result.user;
   }
@@ -52,11 +53,19 @@ export class AuthService {
     if (!user) {
       return null;
     }
+
     const token = await user.getIdToken(false);
     return token;
   }
 
-  async signOut(): Promise<void> {
+  async getDisplayName(): Promise<string | null> {
+    await this.authInitPromise;
+
+    const user = this.currentUser();
+    return user ? user.displayName : null;
+  }
+
+  async signOut() {
     await signOut(this.auth);
   }
 }

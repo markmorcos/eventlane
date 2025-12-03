@@ -15,16 +15,11 @@ export class AuthButtonComponent {
 
   constructor(private authService: AuthService) {}
 
-  async signInWithGoogle() {
-    try {
-      await this.authService.signInWithGoogle();
-    } catch (error) {
-      console.error("Error signing in with Google:", error);
-      alert("Failed to sign in. Please try again.");
-    }
+  signInWithGoogle() {
+    return this.authService.signInWithGoogle();
   }
 
-  async signOut() {
-    await this.authService.signOut();
+  signOut() {
+    return this.authService.signOut();
   }
 }

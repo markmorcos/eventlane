@@ -93,7 +93,6 @@ class AdminService(
     fun removeAttendee(
         slug: String,
         attendeeId: String,
-        promoteNext: Boolean,
         requesterEmail: String
     ): RemoveAttendeeResult {
         eventPermissionService.requireAdmin(slug, requesterEmail)
@@ -109,12 +108,10 @@ class AdminService(
             var promoted: Attendee? = null
             
             if (confirmedAttendee != null) {
-                // Remove from confirmed list
                 event.confirmedList.remove(confirmedAttendee)
                 logger.debug("Admin removed confirmed attendee ${confirmedAttendee.userId} from event $slug")
                 
-                if (promoteNext && event.waitingList.isNotEmpty()) {
-                    // Promote next person from waitlist
+                if (event.waitingList.isNotEmpty()) {
                     val nextInLine = event.waitingList.removeAt(0)
                     logger.debug("Promoting attendee ${nextInLine.userId} from waitlist to confirmed after admin removal")
                     event.confirmedList.add(nextInLine)

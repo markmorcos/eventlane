@@ -7,6 +7,7 @@ import {
 } from "@angular/router";
 import { filter } from "rxjs/operators";
 import { CommonModule } from "@angular/common";
+
 import { AuthButtonComponent } from "./components/auth-button/auth-button.component";
 import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.component";
 
@@ -30,7 +31,7 @@ export class AppComponent {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        this.isLandingPage = event.url === "/" || event.url === "";
+        this.isLandingPage = ["/", ""].includes(event.url);
       });
   }
 }

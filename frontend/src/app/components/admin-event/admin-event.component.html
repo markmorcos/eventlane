@@ -27,7 +27,7 @@
       <button
         class="primary"
         (click)="updateCapacity()"
-        [disabled]="submitting"
+        [disabled]="updating()"
       >
         Update capacity
       </button>
@@ -52,7 +52,7 @@
           <tr>
             <td>{{ attendee.name }}</td>
             <td>{{ attendee.email }}</td>
-            <td>{{ attendee.createdAt | date : "dd.MM.yyyy" }}</td>
+            <td>{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
             <td>
               <button
                 class="danger small"
@@ -78,7 +78,6 @@
       <table>
         <thead>
           <tr>
-            <th>Position</th>
             <th>Name</th>
             <th>Email</th>
             <th>Registered</th>
@@ -89,10 +88,9 @@
           @for (attendee of attendees().waitlisted; track attendee.id; let i =
           $index) {
           <tr>
-            <td>{{ i + 1 }}</td>
             <td>{{ attendee.name }}</td>
             <td>{{ attendee.email }}</td>
-            <td>{{ attendee.createdAt | date : "dd.MM.yyyy" }}</td>
+            <td>{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
             <td>
               <button
                 class="danger small"
@@ -113,12 +111,12 @@
 
   <div class="card">
     <h3>Admin management</h3>
-    @if (admins.length) {
+    @if (admins().length) {
     <div class="admin-list">
-      @for (admin of admins; track admin) {
+      @for (admin of admins(); track admin) {
       <div class="admin-item">
         <span>{{ admin }}</span>
-        @if (admins.length > 1 && admin !== admins[0]) {
+        @if (admins().length > 1 && admin !== admins()[0]) {
         <button class="danger small" (click)="removeAdmin(admin)">
           Remove
         </button>
@@ -136,7 +134,8 @@
       <button
         class="primary"
         (click)="addAdmin()"
-        [disabled]="!newAdminEmail || submitting"
+        required
+        [disabled]="!newAdminEmail || updating()"
       >
         Add admin
       </button>
@@ -147,11 +146,5 @@
     <h3>Danger zone</h3>
     <button class="danger" (click)="deleteEvent()">Delete event</button>
   </div>
-
-  @if (message) {
-  <p [class.error]="isError" [class.success]="!isError" class="message">
-    {{ message }}
-  </p>
-  }
 </div>
 }

@@ -1,18 +1,12 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  signal,
-  effect,
-  computed,
-} from "@angular/core";
+import { Component, OnInit, OnDestroy, signal, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink, ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+import { firstValueFrom } from "rxjs";
+
 import { AuthService } from "../../services/auth.service";
 import { ApiService } from "../../services/api.service";
-import { EventStateService } from "../../services/event-state.service";
-import { firstValueFrom } from "rxjs";
+import { EventDetailStore } from "../../services/event-detail.store";
 
 @Component({
   selector: "app-event-detail",
@@ -22,61 +16,42 @@ import { firstValueFrom } from "rxjs";
   styleUrls: ["./event-detail.component.scss"],
 })
 export class EventDetailComponent implements OnInit, OnDestroy {
-  event = this.eventStateService.currentEvent;
+  private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
+  private apiService = inject(ApiService);
+  private eventDetailStore = inject(EventDetailStore);
+
+  event = this.eventDetailStore.event;
+  loading = this.eventDetailStore.loading;
+
   isAuthenticated = this.authService.isAuthenticated;
 
-  currentUserName = computed(
-    () => this.authService.currentUser()?.displayName || ""
-  );
-  userName = signal(this.currentUserName());
-  submitting = false;
-  message = "";
-  isError = false;
+  userName = signal("");
 
-  constructor(
-    private route: ActivatedRoute,
-    private authService: AuthService,
-    private apiService: ApiService,
-    private eventStateService: EventStateService
-  ) {
-    effect(
-      () =>
-        this.userName.set(this.authService.currentUser()?.displayName ?? ""),
-      { allowSignalWrites: true }
-    );
+  async getDefaultName() {
+    const displayName = await this.authService.getDisplayName();
+    return this.event()?.currentUserAttendee?.name || displayName || "";
   }
 
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
-    await this.eventStateService.loadEvent(slug);
+    await this.eventDetailStore.loadEvent(slug);
 
-    const evt = this.event();
-    if (evt?.currentUserAttendee) {
-      this.userName.set(evt.currentUserAttendee.name);
-    }
+    this.userName.set(await this.getDefaultName());
   }
 
   ngOnDestroy() {
-    this.eventStateService.leaveEventRoom();
+    this.eventDetailStore.leaveEventRoom();
   }
 
   async rsvp() {
     const evt = this.event();
     if (!evt || !this.userName) return;
 
-    this.submitting = true;
-    this.message = "";
-
-    try {
-      const result = await firstValueFrom(
-        this.apiService.rsvp(evt.slug, { name: this.userName() })
-      );
-    } catch (error: any) {
-      console.error("RSVP error:", error);
-      this.showMessage(error.error?.message || "Failed to RSVP", true);
-    } finally {
-      this.submitting = false;
-    }
+    await firstValueFrom(
+      this.apiService.rsvp(evt.slug, { name: this.userName() })
+    );
+    this.userName.set("");
   }
 
   async cancel() {
@@ -85,25 +60,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
     if (!confirm("Are you sure you want to cancel your RSVP?")) return;
 
-    this.submitting = true;
-    this.message = "";
-
-    try {
-      await firstValueFrom(this.apiService.cancel(evt.slug));
-      this.userName.set(this.currentUserName());
-    } catch (error: any) {
-      console.error("Cancel error:", error);
-      this.showMessage(error.error?.message || "Failed to cancel RSVP", true);
-    } finally {
-      this.submitting = false;
-    }
-  }
-
-  showMessage(msg: string, error: boolean) {
-    this.message = msg;
-    this.isError = error;
-    setTimeout(() => {
-      this.message = "";
-    }, 5000);
+    await firstValueFrom(this.apiService.cancel(evt.slug));
+    this.userName.set(await this.getDefaultName());
   }
 }

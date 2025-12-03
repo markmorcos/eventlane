@@ -1,12 +1,16 @@
 <div class="events-list">
   <div class="header">
     <h2>My events</h2>
-    @if (authService.isAuthenticated()) {
+    @if (isAuthenticated()) {
     <button class="primary" routerLink="/events/create">Create event</button>
     }
   </div>
 
-  @if (events().length === 0 && !loading()) {
+  @if (loading()) {
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+  } @else if (events().length === 0) {
   <div class="empty-state">
     <svg
       width="120"

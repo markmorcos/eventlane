@@ -65,4 +65,8 @@ object DtoMapper {
         
         return AttendeesDTO(confirmed, waitlisted)
     }
+
+    fun toAdminsDTO(event: EventDocument): List<String> {
+        return event.admins
+    }
 }

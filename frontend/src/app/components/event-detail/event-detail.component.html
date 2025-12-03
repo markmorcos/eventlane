@@ -52,9 +52,9 @@
         <button
           class="primary"
           (click)="rsvp()"
-          [disabled]="!userName || submitting"
+          [disabled]="!userName || loading()"
         >
-          {{ submitting ? "Processing..." : "RSVP" }}
+          RSVP
         </button>
       </div>
       } @else {
@@ -69,8 +69,8 @@
             {{ evt.currentUserAttendee.status | titlecase }}
           </span>
         </p>
-        <button class="danger" (click)="cancel()" [disabled]="submitting">
-          {{ submitting ? "Processing..." : "Cancel RSVP" }}
+        <button class="danger" (click)="cancel()" [disabled]="loading()">
+          Cancel RSVP
         </button>
       </div>
       }
@@ -79,10 +79,6 @@
     <div class="auth-prompt">
       <p>Please sign in to RSVP for this event.</p>
     </div>
-    } @if (message) {
-    <p [class.error]="isError" [class.success]="!isError" class="message">
-      {{ message }}
-    </p>
     }
   </div>
 </div>

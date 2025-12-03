@@ -1,8 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { EventStateService } from "../../services/event-state.service";
 import { AuthService } from "../../services/auth.service";
+import { EventListStore } from "../../services/event-list.store";
 
 @Component({
   selector: "app-events-list",
@@ -12,15 +12,15 @@ import { AuthService } from "../../services/auth.service";
   styleUrls: ["./events-list.component.scss"],
 })
 export class EventsListComponent implements OnInit {
-  events = this.eventStateService.events;
-  loading = this.eventStateService.loading;
+  private eventListStore = inject(EventListStore);
+  private authService = inject(AuthService);
 
-  constructor(
-    public eventStateService: EventStateService,
-    public authService: AuthService
-  ) {}
+  isAuthenticated = this.authService.isAuthenticated;
+  events = this.eventListStore.events;
+  loading = this.eventListStore.loading;
+  error = this.eventListStore.error;
 
   ngOnInit() {
-    // Events are auto-loaded in the service
+    this.eventListStore.loadAllEvents();
   }
 }
