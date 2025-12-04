@@ -15,22 +15,20 @@ import { SeoService } from "../../services/seo.service";
   styleUrls: ["./create-event.component.scss"],
 })
 export class CreateEventComponent implements OnInit {
+  private eventListStore = inject(EventListStore);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private seoService = inject(SeoService);
+
   isAuthenticated = this.authService.isAuthenticated;
+  loading = this.eventListStore.loading;
+  error = this.eventListStore.error;
 
   title = "";
   slug = "";
   capacity = 8;
   adminEmails = "";
-  submitting = false;
   message = "";
-  isError = false;
-
-  constructor(
-    private eventListStore: EventListStore,
-    private authService: AuthService,
-    private router: Router,
-    private seoService: SeoService
-  ) {}
 
   ngOnInit() {
     this.seoService.updateTags({
@@ -55,9 +53,6 @@ export class CreateEventComponent implements OnInit {
 
   async createEvent() {
     if (!this.title || !this.slug || this.capacity < 1) return;
-
-    this.submitting = true;
-    this.message = "";
 
     const adminEmailsList = this.adminEmails
       .split(",")

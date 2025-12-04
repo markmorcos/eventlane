@@ -35,7 +35,7 @@ export class EventListStore {
       const event = await firstValueFrom(this.apiService.createEvent(request));
       return event;
     } catch (error) {
-      console.error("Error creating event:", error);
+      this.error.set("Event already exists.");
     } finally {
       this.loading.set(false);
     }

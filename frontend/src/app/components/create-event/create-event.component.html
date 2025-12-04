@@ -66,15 +66,15 @@
         <button
           type="submit"
           class="primary"
-          [disabled]="!title || !slug || capacity < 1 || submitting"
+          [disabled]="!title || !slug || capacity < 1 || loading()"
         >
-          {{ submitting ? "Creating..." : "Create Event" }}
+          Create Event
         </button>
       </div>
 
-      @if (message) {
-      <p [class.error]="isError" [class.success]="!isError" class="message">
-        {{ message }}
+      @if (error()) {
+      <p [class.error]="error()" [class.success]="!error()" class="message">
+        {{ error() }}
       </p>
       }
     </form>
