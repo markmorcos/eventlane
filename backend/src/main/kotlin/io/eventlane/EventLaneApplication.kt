@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing
 
 @SpringBootApplication
 @EnableMongoAuditing
-class RsvpApplication
+class EventLaneApplication
 
 fun main(args: Array<String>) {
-    runApplication<RsvpApplication>(*args)
+    runApplication<EventLaneApplication>(*args)
 }

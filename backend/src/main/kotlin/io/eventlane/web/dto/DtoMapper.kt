@@ -1,72 +1,29 @@
 package io.eventlane.web.dto
 
-import io.eventlane.persistence.Attendee
-import io.eventlane.persistence.EventDocument
+import io.eventlane.domain.model.Attendee
+import io.eventlane.domain.model.Event
 
 object DtoMapper {
+    fun toAttendeeDto(a: Attendee): AttendeeDto = AttendeeDto(
+        email = a.email,
+        name = a.name,
+        userId = a.userId,
+    )
 
-    fun toAttendeeDTO(attendee: Attendee, status: String): AttendeeDTO {
-        return AttendeeDTO(
-            id = attendee.id,
-            userId = attendee.userId,
-            name = attendee.name,
-            email = attendee.email,
-            status = status,
-            createdAt = attendee.createdAt.toEpochMilli(),
-        )
-    }
+    fun toEventResponse(event: Event, requesterEmail: String): EventResponseDto {
+        val isAdmin = event.isAdmin(requesterEmail.lowercase())
 
-    fun toEventSummaryDTO(event: EventDocument): EventSummaryDTO {
-        val confirmedCount = event.confirmedList.size
-        val waitlistCount = event.waitingList.size
-
-        return EventSummaryDTO(
-            id = event.id ?: "",
+        return EventResponseDto(
             slug = event.slug,
             title = event.title,
             capacity = event.capacity,
-            confirmedCount = confirmedCount,
-            waitlistCount = waitlistCount,
-            createdAt = event.createdAt.toEpochMilli(),
-        )
-    }
-
-    fun toEventDetailDTO(event: EventDocument, isAdmin: Boolean, email: String? = null): EventDetailDTO {
-        val confirmedCount = event.confirmedList.size
-        val waitlistCount = event.waitingList.size
-
-        val currentUserAttendee = email?.let { userEmail ->
-            event.confirmedList.find { it.email == userEmail }?.let { toAttendeeDTO(it, "CONFIRMED") }
-                ?: event.waitingList.find { it.email == userEmail }?.let { toAttendeeDTO(it, "WAITLISTED") }
-        }
-
-        return EventDetailDTO(
-            id = event.id ?: "",
-            slug = event.slug,
-            title = event.title,
-            capacity = event.capacity,
-            confirmedCount = confirmedCount,
-            waitlistCount = waitlistCount,
+            confirmedCount = event.confirmedList.size,
+            waitlistCount = event.waitingList.size,
             isAdmin = isAdmin,
-            currentUserAttendee = currentUserAttendee,
-            createdAt = event.createdAt.toEpochMilli(),
-            updatedAt = event.updatedAt.toEpochMilli(),
+
+            confirmed = if (isAdmin) event.confirmedList.map { toAttendeeDto(it) } else null,
+            waitlist = if (isAdmin) event.waitingList.map { toAttendeeDto(it) } else null,
+            admins = if (isAdmin) event.admins else null,
         )
-    }
-
-    fun toAttendeesDTO(event: EventDocument): AttendeesDTO {
-        val confirmed = event.confirmedList
-            .sortedBy { it.createdAt }
-            .map { toAttendeeDTO(it, "CONFIRMED") }
-
-        val waitlisted = event.waitingList
-            .sortedBy { it.createdAt }
-            .map { toAttendeeDTO(it, "WAITLISTED") }
-
-        return AttendeesDTO(confirmed, waitlisted)
-    }
-
-    fun toAdminsDTO(event: EventDocument): List<String> {
-        return event.admins
     }
 }

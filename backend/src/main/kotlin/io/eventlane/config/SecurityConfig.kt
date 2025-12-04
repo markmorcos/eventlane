@@ -15,7 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(
+class SecurityConfig(
     private val firebaseAuthenticationFilter: FirebaseAuthenticationFilter,
 ) {
 

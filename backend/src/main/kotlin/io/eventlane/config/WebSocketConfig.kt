@@ -8,17 +8,14 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-class WebSocketConfiguration : WebSocketMessageBrokerConfigurer {
+class WebSocketConfig : WebSocketMessageBrokerConfigurer {
 
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
-        // Enable a simple in-memory message broker
-        registry.enableSimpleBroker("/topic")
-        // Set application destination prefix for messages bound for @MessageMapping methods
+        registry.enableSimpleBroker("/topic/events")
         registry.setApplicationDestinationPrefixes("/app")
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        // Register the /ws endpoint with SockJS fallback
         registry.addEndpoint("/ws")
             .setAllowedOrigins("http://localhost:4200", "https://eventlane.io")
             .withSockJS()

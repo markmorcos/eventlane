@@ -1,4 +1,4 @@
-package io.eventlane.domain
+package io.eventlane.domain.model
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
