@@ -71,9 +71,9 @@ export class ApiService {
     return this.http.delete(`${this.apiUrl}/events/${slug}/admins/${email}`);
   }
 
-  removeAttendee(slug: string, attendeeId: string) {
+  removeAttendee(slug: string, email: string) {
     return this.http.delete<CancelResponse>(
-      `${this.apiUrl}/events/${slug}/attendees/${attendeeId}`
+      `${this.apiUrl}/events/${slug}/attendees/${email}`
     );
   }
 

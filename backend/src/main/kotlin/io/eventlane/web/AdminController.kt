@@ -50,8 +50,6 @@ class AdminController(
         
         return UpdateCapacityResponseDTO(
             event = DtoMapper.toEventDetailDTO(result.event, true),
-            promoted = result.promoted.map { DtoMapper.toAttendeeDTO(it, "CONFIRMED") },
-            demoted = result.demoted.map { DtoMapper.toAttendeeDTO(it, "WAITLISTED") }
         )
     }
     
@@ -83,20 +81,17 @@ class AdminController(
         wsPublisher.publishAdminRemoved(slug, email)
     }
     
-    @DeleteMapping("/events/{slug}/attendees/{attendeeId}")
+    @DeleteMapping("/events/{slug}/attendees/{email}")
     fun removeAttendee(
         @PathVariable slug: String,
-        @PathVariable attendeeId: String,
+        @PathVariable email: String,
         @AuthenticationPrincipal user: SecurityUser
-    ): CancelResponseDTO {
-        val result = adminService.removeAttendee(slug, attendeeId, user.email)
+    ): Boolean {
+        val result = adminService.removeAttendee(slug, email, user.email)
         
         wsPublisher.publishEventUpdate(slug)
         
-        return CancelResponseDTO(
-            success = result.success,
-            promoted = result.promoted?.let { DtoMapper.toAttendeeDTO(it, "CONFIRMED") }
-        )
+        return result
     }
     
     @DeleteMapping("/events/{slug}")

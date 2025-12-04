@@ -37,12 +37,12 @@ export class AttendeesStore {
     }
   }
 
-  async removeAttendee(slug: string, attendeeId: string) {
+  async removeAttendee(slug: string, email: string) {
     try {
       this.loading.set(true);
       this.error.set(null);
 
-      await firstValueFrom(this.apiService.removeAttendee(slug, attendeeId));
+      await firstValueFrom(this.apiService.removeAttendee(slug, email));
     } catch (error) {
       this.error.set(`Failed to remove attendee: ${error}`);
     } finally {

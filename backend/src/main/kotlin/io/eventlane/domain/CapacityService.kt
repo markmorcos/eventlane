@@ -14,8 +14,6 @@ class CapacityService(
     
     data class CapacityChangeResult(
         val event: EventDocument,
-        val promoted: List<Attendee>,
-        val demoted: List<Attendee>
     )
     
     fun updateCapacity(slug: String, newCapacity: Int, adminEmail: String): CapacityChangeResult {
@@ -31,12 +29,8 @@ class CapacityService(
             
             logger.debug("Updating capacity for event $slug from $oldCapacity to $newCapacity")
             
-            val promoted = mutableListOf<Attendee>()
-            val demoted = mutableListOf<Attendee>()
-            
             when {
                 newCapacity > event.confirmedList.size -> {
-                    // We have more space - promote from waitlist
                     val slotsToFill = newCapacity - event.confirmedList.size
                     val numToPromote = minOf(slotsToFill, event.waitingList.size)
                     
@@ -44,32 +38,27 @@ class CapacityService(
                         val attendee = event.waitingList.removeAt(0)
                         logger.debug("Promoting attendee ${attendee.userId} from waitlist to confirmed")
                         event.confirmedList.add(attendee)
-                        promoted.add(attendee)
                     }
                 }
                 
                 newCapacity < event.confirmedList.size -> {
-                    // We have less space - demote most recent confirmed
                     val demotionsNeeded = event.confirmedList.size - newCapacity
                     
-                    // Take last N confirmed attendees to demote
                     val toDemote = event.confirmedList.takeLast(demotionsNeeded)
                     
                     toDemote.forEach { attendee ->
                         logger.debug("Demoting attendee ${attendee.userId} from confirmed to waitlist")
                         event.confirmedList.remove(attendee)
-                        event.waitingList.add(0, attendee)  // Add to beginning
-                        demoted.add(attendee)
+                        event.waitingList.add(0, attendee)
                     }
                 }
                 
                 else -> {
-                    // Capacity matches confirmed count - no changes needed
                     logger.debug("Capacity change for event $slug resulted in no promotions or demotions")
                 }
             }
             
-            CapacityChangeResult(event, promoted, demoted)
+            CapacityChangeResult(event)
         }
     }
 }

@@ -46,7 +46,6 @@ export interface RsvpResponse {
 
 export interface CancelResponse {
   success: boolean;
-  promoted: Attendee | null;
 }
 
 export interface CreateEventRequest {
@@ -62,8 +61,6 @@ export interface UpdateCapacityRequest {
 
 export interface UpdateCapacityResponse {
   event: EventDetail;
-  promoted: Attendee[];
-  demoted: Attendee[];
 }
 
 export interface AdminEmailRequest {

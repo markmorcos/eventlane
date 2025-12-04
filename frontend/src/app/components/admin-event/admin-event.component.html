@@ -56,7 +56,7 @@
             <td>
               <button
                 class="danger small"
-                (click)="removeAttendee(attendee.id)"
+                (click)="removeAttendee(attendee.email)"
               >
                 Remove
               </button>
@@ -85,8 +85,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (attendee of attendees().waitlisted; track attendee.id; let i =
-          $index) {
+          @for (attendee of attendees().waitlisted; track attendee.id) {
           <tr>
             <td>{{ attendee.name }}</td>
             <td>{{ attendee.email }}</td>
@@ -94,7 +93,7 @@
             <td>
               <button
                 class="danger small"
-                (click)="removeAttendee(attendee.id)"
+                (click)="removeAttendee(attendee.email)"
               >
                 Remove
               </button>

@@ -22,11 +22,6 @@ class AdminService(
         val adminEmails: List<String>
     )
     
-    data class RemoveAttendeeResult(
-        val success: Boolean,
-        val promoted: Attendee?
-    )
-    
     fun createEvent(request: CreateEventRequest, creatorEmail: String): EventDocument {
         if (eventRepository.existsBySlug(request.slug)) {
             throw ConflictException("Event with slug '${request.slug}' already exists")
@@ -92,38 +87,34 @@ class AdminService(
     
     fun removeAttendee(
         slug: String,
-        attendeeId: String,
+        email: String,
         requesterEmail: String
-    ): RemoveAttendeeResult {
+    ): Boolean {
         eventPermissionService.requireAdmin(slug, requesterEmail)
         
         return optimisticRetry.doWithRetry(slug) { event ->
-            val confirmedAttendee = event.confirmedList.find { it.id == attendeeId }
-            val waitlistedAttendee = event.waitingList.find { it.id == attendeeId }
+            val confirmedAttendee = event.confirmedList.find { it.email == email }
+            val waitlistedAttendee = event.waitingList.find { it.email == email }
             
             if (confirmedAttendee == null && waitlistedAttendee == null) {
-                throw NotFoundException("Attendee not found: $attendeeId")
+                throw NotFoundException("Attendee not found: $email in event $slug")
             }
-            
-            var promoted: Attendee? = null
             
             if (confirmedAttendee != null) {
                 event.confirmedList.remove(confirmedAttendee)
-                logger.debug("Admin removed confirmed attendee ${confirmedAttendee.userId} from event $slug")
+                logger.debug("Admin removed confirmed attendee ${confirmedAttendee.email} from event $slug")
                 
                 if (event.waitingList.isNotEmpty()) {
                     val nextInLine = event.waitingList.removeAt(0)
-                    logger.debug("Promoting attendee ${nextInLine.userId} from waitlist to confirmed after admin removal")
+                    logger.debug("Promoting attendee ${nextInLine.email} from waitlist to confirmed after admin removal")
                     event.confirmedList.add(nextInLine)
-                    promoted = nextInLine
                 }
             } else if (waitlistedAttendee != null) {
-                // Remove from waiting list
                 event.waitingList.remove(waitlistedAttendee)
-                logger.debug("Admin removed waitlisted attendee ${waitlistedAttendee.userId} from event $slug")
+                logger.debug("Admin removed waitlisted attendee ${waitlistedAttendee.email} from event $slug")
             }
             
-            RemoveAttendeeResult(true, promoted)
+            true
         }
     }
     

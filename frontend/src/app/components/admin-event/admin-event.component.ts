@@ -74,13 +74,13 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     this.eventDetailStore.updateCapacity(this.newCapacity());
   }
 
-  async removeAttendee(attendeeId: string) {
+  async removeAttendee(email: string) {
     const evt = this.event();
     if (!evt) return;
 
     if (!confirm("Are you sure you want to remove this attendee?")) return;
 
-    this.attendeesStore.removeAttendee(evt.slug, attendeeId);
+    this.attendeesStore.removeAttendee(evt.slug, email);
   }
 
   async addAdmin() {

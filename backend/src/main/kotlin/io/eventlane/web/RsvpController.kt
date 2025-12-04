@@ -2,7 +2,6 @@ package io.eventlane.web
 
 import io.eventlane.auth.SecurityUser
 import io.eventlane.domain.RsvpService
-import io.eventlane.web.dto.CancelResponseDTO
 import io.eventlane.web.dto.DtoMapper
 import io.eventlane.web.dto.RsvpRequestDTO
 import io.eventlane.web.dto.RsvpResponseDTO
@@ -30,7 +29,6 @@ class RsvpController(
             email = user.email
         )
         
-        // Publish WebSocket updates
         wsPublisher.publishEventUpdate(slug)
         
         return RsvpResponseDTO(
@@ -43,15 +41,9 @@ class RsvpController(
     fun cancel(
         @PathVariable slug: String,
         @AuthenticationPrincipal user: SecurityUser
-    ): CancelResponseDTO {
-        val result = rsvpService.cancel(slug, user.uid)
-        
-        // Publish WebSocket updates
+    ): Boolean {
+        val result = rsvpService.cancel(slug, user.email)
         wsPublisher.publishEventUpdate(slug)
-        
-        return CancelResponseDTO(
-            success = result.success,
-            promoted = result.promoted?.let { DtoMapper.toAttendeeDTO(it, "CONFIRMED") }
-        )
+        return result
     }
 }

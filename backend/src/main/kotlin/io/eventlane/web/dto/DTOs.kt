@@ -46,11 +46,6 @@ data class RsvpResponseDTO(
     val attendee: AttendeeDTO
 )
 
-data class CancelResponseDTO(
-    val success: Boolean,
-    val promoted: AttendeeDTO?
-)
-
 data class CreateEventRequestDTO(
     val title: String,
     val slug: String,
@@ -64,8 +59,6 @@ data class UpdateCapacityRequestDTO(
 
 data class UpdateCapacityResponseDTO(
     val event: EventDetailDTO,
-    val promoted: List<AttendeeDTO>,
-    val demoted: List<AttendeeDTO>
 )
 
 data class AdminEmailRequestDTO(
