@@ -9,19 +9,19 @@ import java.time.Instant
 
 @Component
 class OptimisticRetry(
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
-    
+
     fun <T> doWithRetry(slug: String, maxRetries: Int = 5, block: (EventDocument) -> T): T {
         var attempt = 0
         while (true) {
             attempt++
             val event = eventRepository.findBySlug(slug)
                 ?: throw NotFoundException("Event not found: $slug")
-            
+
             val result = block(event)
-            
+
             try {
                 event.updatedAt = Instant.now()
                 eventRepository.save(event)

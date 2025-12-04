@@ -10,33 +10,35 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class FirebaseAuthenticationFilter(
-    private val tokenVerifier: FirebaseTokenVerifier
+    private val tokenVerifier: FirebaseTokenVerifier,
 ) : OncePerRequestFilter() {
-    
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         val authHeader = request.getHeader("Authorization")
-        
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val idToken = authHeader.substring(7)
             val decodedToken = tokenVerifier.verifyToken(idToken)
-            
+
             if (decodedToken != null) {
                 val uid = decodedToken.uid
                 val email = decodedToken.email ?: ""
-                
+
                 val user = SecurityUser(uid, email)
                 val authentication = UsernamePasswordAuthenticationToken(
-                    user, null, user.authorities
+                    user,
+                    null,
+                    user.authorities,
                 )
-                
+
                 SecurityContextHolder.getContext().authentication = authentication
             }
         }
-        
+
         filterChain.doFilter(request, response)
     }
 }

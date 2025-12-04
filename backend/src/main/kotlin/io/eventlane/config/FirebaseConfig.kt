@@ -11,15 +11,15 @@ import java.io.FileInputStream
 
 @Configuration
 class FirebaseConfig {
-    
+
     private val logger = LoggerFactory.getLogger(javaClass)
-    
+
     @Value("\${firebase.project-id}")
     private lateinit var projectId: String
-    
+
     @Value("\${firebase.credentials-path:}")
     private var credentialsPath: String? = null
-    
+
     @PostConstruct
     fun initialize() {
         try {
@@ -36,7 +36,7 @@ class FirebaseConfig {
                         .setProjectId(projectId)
                         .build()
                 }
-                
+
                 FirebaseApp.initializeApp(options)
                 logger.info("Firebase initialized successfully for project: $projectId")
             }

@@ -8,43 +8,38 @@ import io.eventlane.web.dto.DtoMapper
 import io.eventlane.web.dto.EventDetailDTO
 import io.eventlane.web.dto.EventSummaryDTO
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/events")
 class EventController(
     private val eventService: EventService,
-    private val eventPermissionService: EventPermissionService
+    private val eventPermissionService: EventPermissionService,
 ) {
-    
+
     @GetMapping
-    fun getAllEvents(
-        @AuthenticationPrincipal user: SecurityUser?
-    ): List<EventSummaryDTO> {
+    fun getAllEvents(@AuthenticationPrincipal user: SecurityUser?): List<EventSummaryDTO> {
         if (user == null) {
             return emptyList()
         }
         val events = eventService.getEventsByAdmin(user.email)
         return events.map(DtoMapper::toEventSummaryDTO)
     }
-    
+
     @GetMapping("/{slug}")
-    fun getEvent(
-        @PathVariable slug: String,
-        @AuthenticationPrincipal user: SecurityUser?
-    ): EventDetailDTO {
+    fun getEvent(@PathVariable slug: String, @AuthenticationPrincipal user: SecurityUser?): EventDetailDTO {
         val event = eventService.getEventBySlug(slug)
-        val isAdmin = user?.let { 
-            eventPermissionService.isAdmin(slug, it.email) 
+        val isAdmin = user?.let {
+            eventPermissionService.isAdmin(slug, it.email)
         } ?: false
         return DtoMapper.toEventDetailDTO(event, isAdmin, user?.email)
     }
-    
+
     @GetMapping("/{slug}/attendees")
-    fun getAttendees(
-        @PathVariable slug: String,
-        @AuthenticationPrincipal user: SecurityUser
-    ): AttendeesDTO {
+    fun getAttendees(@PathVariable slug: String, @AuthenticationPrincipal user: SecurityUser): AttendeesDTO {
         eventPermissionService.requireAdmin(slug, user.email)
         val event = eventService.getEventBySlug(slug)
         return DtoMapper.toAttendeesDTO(event)

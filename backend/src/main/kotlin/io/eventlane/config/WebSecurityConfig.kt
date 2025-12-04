@@ -16,9 +16,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-    private val firebaseAuthenticationFilter: FirebaseAuthenticationFilter
+    private val firebaseAuthenticationFilter: FirebaseAuthenticationFilter,
 ) {
-    
+
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -36,10 +36,10 @@ class WebSecurityConfig(
                     .anyRequest().authenticated()
             }
             .addFilterBefore(firebaseAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-        
+
         return http.build()
     }
-    
+
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
@@ -47,7 +47,7 @@ class WebSecurityConfig(
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
-        
+
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source

@@ -1,1 +1,1 @@
-rootProject.name = "rsvp-backend"
+rootProject.name = "eventlane"

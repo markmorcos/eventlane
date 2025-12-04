@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails
 
 data class SecurityUser(
     val uid: String,
-    val email: String
+    val email: String,
 ) : UserDetails {
     override fun getAuthorities(): Collection<GrantedAuthority> = emptyList()
     override fun getPassword(): String = ""

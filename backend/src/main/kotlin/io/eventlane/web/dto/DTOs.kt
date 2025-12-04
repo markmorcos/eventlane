@@ -6,7 +6,7 @@ data class AttendeeDTO(
     val name: String,
     val email: String,
     val status: String,
-    val createdAt: Long
+    val createdAt: Long,
 )
 
 data class EventSummaryDTO(
@@ -16,7 +16,7 @@ data class EventSummaryDTO(
     val capacity: Int,
     val confirmedCount: Int,
     val waitlistCount: Int,
-    val createdAt: Long
+    val createdAt: Long,
 )
 
 data class EventDetailDTO(
@@ -29,32 +29,32 @@ data class EventDetailDTO(
     val isAdmin: Boolean,
     val currentUserAttendee: AttendeeDTO?,
     val createdAt: Long,
-    val updatedAt: Long 
+    val updatedAt: Long,
 )
 
 data class AttendeesDTO(
     val confirmed: List<AttendeeDTO>,
-    val waitlisted: List<AttendeeDTO>
+    val waitlisted: List<AttendeeDTO>,
 )
 
 data class RsvpRequestDTO(
-    val name: String
+    val name: String,
 )
 
 data class RsvpResponseDTO(
     val status: String,
-    val attendee: AttendeeDTO
+    val attendee: AttendeeDTO,
 )
 
 data class CreateEventRequestDTO(
     val title: String,
     val slug: String,
     val capacity: Int,
-    val adminEmails: List<String> = emptyList()
+    val adminEmails: List<String> = emptyList(),
 )
 
 data class UpdateCapacityRequestDTO(
-    val capacity: Int
+    val capacity: Int,
 )
 
 data class UpdateCapacityResponseDTO(
@@ -62,5 +62,5 @@ data class UpdateCapacityResponseDTO(
 )
 
 data class AdminEmailRequestDTO(
-    val adminEmail: String
+    val adminEmail: String,
 )

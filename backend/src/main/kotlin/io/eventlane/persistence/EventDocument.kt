@@ -10,24 +10,24 @@ import java.time.Instant
 data class EventDocument(
     @Id
     val id: String? = null,
-    
+
     @Indexed(unique = true)
     val slug: String,
-    
+
     val title: String,
-    
+
     var capacity: Int,
-    
+
     val admins: MutableList<String> = mutableListOf(),
-    
+
     val confirmedList: MutableList<Attendee> = mutableListOf(),
-    
+
     val waitingList: MutableList<Attendee> = mutableListOf(),
-    
+
     val createdAt: Instant = Instant.now(),
-    
+
     var updatedAt: Instant = Instant.now(),
-    
+
     @Version
-    val version: Long? = null
+    val version: Long? = null,
 )
