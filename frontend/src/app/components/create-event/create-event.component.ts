@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 
 import { AuthService } from "../../services/auth.service";
 import { EventListStore } from "../../services/event-list.store";
+import { SeoService } from "../../services/seo.service";
 
 @Component({
   selector: "app-create-event",
@@ -13,7 +14,7 @@ import { EventListStore } from "../../services/event-list.store";
   templateUrl: "./create-event.component.html",
   styleUrls: ["./create-event.component.scss"],
 })
-export class CreateEventComponent {
+export class CreateEventComponent implements OnInit {
   isAuthenticated = this.authService.isAuthenticated;
 
   title = "";
@@ -27,8 +28,21 @@ export class CreateEventComponent {
   constructor(
     private eventListStore: EventListStore,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private seoService: SeoService
   ) {}
+
+  ngOnInit() {
+    this.seoService.updateTags({
+      title: "Create New Event - EventLane",
+      description:
+        "Create your event in seconds. Set capacity, share your unique link, and manage RSVPs automatically.",
+      keywords: "create event, event management, RSVP",
+      url: "/create",
+      type: "website",
+    });
+    this.seoService.removeStructuredData();
+  }
 
   generateSlug() {
     if (this.title) {

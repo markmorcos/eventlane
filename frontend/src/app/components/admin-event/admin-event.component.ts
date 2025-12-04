@@ -14,6 +14,8 @@ import { AdminsStore } from "../../services/admins.store";
 import { AttendeesStore } from "../../services/attendees.store";
 import { EventDetailStore } from "../../services/event-detail.store";
 import { AuthService } from "../../services/auth.service";
+import { SeoService } from "../../services/seo.service";
+import { Meta } from "@angular/platform-browser";
 
 @Component({
   selector: "app-admin-event",
@@ -28,6 +30,8 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   private eventDetailStore = inject(EventDetailStore);
   private attendeesStore = inject(AttendeesStore);
   private adminsStore = inject(AdminsStore);
+  private seoService = inject(SeoService);
+  private meta = inject(Meta);
   private authService = inject(AuthService);
 
   email = this.authService.userEmail;
@@ -47,6 +51,10 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
+
+    // Set noindex for admin pages
+    this.meta.updateTag({ name: "robots", content: "noindex, nofollow" });
+    this.seoService.removeStructuredData();
 
     await this.eventDetailStore.loadEvent(slug);
 

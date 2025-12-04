@@ -22,7 +22,17 @@
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/apple-touch-icon.png",
+              "src/android-chrome-192x192.png",
+              "src/android-chrome-512x512.png",
+              "src/og-image.png",
+              "src/manifest.json",
+              "src/robots.txt",
+              "src/sitemap.xml",
+              "src/assets"
+            ],
             "styles": ["src/styles.scss"],
             "scripts": []
           },
