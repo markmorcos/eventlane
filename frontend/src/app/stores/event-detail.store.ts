@@ -91,22 +91,45 @@ export class EventDetailStore {
 
       case "AttendeeAdded": {
         const d = delta as AttendeeAddedDelta;
+        const isAdmin = event.isAdmin === true;
 
         const requesterStatus =
-          d.attendee.email === this.userEmail() ? d.status : undefined;
-        let confirmed = event.confirmed || [];
-        let waitlisted = event.waitlisted || [];
+          d.attendee.email === this.userEmail()
+            ? d.status
+            : event.requesterStatus;
 
-        if (d.status === "CONFIRMED") {
-          confirmed.push(d.attendee);
-        } else {
-          waitlisted.push(d.attendee);
+        if (!isAdmin) {
+          return {
+            ...event,
+            requesterStatus,
+            confirmedCount:
+              d.status === "CONFIRMED"
+                ? event.confirmedCount + 1
+                : event.confirmedCount,
+
+            waitlistedCount:
+              d.status === "WAITLISTED"
+                ? event.waitlistedCount + 1
+                : event.waitlistedCount,
+
+            confirmed: [],
+            waitlisted: [],
+          };
         }
 
-        confirmed = Array.from(new Set(confirmed)).sort((a, b) =>
+        let confirmed = event.confirmed ?? [];
+        let waitlisted = event.waitlisted ?? [];
+
+        if (d.status === "CONFIRMED") {
+          confirmed = [...confirmed, d.attendee];
+        } else {
+          waitlisted = [...waitlisted, d.attendee];
+        }
+
+        confirmed = confirmed.sort((a, b) =>
           a.createdAt.localeCompare(b.createdAt)
         );
-        waitlisted = Array.from(new Set(waitlisted)).sort((a, b) =>
+        waitlisted = waitlisted.sort((a, b) =>
           a.createdAt.localeCompare(b.createdAt)
         );
 
@@ -122,16 +145,49 @@ export class EventDetailStore {
 
       case "AttendeeRemoved": {
         const d = delta as AttendeeRemovedDelta;
-        if (!event.confirmed || !event.waitlisted) return event;
-        const confirmed = event.confirmed.filter(
+        const isAdmin = event.isAdmin === true;
+
+        const requesterStatus =
+          d.attendeeEmail === this.userEmail()
+            ? undefined
+            : event.requesterStatus;
+
+        if (!isAdmin) {
+          const wasConfirmed = event.requesterStatus === "CONFIRMED";
+          const wasWaitlisted = event.requesterStatus === "WAITLISTED";
+
+          return {
+            ...event,
+            requesterStatus,
+            confirmedCount: wasConfirmed
+              ? event.confirmedCount - 1
+              : event.confirmedCount,
+            waitlistedCount: wasWaitlisted
+              ? event.waitlistedCount - 1
+              : event.waitlistedCount,
+            confirmed: [],
+            waitlisted: [],
+          };
+        }
+
+        let confirmed = (event.confirmed ?? []).filter(
           (a) => a.email !== d.attendeeEmail
         );
-        const waitlisted = event.waitlisted.filter(
+
+        let waitlisted = (event.waitlisted ?? []).filter(
           (a) => a.email !== d.attendeeEmail
         );
+
+        confirmed = confirmed.sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt)
+        );
+        waitlisted = waitlisted.sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt)
+        );
+
         return {
           ...event,
-          requesterStatus: undefined,
+          requesterStatus,
           confirmed,
           waitlisted,
           confirmedCount: confirmed.length,
