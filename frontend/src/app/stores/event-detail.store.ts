@@ -75,7 +75,7 @@ export class EventDetailStore {
     }
   }
 
-  destroy(): void {
+  destroy() {
     if (this.currentSlug) {
       this.socket.unsubscribeFromEvent(this.currentSlug);
       this.currentSlug = undefined;
