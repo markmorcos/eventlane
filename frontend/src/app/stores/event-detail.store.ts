@@ -92,28 +92,31 @@ export class EventDetailStore {
       case "AttendeeAdded": {
         const d = delta as AttendeeAddedDelta;
 
-        const confirmed = event.confirmed || [];
-        const waitlisted = event.waitlisted || [];
+        const requesterStatus =
+          d.attendee.email === this.userEmail() ? d.status : undefined;
+        let confirmed = event.confirmed || [];
+        let waitlisted = event.waitlisted || [];
 
         if (d.status === "CONFIRMED") {
-          return {
-            ...event,
-            requesterStatus:
-              d.attendee.email === this.userEmail() ? "CONFIRMED" : undefined,
-            confirmed: [...confirmed, d.attendee].sort((a, b) =>
-              a.createdAt.localeCompare(b.createdAt)
-            ),
-            confirmedCount: confirmed.length + 1,
-          };
+          confirmed.push(d.attendee);
+        } else {
+          waitlisted.push(d.attendee);
         }
+
+        confirmed = Array.from(new Set(confirmed)).sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt)
+        );
+        waitlisted = Array.from(new Set(waitlisted)).sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt)
+        );
+
         return {
           ...event,
-          requesterStatus:
-            d.attendee.email === this.userEmail() ? "WAITLISTED" : undefined,
-          waitlisted: [...waitlisted, d.attendee].sort((a, b) =>
-            a.createdAt.localeCompare(b.createdAt)
-          ),
-          waitlistedCount: waitlisted.length + 1,
+          requesterStatus,
+          confirmed,
+          waitlisted,
+          confirmedCount: confirmed.length,
+          waitlistedCount: waitlisted.length,
         };
       }
 
