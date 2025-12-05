@@ -20,7 +20,6 @@ export class EventSocketService implements OnDestroy {
   constructor() {
     this.client = new Client({
       reconnectDelay: 3000, // ⬅ auto-reconnect
-      debug: (str) => console.log(str),
       webSocketFactory: () => new SockJS(environment.wsBaseUrl),
     });
 
