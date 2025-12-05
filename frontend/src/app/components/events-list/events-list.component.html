@@ -40,10 +40,10 @@
           <span class="label">Capacity:</span>
           <span>{{ event.confirmedCount }} / {{ event.capacity }}</span>
         </div>
-        @if (event.waitlistCount > 0) {
+        @if (event.waitlistedCount > 0) {
         <div class="info-row">
           <span class="label">Waitlist:</span>
-          <span>{{ event.waitlistCount }}</span>
+          <span>{{ event.waitlistedCount }}</span>
         </div>
         }
         <div class="info-row">

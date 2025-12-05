@@ -21,10 +21,10 @@
         <span class="label">Capacity:</span>
         <span class="value">{{ evt.confirmedCount }} / {{ evt.capacity }}</span>
       </div>
-      @if (evt.waitlistCount > 0) {
+      @if (evt.waitlistedCount > 0) {
       <div class="stat">
         <span class="label">Waitlist:</span>
-        <span class="value">{{ evt.waitlistCount }}</span>
+        <span class="value">{{ evt.waitlistedCount }}</span>
       </div>
       }
       <div class="stat">
@@ -41,7 +41,7 @@
 
     @if (isAuthenticated()) {
     <div class="actions">
-      @if (!evt.currentUserAttendee) {
+      @if (!evt.requesterStatus) {
       <div class="rsvp-form">
         <input
           type="text"
@@ -51,7 +51,7 @@
         />
         <button
           class="primary"
-          (click)="rsvp()"
+          (click)="attend()"
           [disabled]="!userName || loading()"
         >
           RSVP
@@ -63,10 +63,10 @@
           Your status:
           <span
             class="badge"
-            [class.confirmed]="evt.currentUserAttendee.status === 'CONFIRMED'"
-            [class.waitlisted]="evt.currentUserAttendee.status === 'WAITLISTED'"
+            [class.confirmed]="evt.requesterStatus === 'CONFIRMED'"
+            [class.waitlisted]="evt.requesterStatus === 'WAITLISTED'"
           >
-            {{ evt.currentUserAttendee.status | titlecase }}
+            {{ evt.requesterStatus | titlecase }}
           </span>
         </p>
         <button class="danger" (click)="cancel()" [disabled]="loading()">

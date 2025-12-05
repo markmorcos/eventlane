@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
-import { EventListStore } from "../../services/event-list.store";
+import { EventListStore } from "../../stores/event-list.store";
 import { SeoService } from "../../services/seo.service";
 
 @Component({
@@ -13,14 +13,14 @@ import { SeoService } from "../../services/seo.service";
   styleUrls: ["./events-list.component.scss"],
 })
 export class EventsListComponent implements OnInit {
-  private eventListStore = inject(EventListStore);
+  private store = inject(EventListStore);
   private authService = inject(AuthService);
   private seoService = inject(SeoService);
 
   isAuthenticated = this.authService.isAuthenticated;
-  events = this.eventListStore.events;
-  loading = this.eventListStore.loading;
-  error = this.eventListStore.error;
+  events = this.store.events;
+  loading = this.store.loading;
+  error = this.store.error;
 
   ngOnInit() {
     this.seoService.updateTags({
@@ -32,6 +32,6 @@ export class EventsListComponent implements OnInit {
       type: "website",
     });
     this.seoService.removeStructuredData();
-    this.eventListStore.loadAllEvents();
+    this.store.loadManagedEvents();
   }
 }

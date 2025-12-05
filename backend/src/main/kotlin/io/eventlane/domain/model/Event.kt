@@ -3,7 +3,7 @@ package io.eventlane.domain.model
 import java.time.Instant
 
 data class Event(
-    val id: String,
+    val id: String? = null,
     val slug: String,
     val title: String,
     val capacity: Int,
@@ -17,7 +17,7 @@ data class Event(
     val createdAt: Instant,
     val updatedAt: Instant,
 
-    val version: Long,
+    val version: Long? = null,
 ) {
     fun isAdmin(email: String) = email == creatorEmail || admins.contains(email)
 

@@ -6,10 +6,10 @@ import io.eventlane.application.ports.EventRepository
 import io.eventlane.domain.behavior.EventBehavior
 import io.eventlane.domain.model.Event
 import io.eventlane.domain.model.EventCreated
+import io.eventlane.domain.model.EventDeleted
 import io.eventlane.domain.model.EventDelta
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.util.UUID
 
 @Service
 class EventCommandService(
@@ -26,7 +26,6 @@ class EventCommandService(
         val now = Instant.now()
 
         val event = Event(
-            id = UUID.randomUUID().toString(),
             slug = slug,
             title = title,
             capacity = capacity,
@@ -36,13 +35,12 @@ class EventCommandService(
             admins = emptyList(),
             createdAt = now,
             updatedAt = now,
-            version = 0L,
         )
 
         val saved = repository.save(event)
 
         val delta = EventCreated(
-            version = saved.version,
+            version = saved.version ?: 0L,
             timestamp = now,
             eventSlug = saved.slug,
             title = saved.title,
@@ -62,6 +60,24 @@ class EventCommandService(
         publisher.publish(slug, deltas)
 
         return deltas
+    }
+
+    fun deleteEvent(slug: String): EventDelta {
+        val now = Instant.now()
+
+        val event = repository.findBySlug(slug)
+
+        repository.deleteBySlug(slug)
+
+        val delta = EventDeleted(
+            version = event.version ?: 0L,
+            timestamp = now,
+            eventSlug = event.slug,
+        )
+
+        publisher.publish(slug, listOf(delta))
+
+        return delta
     }
 
     fun addAdmin(slug: String, adminEmail: String): List<EventDelta> {

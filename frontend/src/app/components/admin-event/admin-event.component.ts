@@ -5,14 +5,14 @@ import {
   inject,
   signal,
   computed,
+  effect,
+  untracked,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink, ActivatedRoute, Router } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 
-import { AdminsStore } from "../../services/admins.store";
-import { AttendeesStore } from "../../services/attendees.store";
-import { EventDetailStore } from "../../services/event-detail.store";
+import { EventDetailStore } from "../../stores/event-detail.store";
 import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
 import { Meta } from "@angular/platform-browser";
@@ -27,27 +27,35 @@ import { Meta } from "@angular/platform-browser";
 export class AdminEventComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private eventDetailStore = inject(EventDetailStore);
-  private attendeesStore = inject(AttendeesStore);
-  private adminsStore = inject(AdminsStore);
+  private store = inject(EventDetailStore);
   private seoService = inject(SeoService);
   private meta = inject(Meta);
   private authService = inject(AuthService);
 
   email = this.authService.userEmail;
-  event = this.eventDetailStore.event;
-  attendees = this.attendeesStore.attendees;
-  admins = this.adminsStore.admins;
-  updating = computed(() =>
-    [
-      this.eventDetailStore.loading(),
-      this.attendeesStore.loading(),
-      this.adminsStore.loading(),
-    ].some(Boolean)
-  );
+  event = this.store.event;
+  confirmed = computed(() => this.store.event()?.confirmed || []);
+  waitlisted = computed(() => this.store.event()?.waitlisted || []);
+  admins = computed(() => this.store.event()?.admins || []);
+  loading = this.store.loading;
+
+  eventCapacity = computed(() => this.store.event()?.capacity || 0);
 
   newCapacity = signal(0);
   newAdminEmail = signal("");
+
+  constructor() {
+    effect(
+      () => {
+        const capacity = this.eventCapacity();
+        const newCapacity = untracked(() => this.newCapacity());
+        if (capacity !== newCapacity) {
+          this.newCapacity.set(capacity);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
@@ -56,7 +64,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     this.meta.updateTag({ name: "robots", content: "noindex, nofollow" });
     this.seoService.removeStructuredData();
 
-    await this.eventDetailStore.loadEvent(slug);
+    await this.store.init(slug);
 
     const evt = this.event();
     if (!evt?.isAdmin) {
@@ -65,21 +73,17 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     }
 
     this.newCapacity.set(evt.capacity);
-    Promise.all([
-      this.attendeesStore.loadAttendees(slug),
-      this.adminsStore.loadAdmins(slug),
-    ]);
   }
 
   ngOnDestroy() {
-    this.eventDetailStore.leaveEventRoom();
+    this.store.destroy();
   }
 
   async updateCapacity() {
     const evt = this.event();
     if (!evt || this.newCapacity() < 0) return;
 
-    this.eventDetailStore.updateCapacity(this.newCapacity());
+    this.store.updateCapacity(evt.slug, this.newCapacity());
   }
 
   async removeAttendee(email: string) {
@@ -88,14 +92,14 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
     if (!confirm("Are you sure you want to remove this attendee?")) return;
 
-    this.attendeesStore.removeAttendee(evt.slug, email);
+    this.store.cancel(evt.slug, email);
   }
 
   async addAdmin() {
     const evt = this.event();
     if (!evt || !this.newAdminEmail()) return;
 
-    this.adminsStore.addAdmin(evt.slug, this.newAdminEmail());
+    this.store.addAdmin(evt.slug, this.newAdminEmail());
     this.newAdminEmail.set("");
   }
 
@@ -105,7 +109,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
     if (!confirm(`Remove ${adminEmail} as admin?`)) return;
 
-    this.adminsStore.removeAdmin(evt.slug, adminEmail);
+    this.store.removeAdmin(evt.slug, adminEmail);
   }
 
   async deleteEvent() {
@@ -119,7 +123,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     )
       return;
 
-    await this.eventDetailStore.deleteEvent(evt.slug);
+    await this.store.deleteEvent(evt.slug);
     this.router.navigate(["/events"]);
   }
 }

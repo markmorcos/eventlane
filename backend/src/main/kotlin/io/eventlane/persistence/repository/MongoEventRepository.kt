@@ -40,7 +40,7 @@ class MongoEventRepository(
 
     override fun existsBySlug(slug: String) = springDataRepository.existsBySlug(slug)
 
-    override fun findByAdmin(email: String) = springDataRepository.findByAdminsContaining(email)
+    override fun findByAdmin(email: String) = springDataRepository.findByCreatorEmailOrAdminsContaining(email, email)
         .map(EventPersistenceMapper::toDomain)
 
     override fun deleteBySlug(slug: String) = springDataRepository.deleteBySlug(slug)

@@ -17,7 +17,7 @@ object EventPersistenceMapper {
         admins = doc.admins,
         createdAt = doc.createdAt,
         updatedAt = doc.updatedAt,
-        version = doc.version ?: 0L,
+        version = doc.version,
     )
 
     fun toDocument(domain: Event): EventDocument = EventDocument(
@@ -31,7 +31,7 @@ object EventPersistenceMapper {
         waitingList = domain.waitingList.map { toDocumentAttendee(it) },
         createdAt = domain.createdAt,
         updatedAt = domain.updatedAt,
-        version = if (domain.version == 0L) null else domain.version,
+        version = domain.version,
     )
 
     fun toDomainAttendee(doc: AttendeeDocument): Attendee = Attendee(

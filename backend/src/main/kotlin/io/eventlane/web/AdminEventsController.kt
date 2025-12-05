@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/admin/events/{slug}")
-class AdminEventController(
+class AdminEventsController(
     private val repository: EventRepository,
     private val commands: EventCommandService,
 ) {
@@ -35,6 +35,12 @@ class AdminEventController(
     ): List<EventDelta> {
         ensureAdmin(slug, user.email)
         return commands.updateCapacity(slug, body.capacity)
+    }
+
+    @DeleteMapping
+    fun deleteEvent(@PathVariable slug: String, @AuthenticationPrincipal user: SecurityUser): EventDelta {
+        ensureAdmin(slug, user.email)
+        return commands.deleteEvent(slug)
     }
 
     @PostMapping("/admins/{email}")

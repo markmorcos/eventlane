@@ -17,26 +17,23 @@
       </p>
     </div>
     <h3>Capacity management</h3>
-    <div class="capacity-control">
+    <form class="capacity-control">
       <input
+        name="capacity"
         type="number"
         [(ngModel)]="newCapacity"
         min="0"
-        placeholder="New capacity"
+        placeholder="Capacity"
       />
-      <button
-        class="primary"
-        (click)="updateCapacity()"
-        [disabled]="updating()"
-      >
+      <button class="primary" (click)="updateCapacity()" [disabled]="loading()">
         Update capacity
       </button>
-    </div>
+    </form>
   </div>
 
   <div class="card">
-    <h3>Confirmed attendees ({{ attendees().confirmed.length }})</h3>
-    @if (attendees().confirmed.length) {
+    <h3>Confirmed attendees ({{ confirmed().length }})</h3>
+    @if (confirmed().length) {
     <div class="attendees-table">
       <table>
         <thead>
@@ -48,7 +45,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (attendee of attendees().confirmed; track attendee.id) {
+          @for (attendee of confirmed(); track attendee.id) {
           <tr>
             <td>{{ attendee.name }}</td>
             <td>{{ attendee.email }}</td>
@@ -72,8 +69,8 @@
   </div>
 
   <div class="card">
-    <h3>Waitlisted attendees ({{ attendees().waitlisted.length }})</h3>
-    @if (attendees().waitlisted.length) {
+    <h3>Waitlisted attendees ({{ waitlisted().length }})</h3>
+    @if (waitlisted().length) {
     <div class="attendees-table">
       <table>
         <thead>
@@ -85,7 +82,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (attendee of attendees().waitlisted; track attendee.id) {
+          @for (attendee of waitlisted(); track attendee.id) {
           <tr>
             <td>{{ attendee.name }}</td>
             <td>{{ attendee.email }}</td>
@@ -115,33 +112,31 @@
       @for (admin of admins(); track admin) {
       <div class="admin-item">
         <span>{{ admin }}</span>
-        @if (admins().length > 1 && admin !== admins()[0]) {
         <button class="danger small" (click)="removeAdmin(admin)">
           Remove
         </button>
-        }
       </div>
       }
     </div>
     }
-    <div class="add-admin">
+    <form class="add-admin" (ngSubmit)="addAdmin()">
       <input
         type="email"
+        name="email"
         [(ngModel)]="newAdminEmail"
         placeholder="Admin email"
       />
       <button
+        type="submit"
         class="primary"
-        (click)="addAdmin()"
-        required
-        [disabled]="!newAdminEmail || updating()"
+        [disabled]="!newAdminEmail || loading()"
       >
         Add admin
       </button>
-    </div>
+    </form>
   </div>
 
-  @if (email() === admins()[0]) {
+  @if (event()?.creatorEmail === email()) {
   <div class="card danger-zone">
     <h3>Danger zone</h3>
     <button class="danger" (click)="deleteEvent()">Delete event</button>

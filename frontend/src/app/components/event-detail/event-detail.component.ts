@@ -9,13 +9,11 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink, ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { firstValueFrom } from "rxjs";
 
 import { AuthService } from "../../services/auth.service";
-import { ApiService } from "../../services/api.service";
-import { EventDetailStore } from "../../services/event-detail.store";
+import { EventDetailStore } from "../../stores/event-detail.store";
 import { SeoService } from "../../services/seo.service";
-import { EventDetail } from "../../models/event.models";
+import { EventDetail } from "../../models/event.model";
 
 @Component({
   selector: "app-event-detail",
@@ -27,19 +25,18 @@ import { EventDetail } from "../../models/event.models";
 export class EventDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
-  private apiService = inject(ApiService);
-  private eventDetailStore = inject(EventDetailStore);
+  private store = inject(EventDetailStore);
   private seoService = inject(SeoService);
 
-  event = this.eventDetailStore.event;
-  loading = this.eventDetailStore.loading;
+  event = this.store.event;
+  loading = this.store.loading;
 
   isAuthenticated = this.authService.isAuthenticated;
+  email = this.authService.userEmail;
 
   userName = signal("");
 
   constructor() {
-    // Update SEO when event data changes
     effect(() => {
       const evt = this.event();
       if (evt) {
@@ -50,18 +47,18 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
   async getDefaultName() {
     const displayName = await this.authService.getDisplayName();
-    return this.event()?.currentUserAttendee?.name || displayName || "";
+    return displayName || "";
   }
 
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
-    await this.eventDetailStore.loadEvent(slug);
+    await this.store.init(slug);
 
     this.userName.set(await this.getDefaultName());
   }
 
   ngOnDestroy() {
-    this.eventDetailStore.leaveEventRoom();
+    this.store.destroy();
     this.seoService.removeStructuredData();
   }
 
@@ -69,7 +66,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     const spotsLeft = event.capacity - event.confirmedCount;
     const isFull = spotsLeft <= 0;
     const availabilityText = isFull
-      ? `Full - Join waitlist (${event.waitlistCount} waiting)`
+      ? `Full - Join waitlist (${event.waitlistedCount} waiting)`
       : `${spotsLeft} of ${event.capacity} spots available`;
 
     // Update meta tags
@@ -112,13 +109,11 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     this.seoService.addStructuredData(eventSchema);
   }
 
-  async rsvp() {
+  async attend() {
     const evt = this.event();
     if (!evt || !this.userName) return;
 
-    await firstValueFrom(
-      this.apiService.rsvp(evt.slug, { name: this.userName() })
-    );
+    await this.store.attend(evt.slug, this.userName());
   }
 
   async cancel() {
@@ -127,7 +122,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
     if (!confirm("Are you sure you want to cancel your RSVP?")) return;
 
-    await firstValueFrom(this.apiService.cancel(evt.slug));
+    await this.store.cancel(evt.slug, this.email()!);
     this.userName.set(await this.getDefaultName());
   }
 }

@@ -12,6 +12,7 @@ import java.time.Instant
 @JsonSubTypes(
     JsonSubTypes.Type(value = EventCreated::class, name = "EventCreated"),
     JsonSubTypes.Type(value = EventCapacityUpdated::class, name = "EventCapacityUpdated"),
+    JsonSubTypes.Type(value = EventDeleted::class, name = "EventDeleted"),
     JsonSubTypes.Type(value = AttendeeAdded::class, name = "AttendeeAdded"),
     JsonSubTypes.Type(value = AttendeeRemoved::class, name = "AttendeeRemoved"),
     JsonSubTypes.Type(value = AttendeeStatusChanged::class, name = "AttendeeStatusChanged"),
@@ -38,6 +39,12 @@ data class EventCapacityUpdated(
     override val eventSlug: String,
     val oldCapacity: Int,
     val newCapacity: Int,
+) : EventDelta(version, timestamp, eventSlug)
+
+data class EventDeleted(
+    override val version: Long,
+    override val timestamp: Instant,
+    override val eventSlug: String,
 ) : EventDelta(version, timestamp, eventSlug)
 
 data class AttendeeAdded(

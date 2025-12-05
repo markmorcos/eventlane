@@ -4,8 +4,8 @@ import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 
 import { AuthService } from "../../services/auth.service";
-import { EventListStore } from "../../services/event-list.store";
 import { SeoService } from "../../services/seo.service";
+import { EventListStore } from "../../stores/event-list.store";
 
 @Component({
   selector: "app-create-event",
@@ -15,20 +15,18 @@ import { SeoService } from "../../services/seo.service";
   styleUrls: ["./create-event.component.scss"],
 })
 export class CreateEventComponent implements OnInit {
-  private eventListStore = inject(EventListStore);
+  private store = inject(EventListStore);
   private authService = inject(AuthService);
   private router = inject(Router);
   private seoService = inject(SeoService);
 
   isAuthenticated = this.authService.isAuthenticated;
-  loading = this.eventListStore.loading;
-  error = this.eventListStore.error;
+  loading = this.store.loading;
+  error = this.store.error;
 
   title = "";
   slug = "";
   capacity = 8;
-  adminEmails = "";
-  message = "";
 
   ngOnInit() {
     this.seoService.updateTags({
@@ -54,16 +52,10 @@ export class CreateEventComponent implements OnInit {
   async createEvent() {
     if (!this.title || !this.slug || this.capacity < 1) return;
 
-    const adminEmailsList = this.adminEmails
-      .split(",")
-      .map((e) => e.trim())
-      .filter(Boolean);
-
-    const event = await this.eventListStore.createEvent({
+    const event = await this.store.createEvent({
       title: this.title,
       slug: this.slug,
       capacity: this.capacity,
-      adminEmails: adminEmailsList.length > 0 ? adminEmailsList : undefined,
     });
 
     if (event) {

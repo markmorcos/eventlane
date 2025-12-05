@@ -1,3 +1,5 @@
+package io.eventlane.web
+
 import io.eventlane.application.service.AttendanceService
 import io.eventlane.auth.SecurityUser
 import io.eventlane.domain.model.AttendeeAdded
@@ -13,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/events/{slug}")
-class AttendanceController(private val attendance: AttendanceService) {
+@RequestMapping("/api/attendances/{slug}")
+class AttendancesController(private val attendance: AttendanceService) {
     @PostMapping("/attend")
     fun attend(
         @PathVariable slug: String,

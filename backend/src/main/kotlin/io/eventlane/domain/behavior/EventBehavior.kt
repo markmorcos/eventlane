@@ -29,7 +29,7 @@ object EventBehavior {
                 }
 
             return event to AttendeeAdded(
-                version = event.version,
+                version = event.version ?: 0L,
                 timestamp = now,
                 eventSlug = event.slug,
                 attendee = existing,
@@ -51,7 +51,7 @@ object EventBehavior {
                 ?: throw NotFoundException("Attendee with email $normalized not found after addition")
 
         return updatedEvent to AttendeeAdded(
-            version = event.version,
+            version = event.version ?: 0L,
             timestamp = now,
             eventSlug = event.slug,
             attendee = attendee,
@@ -71,7 +71,7 @@ object EventBehavior {
         val (updatedEvent, promotedAttendee) = event.removeAttendee(attendee)
 
         deltas += AttendeeRemoved(
-            version = event.version,
+            version = event.version ?: 0L,
             timestamp = now,
             eventSlug = event.slug,
             attendeeEmail = attendee.email,
@@ -79,7 +79,7 @@ object EventBehavior {
 
         promotedAttendee?.let {
             deltas += AttendeeStatusChanged(
-                version = event.version,
+                version = event.version ?: 0L,
                 timestamp = now,
                 eventSlug = event.slug,
                 attendeeEmail = it.email,
@@ -107,7 +107,7 @@ object EventBehavior {
         val currentConfirmed = event.confirmedList.size
 
         deltas += EventCapacityUpdated(
-            version = event.version,
+            version = event.version ?: 0L,
             timestamp = now,
             eventSlug = event.slug,
             oldCapacity = oldCapacity,
@@ -123,7 +123,7 @@ object EventBehavior {
 
             toPromote.forEach { attendee ->
                 deltas += AttendeeStatusChanged(
-                    version = event.version,
+                    version = event.version ?: 0L,
                     timestamp = now,
                     eventSlug = event.slug,
                     attendeeEmail = attendee.email,
@@ -148,7 +148,7 @@ object EventBehavior {
 
         toDemote.forEach { attendee ->
             deltas += AttendeeStatusChanged(
-                version = event.version,
+                version = event.version ?: 0L,
                 timestamp = now,
                 eventSlug = event.slug,
                 attendeeEmail = attendee.email,
@@ -185,7 +185,7 @@ object EventBehavior {
         )
 
         val delta = AdminAdded(
-            version = event.version,
+            version = event.version ?: 0L,
             timestamp = now,
             eventSlug = event.slug,
             adminEmail = normalized,
@@ -212,7 +212,7 @@ object EventBehavior {
         )
 
         val delta = AdminRemoved(
-            version = event.version,
+            version = event.version ?: 0L,
             timestamp = now,
             eventSlug = event.slug,
             adminEmail = normalized,

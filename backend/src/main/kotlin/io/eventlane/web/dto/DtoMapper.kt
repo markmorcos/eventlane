@@ -1,6 +1,7 @@
 package io.eventlane.web.dto
 
 import io.eventlane.domain.model.Attendee
+import io.eventlane.domain.model.AttendeeStatus
 import io.eventlane.domain.model.Event
 
 object DtoMapper {
@@ -12,17 +13,24 @@ object DtoMapper {
 
     fun toEventResponse(event: Event, requesterEmail: String): EventResponseDto {
         val isAdmin = event.isAdmin(requesterEmail.lowercase())
+        val status = when {
+            event.confirmedList.any { it.email == requesterEmail.lowercase() } -> AttendeeStatus.CONFIRMED
+            event.waitingList.any { it.email == requesterEmail.lowercase() } -> AttendeeStatus.WAITLISTED
+            else -> null
+        }
 
         return EventResponseDto(
             slug = event.slug,
             title = event.title,
             capacity = event.capacity,
             confirmedCount = event.confirmedList.size,
-            waitlistCount = event.waitingList.size,
+            waitlistedCount = event.waitingList.size,
+            creatorEmail = event.creatorEmail,
             isAdmin = isAdmin,
+            requesterStatus = status,
 
             confirmed = if (isAdmin) event.confirmedList.map { toAttendeeDto(it) } else null,
-            waitlist = if (isAdmin) event.waitingList.map { toAttendeeDto(it) } else null,
+            waitlisted = if (isAdmin) event.waitingList.map { toAttendeeDto(it) } else null,
             admins = if (isAdmin) event.admins else null,
         )
     }
