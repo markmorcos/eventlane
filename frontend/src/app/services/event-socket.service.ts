@@ -25,7 +25,6 @@ export class EventSocketService implements OnDestroy {
 
     // When connected (initial + after reconnect)
     this.client.onConnect = () => {
-      console.log("[WS] Connected");
       this.connectionReady = true;
 
       // Run first-time pending subscriptions
@@ -39,7 +38,6 @@ export class EventSocketService implements OnDestroy {
     };
 
     this.client.onWebSocketClose = () => {
-      console.warn("[WS] Disconnected, retrying...");
       this.connectionReady = false;
     };
 
@@ -62,10 +60,7 @@ export class EventSocketService implements OnDestroy {
     this.activeSlugs.add(slug);
 
     const subscribeFn = () => {
-      console.log("[WS] Subscribing to", destination);
-
       const sub = this.client.subscribe(destination, (msg: IMessage) => {
-        console.log("<< Received:", msg.body);
         const deltas = JSON.parse(msg.body) as EventDelta[];
         subject.next(deltas);
       });
@@ -88,7 +83,6 @@ export class EventSocketService implements OnDestroy {
     if (!subject) return;
 
     const destination = `/topic/events/${slug}`;
-    console.log("[WS] Re-subscribing to", destination);
 
     const sub = this.client.subscribe(destination, (msg: IMessage) => {
       const deltas = JSON.parse(msg.body) as EventDelta[];

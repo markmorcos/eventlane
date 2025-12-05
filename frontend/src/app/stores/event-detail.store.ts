@@ -37,6 +37,7 @@ export class EventDetailStore {
 
   async init(slug: string): Promise<void> {
     this.currentSlug = slug;
+
     this._loading.set(true);
     this._error.set(null);
 
@@ -52,6 +53,23 @@ export class EventDetailStore {
       this._error.set("Failed to load event");
       console.error(err);
       this.route.navigate(["/events"]);
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  async reload(): Promise<void> {
+    if (!this.currentSlug) return;
+
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      const data = await firstValueFrom(this.api.getEvent(this.currentSlug));
+      this._event.set(data);
+    } catch (err) {
+      this._error.set("Failed to reload event");
+      console.error(err);
     } finally {
       this._loading.set(false);
     }

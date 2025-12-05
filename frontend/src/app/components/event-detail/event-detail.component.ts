@@ -33,6 +33,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
   isAuthenticated = this.authService.isAuthenticated;
   email = this.authService.userEmail;
+  displayName = this.authService.userDisplayName;
 
   userName = signal("");
 
@@ -43,18 +44,21 @@ export class EventDetailComponent implements OnInit, OnDestroy {
         this.updateSeo(evt);
       }
     });
-  }
 
-  async getDefaultName() {
-    const displayName = await this.authService.getDisplayName();
-    return displayName || "";
+    effect(
+      () => {
+        if (this.displayName()) {
+          this.userName.set(this.displayName());
+          this.store.reload();
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
     await this.store.init(slug);
-
-    this.userName.set(await this.getDefaultName());
   }
 
   ngOnDestroy() {
@@ -123,6 +127,6 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     if (!confirm("Are you sure you want to cancel your RSVP?")) return;
 
     await this.store.cancel(evt.slug, this.email()!);
-    this.userName.set(await this.getDefaultName());
+    this.userName.set(this.displayName());
   }
 }

@@ -22,6 +22,9 @@ export class AuthService {
   readonly authLoading = signal<boolean>(true);
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
   readonly userEmail = computed(() => this.currentUser()?.email ?? null);
+  readonly userDisplayName = computed(
+    () => this.currentUser()?.displayName ?? ""
+  );
 
   constructor() {
     const app = initializeApp(environment.firebase);
@@ -56,11 +59,6 @@ export class AuthService {
 
     const token = await user.getIdToken(false);
     return token;
-  }
-
-  async getDisplayName() {
-    await this.authInitPromise;
-    return this.currentUser()?.displayName;
   }
 
   async getUserEmail() {
