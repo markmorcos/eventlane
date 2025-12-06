@@ -14,13 +14,16 @@ import { AuthService } from "../../services/auth.service";
 import { EventDetailStore } from "../../stores/event-detail.store";
 import { SeoService } from "../../services/seo.service";
 import { EventDetail } from "../../models/event.model";
+import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
+import { HlmInputDirective } from "../../ui/ui-input-helm/src";
+import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
+import { HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective } from "../../ui/ui-card-helm/src";
 
 @Component({
   selector: "app-event-detail",
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, HlmButtonDirective, HlmInputDirective, HlmBadgeDirective, HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective],
   templateUrl: "./event-detail.component.html",
-  styleUrls: ["./event-detail.component.scss"],
 })
 export class EventDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

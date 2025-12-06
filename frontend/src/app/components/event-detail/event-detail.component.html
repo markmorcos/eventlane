@@ -1,85 +1,97 @@
 @if (event(); as evt) {
-<div class="event-detail">
-  <div class="header">
-    <h2>Event details</h2>
-
-    <button class="secondary" routerLink="/events">Back to events</button>
-  </div>
-
-  <div class="card">
-    <div class="header">
-      <h2>{{ evt.title }}</h2>
-      @if (evt.isAdmin) {
-      <button class="secondary" [routerLink]="['/admin/events', evt.slug]">
-        Manage event
-      </button>
-      }
+<div class="min-h-screen bg-background py-16">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6">
+    <div class="mb-6 flex items-center justify-between">
+      <h2 class="text-3xl font-bold text-foreground">Event Details</h2>
+      <button hlmBtn variant="secondary" routerLink="/events">Back to events</button>
     </div>
 
-    <div class="event-stats">
-      <div class="stat">
-        <span class="label">Capacity:</span>
-        <span class="value">{{ evt.confirmedCount }} / {{ evt.capacity }}</span>
-      </div>
-      @if (evt.waitlistedCount > 0) {
-      <div class="stat">
-        <span class="label">Waitlist:</span>
-        <span class="value">{{ evt.waitlistedCount }}</span>
-      </div>
-      }
-      <div class="stat">
-        <span class="label">Status:</span>
-        <span
-          class="badge"
-          [class.confirmed]="evt.confirmedCount < evt.capacity"
-          [class.waitlisted]="evt.confirmedCount >= evt.capacity"
-        >
-          {{ evt.confirmedCount < evt.capacity ? "Space available" : "Full" }}
-        </span>
-      </div>
-    </div>
-
-    @if (isAuthenticated()) {
-    <div class="actions">
-      @if (!evt.requesterStatus) {
-      <div class="rsvp-form">
-        <input
-          type="text"
-          [(ngModel)]="userName"
-          placeholder="Your name"
-          class="name-input"
-        />
-        <button
-          class="primary"
-          (click)="attend()"
-          [disabled]="!userName || loading()"
-        >
-          RSVP
+    <div hlmCard>
+      <div hlmCardHeader class="flex flex-row items-center justify-between">
+        <h3 hlmCardTitle>{{ evt.title }}</h3>
+        @if (evt.isAdmin) {
+        <button hlmBtn variant="secondary" [routerLink]="['/admin/events', evt.slug]">
+          Manage event
         </button>
+        }
       </div>
-      } @else {
-      <div class="rsvp-status">
-        <p>
-          Your status:
-          <span
-            class="badge"
-            [class.confirmed]="evt.requesterStatus === 'CONFIRMED'"
-            [class.waitlisted]="evt.requesterStatus === 'WAITLISTED'"
-          >
-            {{ evt.requesterStatus | titlecase }}
-          </span>
-        </p>
-        <button class="danger" (click)="cancel()" [disabled]="loading()">
-          Cancel RSVP
-        </button>
+
+      <div hlmCardContent class="space-y-6">
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-lg border border-border p-4">
+            <span class="text-sm text-muted-foreground">Capacity</span>
+            <div class="mt-1 text-2xl font-semibold text-foreground">
+              {{ evt.confirmedCount }} / {{ evt.capacity }}
+            </div>
+          </div>
+          @if (evt.waitlistedCount > 0) {
+          <div class="rounded-lg border border-border p-4">
+            <span class="text-sm text-muted-foreground">Waitlist</span>
+            <div class="mt-1 text-2xl font-semibold text-foreground">
+              {{ evt.waitlistedCount }}
+            </div>
+          </div>
+          }
+          <div class="rounded-lg border border-border p-4">
+            <span class="text-sm text-muted-foreground">Status</span>
+            <div class="mt-1">
+              <span
+                hlmBadge
+                [variant]="evt.confirmedCount < evt.capacity ? 'success' : 'warning'"
+              >
+                {{ evt.confirmedCount < evt.capacity ? "Space available" : "Full" }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        @if (isAuthenticated()) {
+        <div class="rounded-lg border border-border p-6">
+          @if (!evt.requesterStatus) {
+          <div class="space-y-4">
+            <h4 class="font-semibold text-foreground">RSVP for this event</h4>
+            <div class="flex gap-3">
+              <input
+                hlmInput
+                type="text"
+                [(ngModel)]="userName"
+                placeholder="Your name"
+                class="flex-1"
+              />
+              <button
+                hlmBtn
+                (click)="attend()"
+                [disabled]="!userName || loading()"
+              >
+                RSVP
+              </button>
+            </div>
+          </div>
+          } @else {
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-muted-foreground">Your status:</p>
+              <span
+                hlmBadge
+                class="mt-1"
+                [variant]="evt.requesterStatus === 'CONFIRMED' ? 'success' : 'warning'"
+              >
+                {{ evt.requesterStatus | titlecase }}
+              </span>
+            </div>
+            <button hlmBtn variant="destructive" (click)="cancel()" [disabled]="loading()">
+              Cancel RSVP
+            </button>
+          </div>
+          }
+        </div>
+        } @else {
+        <div class="rounded-lg border border-border p-6 text-center">
+          <p class="text-muted-foreground">Please sign in to RSVP for this event.</p>
+        </div>
+        }
       </div>
-      }
     </div>
-    } @else {
-    <div class="auth-prompt">
-      <p>Please sign in to RSVP for this event.</p>
-    </div>
-    }
   </div>
 </div>
 }

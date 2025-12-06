@@ -6,13 +6,16 @@ import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
 import { EventListStore } from "../../stores/event-list.store";
+import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
+import { HlmInputDirective } from "../../ui/ui-input-helm/src";
+import { HlmLabelDirective } from "../../ui/ui-label-helm/src";
+import { HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective } from "../../ui/ui-card-helm/src";
 
 @Component({
   selector: "app-create-event",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, HlmButtonDirective, HlmInputDirective, HlmLabelDirective, HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective],
   templateUrl: "./create-event.component.html",
-  styleUrls: ["./create-event.component.scss"],
 })
 export class CreateEventComponent implements OnInit {
   private store = inject(EventListStore);
