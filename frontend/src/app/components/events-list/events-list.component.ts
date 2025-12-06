@@ -4,13 +4,15 @@ import { RouterLink } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import { EventListStore } from "../../stores/event-list.store";
 import { SeoService } from "../../services/seo.service";
+import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
+import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
+import { HlmSpinnerComponent } from "../../ui/ui-spinner-helm/src";
 
 @Component({
   selector: "app-events-list",
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, HlmButtonDirective, HlmBadgeDirective, HlmSpinnerComponent],
   templateUrl: "./events-list.component.html",
-  styleUrls: ["./events-list.component.scss"],
 })
 export class EventsListComponent implements OnInit {
   private store = inject(EventListStore);

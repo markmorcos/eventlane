@@ -24,7 +24,6 @@ import { ToastContainerComponent } from "./components/toast-container/toast-cont
     ToastContainerComponent,
   ],
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
   isLandingPage = false;

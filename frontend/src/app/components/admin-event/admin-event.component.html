@@ -1,146 +1,178 @@
 @if (event(); as evt) {
-<div class="admin-event">
-  <div class="header">
-    <h2>Manage: {{ evt.title }}</h2>
-    <button class="secondary" [routerLink]="['/events', evt.slug]">
-      Back to event
-    </button>
-  </div>
-
-  <div class="card">
-    <div class="capacity-warning">
-      <p class="info-text">
-        <strong>Note:</strong> Adjusting capacity will automatically manage
-        attendee status. Reducing capacity moves confirmed attendees to the
-        waitlist, while increasing capacity promotes waitlisted attendees to
-        confirmed status.
-      </p>
-    </div>
-    <h3>Capacity management</h3>
-    <form class="capacity-control">
-      <input
-        name="capacity"
-        type="number"
-        [(ngModel)]="newCapacity"
-        min="0"
-        placeholder="Capacity"
-      />
-      <button class="primary" (click)="updateCapacity()" [disabled]="loading()">
-        Update capacity
+<div class="min-h-screen bg-background py-16">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    <div class="mb-8 flex items-center justify-between">
+      <h2 class="text-3xl font-bold text-foreground">Manage: {{ evt.title }}</h2>
+      <button hlmBtn variant="secondary" [routerLink]="['/events', evt.slug]">
+        Back to event
       </button>
-    </form>
-  </div>
+    </div>
 
-  <div class="card">
-    <h3>Confirmed attendees ({{ confirmed().length }})</h3>
-    @if (confirmed().length) {
-    <div class="attendees-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Registered</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (attendee of confirmed(); track attendee.id) {
-          <tr>
-            <td>{{ attendee.name }}</td>
-            <td>{{ attendee.email }}</td>
-            <td>{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
-            <td>
-              <button
-                class="danger small"
-                (click)="removeAttendee(attendee.email)"
-              >
+    <div class="space-y-6">
+      <div hlmCard>
+        <div hlmCardHeader>
+          <div class="rounded-lg bg-primary/10 p-4 mb-4">
+            <p class="text-sm text-foreground">
+              <strong>Note:</strong> Adjusting capacity will automatically manage
+              attendee status. Reducing capacity moves confirmed attendees to the
+              waitlist, while increasing capacity promotes waitlisted attendees to
+              confirmed status.
+            </p>
+          </div>
+          <h3 hlmCardTitle>Capacity Management</h3>
+        </div>
+        <div hlmCardContent>
+          <form class="flex gap-3" (ngSubmit)="updateCapacity()">
+            <input
+              hlmInput
+              name="capacity"
+              type="number"
+              [(ngModel)]="newCapacity"
+              min="0"
+              placeholder="Capacity"
+              class="flex-1"
+            />
+            <button hlmBtn type="submit" [disabled]="loading()">
+              Update Capacity
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Confirmed Attendees ({{ confirmed().length }})</h3>
+        </div>
+        <div hlmCardContent>
+          @if (confirmed().length) {
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-border text-left text-sm text-muted-foreground">
+                  <th class="pb-3 font-medium">Name</th>
+                  <th class="pb-3 font-medium">Email</th>
+                  <th class="pb-3 font-medium">Registered</th>
+                  <th class="pb-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                @for (attendee of confirmed(); track attendee.id) {
+                <tr class="border-b border-border">
+                  <td class="py-3 text-foreground">{{ attendee.name }}</td>
+                  <td class="py-3 text-muted-foreground">{{ attendee.email }}</td>
+                  <td class="py-3 text-muted-foreground">{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
+                  <td class="py-3">
+                    <button
+                      hlmBtn
+                      variant="destructive"
+                      size="sm"
+                      (click)="removeAttendee(attendee.email)"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          } @else {
+          <p class="text-sm text-muted-foreground">No confirmed attendees</p>
+          }
+        </div>
+      </div>
+
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Waitlisted Attendees ({{ waitlisted().length }})</h3>
+        </div>
+        <div hlmCardContent>
+          @if (waitlisted().length) {
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-border text-left text-sm text-muted-foreground">
+                  <th class="pb-3 font-medium">Name</th>
+                  <th class="pb-3 font-medium">Email</th>
+                  <th class="pb-3 font-medium">Registered</th>
+                  <th class="pb-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                @for (attendee of waitlisted(); track attendee.id) {
+                <tr class="border-b border-border">
+                  <td class="py-3 text-foreground">{{ attendee.name }}</td>
+                  <td class="py-3 text-muted-foreground">{{ attendee.email }}</td>
+                  <td class="py-3 text-muted-foreground">{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
+                  <td class="py-3">
+                    <button
+                      hlmBtn
+                      variant="destructive"
+                      size="sm"
+                      (click)="removeAttendee(attendee.email)"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          } @else {
+          <p class="text-sm text-muted-foreground">No waitlisted attendees</p>
+          }
+        </div>
+      </div>
+
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Admin Management</h3>
+        </div>
+        <div hlmCardContent class="space-y-4">
+          @if (admins().length) {
+          <div class="space-y-2">
+            @for (admin of admins(); track admin) {
+            <div class="flex items-center justify-between rounded-lg border border-border p-3">
+              <span class="text-sm text-foreground">{{ admin }}</span>
+              <button hlmBtn variant="destructive" size="sm" (click)="removeAdmin(admin)">
                 Remove
               </button>
-            </td>
-          </tr>
+            </div>
+            }
+          </div>
           }
-        </tbody>
-      </table>
-    </div>
-    } @else {
-    <p>No confirmed attendees</p>
-    }
-  </div>
+          <form class="flex gap-3" (ngSubmit)="addAdmin()">
+            <input
+              hlmInput
+              type="email"
+              name="email"
+              [(ngModel)]="newAdminEmail"
+              placeholder="Admin email"
+              class="flex-1"
+            />
+            <button
+              hlmBtn
+              type="submit"
+              [disabled]="!newAdminEmail() || loading()"
+            >
+              Add Admin
+            </button>
+          </form>
+        </div>
+      </div>
 
-  <div class="card">
-    <h3>Waitlisted attendees ({{ waitlisted().length }})</h3>
-    @if (waitlisted().length) {
-    <div class="attendees-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Registered</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (attendee of waitlisted(); track attendee.id) {
-          <tr>
-            <td>{{ attendee.name }}</td>
-            <td>{{ attendee.email }}</td>
-            <td>{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
-            <td>
-              <button
-                class="danger small"
-                (click)="removeAttendee(attendee.email)"
-              >
-                Remove
-              </button>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    } @else {
-    <p>No waitlisted attendees</p>
-    }
-  </div>
-
-  <div class="card">
-    <h3>Admin management</h3>
-    @if (admins().length) {
-    <div class="admin-list">
-      @for (admin of admins(); track admin) {
-      <div class="admin-item">
-        <span>{{ admin }}</span>
-        <button class="danger small" (click)="removeAdmin(admin)">
-          Remove
-        </button>
+      @if (event()?.creatorEmail === email()) {
+      <div hlmCard class="border-destructive/50">
+        <div hlmCardHeader>
+          <h3 hlmCardTitle class="text-destructive">Danger Zone</h3>
+        </div>
+        <div hlmCardContent>
+          <button hlmBtn variant="destructive" (click)="deleteEvent()">Delete Event</button>
+        </div>
       </div>
       }
     </div>
-    }
-    <form class="add-admin" (ngSubmit)="addAdmin()">
-      <input
-        type="email"
-        name="email"
-        [(ngModel)]="newAdminEmail"
-        placeholder="Admin email"
-      />
-      <button
-        type="submit"
-        class="primary"
-        [disabled]="!newAdminEmail || loading()"
-      >
-        Add admin
-      </button>
-    </form>
   </div>
-
-  @if (event()?.creatorEmail === email()) {
-  <div class="card danger-zone">
-    <h3>Danger zone</h3>
-    <button class="danger" (click)="deleteEvent()">Delete event</button>
-  </div>
-  }
 </div>
 }

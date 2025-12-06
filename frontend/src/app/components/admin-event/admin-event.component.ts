@@ -16,13 +16,15 @@ import { EventDetailStore } from "../../stores/event-detail.store";
 import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
 import { Meta } from "@angular/platform-browser";
+import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
+import { HlmInputDirective } from "../../ui/ui-input-helm/src";
+import { HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective } from "../../ui/ui-card-helm/src";
 
 @Component({
   selector: "app-admin-event",
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, HlmButtonDirective, HlmInputDirective, HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective],
   templateUrl: "./admin-event.component.html",
-  styleUrls: ["./admin-event.component.scss"],
 })
 export class AdminEventComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

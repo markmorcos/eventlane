@@ -1,11 +1,11 @@
-<div class="app-container" [class.landing-page]="isLandingPage">
+<div class="min-h-screen" [class.bg-transparent]="isLandingPage" [class.bg-background]="!isLandingPage">
   @if (!isLandingPage) {
-  <header>
-    <div class="container header-content">
-      <a routerLink="/" class="logo">
+  <header class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <a routerLink="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
         <svg
-          width="40"
-          height="40"
+          width="32"
+          height="32"
           viewBox="0 0 60 60"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -56,14 +56,14 @@
             stroke-linecap="round"
           />
         </svg>
-        <span class="logo-text">EventLane</span>
+        <span class="text-xl font-bold text-foreground">EventLane</span>
       </a>
       <app-auth-button></app-auth-button>
     </div>
   </header>
   }
 
-  <main [class.with-header]="!isLandingPage">
+  <main>
     <router-outlet></router-outlet>
   </main>
 </div>
