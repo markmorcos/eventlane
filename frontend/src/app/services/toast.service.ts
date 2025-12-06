@@ -13,7 +13,7 @@ export class ToastService {
   private readonly _toasts = signal<Toast[]>([]);
   readonly toasts = computed(() => this._toasts());
 
-  private readonly defaultDuration = 5000; // 5 seconds
+  private readonly defaultDuration = 3000; // 3 seconds
 
   private generateId(): string {
     return Math.random().toString(36).substring(2, 9);

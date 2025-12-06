@@ -44,7 +44,6 @@ export class EventListStore {
     try {
       const newEvent = await firstValueFrom(this.api.createEvent(eventData));
       this._events.update((events) => [newEvent, ...events]);
-      this.toast.success("Event created successfully!");
       return newEvent;
     } catch (err: any) {
       this._error.set("Failed to create event");
