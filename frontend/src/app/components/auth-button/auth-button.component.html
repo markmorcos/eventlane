@@ -1,9 +1,9 @@
-<div class="auth-button">
+<div class="flex items-center gap-3">
   @if (!authLoading()) { @if (currentUser(); as user) {
-  <span class="user-email">{{ user.email }}</span>
-  <button class="secondary" (click)="signOut()">Sign out</button>
+  <span class="text-sm text-muted-foreground">{{ user.email }}</span>
+  <button hlmBtn variant="secondary" (click)="signOut()">Sign out</button>
   } @else {
-  <button class="primary google-btn" (click)="signInWithGoogle()">
+  <button hlmBtn class="gap-2" (click)="signInWithGoogle()">
     <svg
       width="18"
       height="18"

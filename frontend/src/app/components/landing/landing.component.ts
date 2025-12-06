@@ -15,7 +15,6 @@ import { SeoService } from "../../services/seo.service";
     FooterComponent,
   ],
   templateUrl: "./landing.component.html",
-  styleUrl: "./landing.component.scss",
 })
 export class LandingComponent implements OnInit, OnDestroy {
   constructor(private seoService: SeoService) {}
