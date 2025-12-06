@@ -33,19 +33,35 @@ export class ToastService {
     return id;
   }
 
-  success(title: string, description?: string, duration = this.defaultDuration): string {
+  success(
+    title: string,
+    description?: string,
+    duration = this.defaultDuration
+  ): string {
     return this.addToast({ type: "success", title, description, duration });
   }
 
-  error(title: string, description?: string, duration = this.defaultDuration): string {
+  error(
+    title: string,
+    description?: string,
+    duration = this.defaultDuration
+  ): string {
     return this.addToast({ type: "error", title, description, duration });
   }
 
-  info(title: string, description?: string, duration = this.defaultDuration): string {
+  info(
+    title: string,
+    description?: string,
+    duration = this.defaultDuration
+  ): string {
     return this.addToast({ type: "info", title, description, duration });
   }
 
-  warning(title: string, description?: string, duration = this.defaultDuration): string {
+  warning(
+    title: string,
+    description?: string,
+    duration = this.defaultDuration
+  ): string {
     return this.addToast({ type: "warning", title, description, duration });
   }
 

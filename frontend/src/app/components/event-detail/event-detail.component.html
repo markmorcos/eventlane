@@ -1,16 +1,47 @@
-@if (event(); as evt) {
+@if (loading() && !event()) {
+<div class="min-h-screen bg-background py-16">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6">
+    <div class="mb-6">
+      <hlm-skeleton class="h-10 w-48" />
+    </div>
+    <div class="rounded-lg border bg-card p-6 shadow-sm">
+      <div class="space-y-6">
+        <hlm-skeleton class="h-8 w-3/4" />
+        <div class="grid gap-4 sm:grid-cols-3">
+          @for (_ of [1, 2, 3]; track $index) {
+          <div class="rounded-lg border border-border p-4">
+            <hlm-skeleton class="h-4 w-20 mb-2" />
+            <hlm-skeleton class="h-8 w-16" />
+          </div>
+          }
+        </div>
+        <div class="rounded-lg border border-border p-6">
+          <hlm-skeleton class="h-6 w-32 mb-4" />
+          <hlm-skeleton class="h-10 w-full" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+} @else { @if (event(); as evt) {
 <div class="min-h-screen bg-background py-16">
   <div class="mx-auto max-w-3xl px-4 sm:px-6">
     <div class="mb-6 flex items-center justify-between">
       <h2 class="text-3xl font-bold text-foreground">Event Details</h2>
-      <button hlmBtn variant="secondary" routerLink="/events">Back to events</button>
+      <button hlmBtn variant="secondary" routerLink="/events">
+        Back to events
+      </button>
     </div>
 
     <div hlmCard>
       <div hlmCardHeader class="flex flex-row items-center justify-between">
         <h3 hlmCardTitle>{{ evt.title }}</h3>
         @if (evt.isAdmin) {
-        <button hlmBtn variant="secondary" [routerLink]="['/admin/events', evt.slug]">
+        <button
+          hlmBtn
+          variant="secondary"
+          [routerLink]="['/admin/events', evt.slug]"
+        >
           Manage event
         </button>
         }
@@ -37,9 +68,13 @@
             <div class="mt-1">
               <span
                 hlmBadge
-                [variant]="evt.confirmedCount < evt.capacity ? 'success' : 'warning'"
+                [variant]="
+                  evt.confirmedCount < evt.capacity ? 'success' : 'warning'
+                "
               >
-                {{ evt.confirmedCount < evt.capacity ? "Space available" : "Full" }}
+                {{
+                  evt.confirmedCount < evt.capacity ? "Space available" : "Full"
+                }}
               </span>
             </div>
           </div>
@@ -74,12 +109,19 @@
               <span
                 hlmBadge
                 class="mt-1"
-                [variant]="evt.requesterStatus === 'CONFIRMED' ? 'success' : 'warning'"
+                [variant]="
+                  evt.requesterStatus === 'CONFIRMED' ? 'success' : 'warning'
+                "
               >
                 {{ evt.requesterStatus | titlecase }}
               </span>
             </div>
-            <button hlmBtn variant="destructive" (click)="cancel()" [disabled]="loading()">
+            <button
+              hlmBtn
+              variant="destructive"
+              (click)="cancel()"
+              [disabled]="loading()"
+            >
               Cancel RSVP
             </button>
           </div>
@@ -87,11 +129,13 @@
         </div>
         } @else {
         <div class="rounded-lg border border-border p-6 text-center">
-          <p class="text-muted-foreground">Please sign in to RSVP for this event.</p>
+          <p class="text-muted-foreground">
+            Please sign in to RSVP for this event.
+          </p>
         </div>
         }
       </div>
     </div>
   </div>
 </div>
-}
+} }

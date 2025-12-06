@@ -66,13 +66,13 @@ export class HlmSkeletonTableRowComponent {}
   template: `
     <div class="space-y-3">
       @for (_ of items(); track $index) {
-        <div class="flex items-center space-x-4">
-          <hlm-skeleton class="h-12 w-12 rounded-full" />
-          <div class="space-y-2 flex-1">
-            <hlm-skeleton class="h-4 w-1/2" />
-            <hlm-skeleton class="h-3 w-1/3" />
-          </div>
+      <div class="flex items-center space-x-4">
+        <hlm-skeleton class="h-12 w-12 rounded-full" />
+        <div class="space-y-2 flex-1">
+          <hlm-skeleton class="h-4 w-1/2" />
+          <hlm-skeleton class="h-3 w-1/3" />
         </div>
+      </div>
       }
     </div>
   `,

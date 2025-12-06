@@ -5,16 +5,34 @@ import { Router, RouterLink } from "@angular/router";
 
 import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
+import { ToastService } from "../../services/toast.service";
 import { EventListStore } from "../../stores/event-list.store";
+import { toSlug } from "../../utils/slug.util";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
 import { HlmLabelDirective } from "../../ui/ui-label-helm/src";
-import { HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective } from "../../ui/ui-card-helm/src";
+import {
+  HlmCardDirective,
+  HlmCardHeaderDirective,
+  HlmCardTitleDirective,
+  HlmCardContentDirective,
+} from "../../ui/ui-card-helm/src";
 
 @Component({
   selector: "app-create-event",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, HlmButtonDirective, HlmInputDirective, HlmLabelDirective, HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    HlmButtonDirective,
+    HlmInputDirective,
+    HlmLabelDirective,
+    HlmCardDirective,
+    HlmCardHeaderDirective,
+    HlmCardTitleDirective,
+    HlmCardContentDirective,
+  ],
   templateUrl: "./create-event.component.html",
 })
 export class CreateEventComponent implements OnInit {
@@ -22,6 +40,7 @@ export class CreateEventComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private seoService = inject(SeoService);
+  private toastService = inject(ToastService);
 
   isAuthenticated = this.authService.isAuthenticated;
   loading = this.store.loading;
@@ -45,15 +64,32 @@ export class CreateEventComponent implements OnInit {
 
   generateSlug() {
     if (this.title) {
-      this.slug = this.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+      this.slug = toSlug(this.title);
     }
   }
 
+  isSlugValid(): boolean {
+    return /^[a-z0-9]+(-[a-z0-9]+)*$/.test(this.slug);
+  }
+
+  isFormValid(): boolean {
+    return (
+      this.title.trim().length > 0 &&
+      this.slug.trim().length > 0 &&
+      this.isSlugValid() &&
+      this.capacity >= 1 &&
+      !this.loading()
+    );
+  }
+
   async createEvent() {
-    if (!this.title || !this.slug || this.capacity < 1) return;
+    if (!this.isFormValid()) {
+      this.toastService.error(
+        "Invalid form",
+        "Please check all fields and try again."
+      );
+      return;
+    }
 
     const event = await this.store.createEvent({
       title: this.title,
@@ -62,7 +98,16 @@ export class CreateEventComponent implements OnInit {
     });
 
     if (event) {
+      this.toastService.success(
+        "Event created!",
+        `${event.title} is ready to accept RSVPs.`
+      );
       this.router.navigate(["/events", event.slug]);
+    } else {
+      this.toastService.error(
+        "Failed to create event",
+        this.store.error() || "Please try again or choose a different slug."
+      );
     }
   }
 }

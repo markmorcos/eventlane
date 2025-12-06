@@ -28,22 +28,22 @@ export type AvatarVariants = VariantProps<typeof avatarVariants>;
   template: `
     <span [class]="_computedClass()">
       @if (src() && !imageError()) {
-        <img
-          [src]="src()"
-          [alt]="alt()"
-          class="aspect-square h-full w-full object-cover"
-          (error)="onImageError()"
-        />
+      <img
+        [src]="src()"
+        [alt]="alt()"
+        class="aspect-square h-full w-full object-cover"
+        (error)="onImageError()"
+      />
       } @else {
-        <span
-          class="flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground font-medium"
-          [class.text-xs]="size() === 'sm'"
-          [class.text-sm]="size() === 'default'"
-          [class.text-base]="size() === 'lg'"
-          [class.text-lg]="size() === 'xl'"
-        >
-          {{ initials() }}
-        </span>
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground font-medium"
+        [class.text-xs]="size() === 'sm'"
+        [class.text-sm]="size() === 'default'"
+        [class.text-base]="size() === 'lg'"
+        [class.text-lg]="size() === 'xl'"
+      >
+        {{ initials() }}
+      </span>
       }
     </span>
   `,

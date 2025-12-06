@@ -7,11 +7,19 @@ import { SeoService } from "../../services/seo.service";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
 import { HlmSpinnerComponent } from "../../ui/ui-spinner-helm/src";
+import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
 
 @Component({
   selector: "app-events-list",
   standalone: true,
-  imports: [CommonModule, RouterLink, HlmButtonDirective, HlmBadgeDirective, HlmSpinnerComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    HlmButtonDirective,
+    HlmBadgeDirective,
+    HlmSpinnerComponent,
+    HlmSkeletonCardComponent,
+  ],
   templateUrl: "./events-list.component.html",
 })
 export class EventsListComponent implements OnInit {

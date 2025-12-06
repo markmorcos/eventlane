@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-features',
+  selector: "app-features",
   standalone: true,
   imports: [],
-  templateUrl: './features.component.html',
+  templateUrl: "./features.component.html",
 })
-export class FeaturesComponent {
-
-}
+export class FeaturesComponent {}

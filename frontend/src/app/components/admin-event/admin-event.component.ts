@@ -18,12 +18,33 @@ import { SeoService } from "../../services/seo.service";
 import { Meta } from "@angular/platform-browser";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
-import { HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective } from "../../ui/ui-card-helm/src";
+import {
+  HlmCardDirective,
+  HlmCardHeaderDirective,
+  HlmCardTitleDirective,
+  HlmCardContentDirective,
+} from "../../ui/ui-card-helm/src";
+import {
+  HlmSkeletonComponent,
+  HlmSkeletonTableRowComponent,
+} from "../../ui/ui-skeleton-helm/src";
 
 @Component({
   selector: "app-admin-event",
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HlmButtonDirective, HlmInputDirective, HlmCardDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmCardContentDirective],
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    HlmButtonDirective,
+    HlmInputDirective,
+    HlmCardDirective,
+    HlmCardHeaderDirective,
+    HlmCardTitleDirective,
+    HlmCardContentDirective,
+    HlmSkeletonComponent,
+    HlmSkeletonTableRowComponent,
+  ],
   templateUrl: "./admin-event.component.html",
 })
 export class AdminEventComponent implements OnInit, OnDestroy {

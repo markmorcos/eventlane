@@ -8,8 +8,10 @@
     </div>
 
     @if (loading()) {
-    <div class="flex justify-center py-12">
-      <hlm-spinner />
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (_ of [1, 2, 3, 4, 5, 6]; track $index) {
+      <hlm-skeleton-card />
+      }
     </div>
     } @else if (events().length === 0) {
     <div class="flex flex-col items-center justify-center py-20 text-center">
@@ -29,33 +31,51 @@
           stroke-linecap="round"
         />
       </svg>
-      <h3 class="text-2xl font-semibold text-foreground mb-2">Create your first event now!</h3>
-      <p class="text-muted-foreground">You can create and manage events once you sign in.</p>
+      <h3 class="text-2xl font-semibold text-foreground mb-2">
+        Create your first event now!
+      </h3>
+      <p class="text-muted-foreground">
+        You can create and manage events once you sign in.
+      </p>
     </div>
     } @else {
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       @for (event of events(); track event.slug) {
-      <div class="cursor-pointer rounded-xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-           [routerLink]="['/events', event.slug]">
-        <h3 class="text-xl font-semibold text-foreground mb-4">{{ event.title }}</h3>
+      <div
+        class="cursor-pointer rounded-xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+        [routerLink]="['/events', event.slug]"
+      >
+        <h3 class="text-xl font-semibold text-foreground mb-4">
+          {{ event.title }}
+        </h3>
         <div class="space-y-3">
           <div class="flex justify-between text-sm">
             <span class="text-muted-foreground">Capacity:</span>
-            <span class="font-medium text-foreground">{{ event.confirmedCount }} / {{ event.capacity }}</span>
+            <span class="font-medium text-foreground"
+              >{{ event.confirmedCount }} / {{ event.capacity }}</span
+            >
           </div>
           @if (event.waitlistedCount > 0) {
           <div class="flex justify-between text-sm">
             <span class="text-muted-foreground">Waitlist:</span>
-            <span class="font-medium text-foreground">{{ event.waitlistedCount }}</span>
+            <span class="font-medium text-foreground">{{
+              event.waitlistedCount
+            }}</span>
           </div>
           }
           <div class="flex justify-between text-sm items-center">
             <span class="text-muted-foreground">Status:</span>
             <span
               hlmBadge
-              [variant]="event.confirmedCount < event.capacity ? 'success' : 'warning'"
+              [variant]="
+                event.confirmedCount < event.capacity ? 'success' : 'warning'
+              "
             >
-              {{ event.confirmedCount < event.capacity ? "Space available" : "Full" }}
+              {{
+                event.confirmedCount < event.capacity
+                  ? "Space available"
+                  : "Full"
+              }}
             </span>
           </div>
         </div>

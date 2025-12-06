@@ -2,7 +2,9 @@
   <div class="mx-auto max-w-2xl px-4 sm:px-6">
     <div class="mb-6 flex items-center justify-between">
       <h2 class="text-3xl font-bold text-foreground">Create New Event</h2>
-      <button hlmBtn variant="secondary" routerLink="/events">Back to events</button>
+      <button hlmBtn variant="secondary" routerLink="/events">
+        Back to events
+      </button>
     </div>
 
     @if (isAuthenticated()) {
@@ -35,10 +37,18 @@
               [(ngModel)]="slug"
               name="slug"
               placeholder="summer-tech-conference-2025"
-              pattern="[a-z0-9-]+"
+              (input)="slug = slug.toLowerCase()"
               required
             />
-            <small class="text-sm text-muted-foreground">Only lowercase letters, numbers, and hyphens</small>
+            <small
+              class="text-sm"
+              [class.text-muted-foreground]="isSlugValid() || !slug"
+              [class.text-destructive]="!isSlugValid() && slug"
+            >
+              @if (!isSlugValid() && slug) { Invalid format. Only lowercase
+              letters, numbers, and hyphens (no consecutive or trailing
+              hyphens). } @else { Only lowercase letters, numbers, and hyphens }
+            </small>
           </div>
 
           <div class="space-y-2">
@@ -52,21 +62,23 @@
               min="1"
               required
             />
-            <small class="text-sm text-muted-foreground">Maximum number of confirmed attendees</small>
+            <small class="text-sm text-muted-foreground"
+              >Maximum number of confirmed attendees</small
+            >
           </div>
 
           <div class="flex justify-end">
-            <button
-              hlmBtn
-              type="submit"
-              [disabled]="!title || !slug || capacity < 1 || loading()"
-            >
-              Create Event
+            <button hlmBtn type="submit" [disabled]="!isFormValid()">
+              @if (loading()) { Creating... } @else { Create Event }
             </button>
           </div>
 
           @if (error()) {
-          <p class="text-sm" [class.text-destructive]="error()" [class.text-success]="!error()">
+          <p
+            class="text-sm"
+            [class.text-destructive]="error()"
+            [class.text-success]="!error()"
+          >
             {{ error() }}
           </p>
           }

@@ -1,8 +1,39 @@
-@if (event(); as evt) {
+@if (loading() && !event()) {
+<div class="min-h-screen bg-background py-16">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    <div class="mb-8">
+      <hlm-skeleton class="h-10 w-64 mb-4" />
+    </div>
+
+    <div class="space-y-6">
+      <div class="rounded-lg border bg-card p-6 shadow-sm">
+        <hlm-skeleton class="h-6 w-48 mb-4" />
+        <div class="flex gap-3">
+          <hlm-skeleton class="h-10 flex-1" />
+          <hlm-skeleton class="h-10 w-32" />
+        </div>
+      </div>
+
+      @for (_ of [1, 2]; track $index) {
+      <div class="rounded-lg border bg-card p-6 shadow-sm">
+        <hlm-skeleton class="h-6 w-48 mb-4" />
+        <div class="space-y-3">
+          @for (row of [1, 2, 3]; track row) {
+          <hlm-skeleton-table-row />
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+} @else { @if (event(); as evt) {
 <div class="min-h-screen bg-background py-16">
   <div class="mx-auto max-w-5xl px-4 sm:px-6">
     <div class="mb-8 flex items-center justify-between">
-      <h2 class="text-3xl font-bold text-foreground">Manage: {{ evt.title }}</h2>
+      <h2 class="text-3xl font-bold text-foreground">
+        Manage: {{ evt.title }}
+      </h2>
       <button hlmBtn variant="secondary" [routerLink]="['/events', evt.slug]">
         Back to event
       </button>
@@ -13,10 +44,10 @@
         <div hlmCardHeader>
           <div class="rounded-lg bg-primary/10 p-4 mb-4">
             <p class="text-sm text-foreground">
-              <strong>Note:</strong> Adjusting capacity will automatically manage
-              attendee status. Reducing capacity moves confirmed attendees to the
-              waitlist, while increasing capacity promotes waitlisted attendees to
-              confirmed status.
+              <strong>Note:</strong> Adjusting capacity will automatically
+              manage attendee status. Reducing capacity moves confirmed
+              attendees to the waitlist, while increasing capacity promotes
+              waitlisted attendees to confirmed status.
             </p>
           </div>
           <h3 hlmCardTitle>Capacity Management</h3>
@@ -48,7 +79,9 @@
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
-                <tr class="border-b border-border text-left text-sm text-muted-foreground">
+                <tr
+                  class="border-b border-border text-left text-sm text-muted-foreground"
+                >
                   <th class="pb-3 font-medium">Name</th>
                   <th class="pb-3 font-medium">Email</th>
                   <th class="pb-3 font-medium">Registered</th>
@@ -59,8 +92,12 @@
                 @for (attendee of confirmed(); track attendee.id) {
                 <tr class="border-b border-border">
                   <td class="py-3 text-foreground">{{ attendee.name }}</td>
-                  <td class="py-3 text-muted-foreground">{{ attendee.email }}</td>
-                  <td class="py-3 text-muted-foreground">{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.email }}
+                  </td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}
+                  </td>
                   <td class="py-3">
                     <button
                       hlmBtn
@@ -91,7 +128,9 @@
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
-                <tr class="border-b border-border text-left text-sm text-muted-foreground">
+                <tr
+                  class="border-b border-border text-left text-sm text-muted-foreground"
+                >
                   <th class="pb-3 font-medium">Name</th>
                   <th class="pb-3 font-medium">Email</th>
                   <th class="pb-3 font-medium">Registered</th>
@@ -102,8 +141,12 @@
                 @for (attendee of waitlisted(); track attendee.id) {
                 <tr class="border-b border-border">
                   <td class="py-3 text-foreground">{{ attendee.name }}</td>
-                  <td class="py-3 text-muted-foreground">{{ attendee.email }}</td>
-                  <td class="py-3 text-muted-foreground">{{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}</td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.email }}
+                  </td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}
+                  </td>
                   <td class="py-3">
                     <button
                       hlmBtn
@@ -133,9 +176,16 @@
           @if (admins().length) {
           <div class="space-y-2">
             @for (admin of admins(); track admin) {
-            <div class="flex items-center justify-between rounded-lg border border-border p-3">
+            <div
+              class="flex items-center justify-between rounded-lg border border-border p-3"
+            >
               <span class="text-sm text-foreground">{{ admin }}</span>
-              <button hlmBtn variant="destructive" size="sm" (click)="removeAdmin(admin)">
+              <button
+                hlmBtn
+                variant="destructive"
+                size="sm"
+                (click)="removeAdmin(admin)"
+              >
                 Remove
               </button>
             </div>
@@ -168,11 +218,13 @@
           <h3 hlmCardTitle class="text-destructive">Danger Zone</h3>
         </div>
         <div hlmCardContent>
-          <button hlmBtn variant="destructive" (click)="deleteEvent()">Delete Event</button>
+          <button hlmBtn variant="destructive" (click)="deleteEvent()">
+            Delete Event
+          </button>
         </div>
       </div>
       }
     </div>
   </div>
 </div>
-}
+} }

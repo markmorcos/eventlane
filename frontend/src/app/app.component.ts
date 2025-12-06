@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   Router,
   NavigationEnd,
@@ -8,9 +8,11 @@ import {
 import { filter } from "rxjs/operators";
 import { CommonModule } from "@angular/common";
 
+import { AuthService } from "./services/auth.service";
 import { AuthButtonComponent } from "./components/auth-button/auth-button.component";
 import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.component";
 import { ToastContainerComponent } from "./components/toast-container/toast-container.component";
+import { FooterComponent } from "./components/landing/footer/footer.component";
 
 @Component({
   selector: "app-root",
@@ -18,6 +20,7 @@ import { ToastContainerComponent } from "./components/toast-container/toast-cont
   imports: [
     CommonModule,
     RouterOutlet,
+    FooterComponent,
     RouterLink,
     AuthButtonComponent,
     CookieBannerComponent,
@@ -26,6 +29,9 @@ import { ToastContainerComponent } from "./components/toast-container/toast-cont
   templateUrl: "./app.component.html",
 })
 export class AppComponent {
+  private authService = inject(AuthService);
+
+  authLoading = this.authService.authLoading;
   isLandingPage = false;
 
   constructor(private router: Router) {

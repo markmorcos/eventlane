@@ -1,4 +1,13 @@
-import { Component, computed, input, output, signal, HostListener, ElementRef, inject } from "@angular/core";
+import {
+  Component,
+  computed,
+  input,
+  output,
+  signal,
+  HostListener,
+  ElementRef,
+  inject,
+} from "@angular/core";
 import { hlm } from "@spartan-ng/ui-core";
 import type { ClassValue } from "clsx";
 
@@ -12,13 +21,13 @@ import type { ClassValue } from "clsx";
       </div>
 
       @if (isOpen()) {
-        <div
-          class="absolute z-50 mt-2 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
-          [class.right-0]="align() === 'end'"
-          [class.left-0]="align() === 'start'"
-        >
-          <ng-content />
-        </div>
+      <div
+        class="absolute z-50 mt-2 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
+        [class.right-0]="align() === 'end'"
+        [class.left-0]="align() === 'start'"
+      >
+        <ng-content />
+      </div>
       }
     </div>
   `,
@@ -75,7 +84,9 @@ export class HlmMenuSeparatorComponent {}
 @Component({
   selector: "hlm-menu-label",
   standalone: true,
-  template: `<div class="px-2 py-1.5 text-sm font-semibold"><ng-content /></div>`,
+  template: `<div class="px-2 py-1.5 text-sm font-semibold">
+    <ng-content />
+  </div>`,
 })
 export class HlmMenuLabelComponent {}
 

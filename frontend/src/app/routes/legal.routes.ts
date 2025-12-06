@@ -4,9 +4,9 @@ export const legalRoutes: Routes = [
   {
     path: "privacy-policy",
     loadComponent: () =>
-      import("../components/legal/privacy-policy/privacy-policy.component").then(
-        (m) => m.PrivacyPolicyComponent
-      ),
+      import(
+        "../components/legal/privacy-policy/privacy-policy.component"
+      ).then((m) => m.PrivacyPolicyComponent),
   },
   {
     path: "terms-of-service",
