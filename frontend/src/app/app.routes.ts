@@ -1,9 +1,14 @@
 import { Routes } from "@angular/router";
-
-import { LandingComponent } from "./components/landing/landing.component";
+import { adminGuard } from "./guards/admin.guard";
 
 export const routes: Routes = [
-  { path: "", component: LandingComponent },
+  {
+    path: "",
+    loadComponent: () =>
+      import("./components/landing/landing.component").then(
+        (m) => m.LandingComponent
+      ),
+  },
   {
     path: "events",
     loadComponent: () =>
@@ -27,38 +32,17 @@ export const routes: Routes = [
   },
   {
     path: "admin/events/:slug",
+    canActivate: [adminGuard],
     loadComponent: () =>
       import("./components/admin-event/admin-event.component").then(
         (m) => m.AdminEventComponent
       ),
   },
+  // Legal pages - lazy loaded as a group
   {
-    path: "privacy-policy",
-    loadComponent: () =>
-      import("./components/legal/privacy-policy/privacy-policy.component").then(
-        (m) => m.PrivacyPolicyComponent
-      ),
-  },
-  {
-    path: "terms-of-service",
-    loadComponent: () =>
-      import(
-        "./components/legal/terms-of-service/terms-of-service.component"
-      ).then((m) => m.TermsOfServiceComponent),
-  },
-  {
-    path: "cookie-policy",
-    loadComponent: () =>
-      import("./components/legal/cookie-policy/cookie-policy.component").then(
-        (m) => m.CookiePolicyComponent
-      ),
-  },
-  {
-    path: "gdpr",
-    loadComponent: () =>
-      import("./components/legal/gdpr/gdpr.component").then(
-        (m) => m.GdprComponent
-      ),
+    path: "",
+    loadChildren: () =>
+      import("./routes/legal.routes").then((m) => m.legalRoutes),
   },
   { path: "**", redirectTo: "/" },
 ];

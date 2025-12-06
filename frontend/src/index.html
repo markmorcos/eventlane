@@ -24,6 +24,11 @@
     <meta name="author" content="EventLane" />
     <meta name="theme-color" content="#2D5BFF" />
 
+    <!-- Polyfill for SockJS (must be before other scripts) -->
+    <script>
+      window.global = window;
+    </script>
+
     <!-- Canonical URL -->
     <link rel="canonical" href="https://eventlane.io/" />
 

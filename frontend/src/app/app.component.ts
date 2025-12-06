@@ -10,6 +10,7 @@ import { CommonModule } from "@angular/common";
 
 import { AuthButtonComponent } from "./components/auth-button/auth-button.component";
 import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.component";
+import { ToastContainerComponent } from "./components/toast-container/toast-container.component";
 
 @Component({
   selector: "app-root",
@@ -20,6 +21,7 @@ import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.
     RouterLink,
     AuthButtonComponent,
     CookieBannerComponent,
+    ToastContainerComponent,
   ],
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
