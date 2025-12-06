@@ -1,10 +1,10 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { Client, IMessage } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
 import { Subject } from "rxjs";
 
-import { EventDelta } from "../models/event-delta.model";
 import { environment } from "../../environments/environment";
+
+import { EventDelta } from "../models/event-delta.model";
 
 @Injectable({ providedIn: "root" })
 export class EventSocketService implements OnDestroy {
@@ -19,7 +19,7 @@ export class EventSocketService implements OnDestroy {
   constructor() {
     this.client = new Client({
       reconnectDelay: 3000,
-      webSocketFactory: () => new SockJS(environment.wsBaseUrl),
+      webSocketFactory: () => new WebSocket(environment.wsBaseUrl),
     });
 
     this.client.onConnect = () => {

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 
@@ -19,10 +19,8 @@ import {
 } from "../../ui/ui-card-helm/src";
 
 @Component({
-  selector: "app-create-event",
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: "app-create-event",
+    imports: [
     FormsModule,
     RouterLink,
     HlmButtonDirective,
@@ -31,9 +29,9 @@ import {
     HlmCardDirective,
     HlmCardHeaderDirective,
     HlmCardTitleDirective,
-    HlmCardContentDirective,
-  ],
-  templateUrl: "./create-event.component.html",
+    HlmCardContentDirective
+],
+    templateUrl: "./create-event.component.html"
 })
 export class CreateEventComponent implements OnInit {
   private store = inject(EventListStore);

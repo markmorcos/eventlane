@@ -1,13 +1,12 @@
 import { Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { AuthService } from "../../services/auth.service";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 
 @Component({
-  selector: "app-auth-button",
-  standalone: true,
-  imports: [CommonModule, HlmButtonDirective],
-  templateUrl: "./auth-button.component.html",
+    selector: "app-auth-button",
+    imports: [HlmButtonDirective],
+    templateUrl: "./auth-button.component.html"
 })
 export class AuthButtonComponent {
   currentUser = this.authService.currentUser;

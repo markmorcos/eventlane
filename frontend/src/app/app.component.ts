@@ -6,7 +6,7 @@ import {
   RouterLink,
 } from "@angular/router";
 import { filter } from "rxjs/operators";
-import { CommonModule } from "@angular/common";
+
 
 import { AuthService } from "./services/auth.service";
 import { AuthButtonComponent } from "./components/auth-button/auth-button.component";
@@ -15,26 +15,25 @@ import { ToastContainerComponent } from "./components/toast-container/toast-cont
 import { FooterComponent } from "./components/landing/footer/footer.component";
 
 @Component({
-  selector: "app-root",
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: "app-root",
+    imports: [
     RouterOutlet,
     FooterComponent,
     RouterLink,
     AuthButtonComponent,
     CookieBannerComponent,
-    ToastContainerComponent,
-  ],
-  templateUrl: "./app.component.html",
+    ToastContainerComponent
+],
+    templateUrl: "./app.component.html"
 })
 export class AppComponent {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   authLoading = this.authService.authLoading;
   isLandingPage = false;
 
-  constructor(private router: Router) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {

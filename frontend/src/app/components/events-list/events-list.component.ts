@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { RouterLink } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import { EventListStore } from "../../stores/event-list.store";
@@ -9,16 +9,14 @@ import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
 import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
 
 @Component({
-  selector: "app-events-list",
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: "app-events-list",
+    imports: [
     RouterLink,
     HlmButtonDirective,
     HlmBadgeDirective,
-    HlmSkeletonCardComponent,
-  ],
-  templateUrl: "./events-list.component.html",
+    HlmSkeletonCardComponent
+],
+    templateUrl: "./events-list.component.html"
 })
 export class EventsListComponent implements OnInit {
   private store = inject(EventListStore);

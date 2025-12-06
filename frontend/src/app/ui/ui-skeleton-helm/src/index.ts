@@ -20,10 +20,9 @@ export class HlmSkeletonComponent {
 
 // Skeleton presets for common use cases
 @Component({
-  selector: "hlm-skeleton-card",
-  standalone: true,
-  imports: [HlmSkeletonComponent],
-  template: `
+    selector: "hlm-skeleton-card",
+    imports: [HlmSkeletonComponent],
+    template: `
     <div class="rounded-lg border bg-card p-6 shadow-sm">
       <div class="space-y-4">
         <hlm-skeleton class="h-6 w-3/4" />
@@ -38,15 +37,14 @@ export class HlmSkeletonComponent {
         </div>
       </div>
     </div>
-  `,
+  `
 })
 export class HlmSkeletonCardComponent {}
 
 @Component({
-  selector: "hlm-skeleton-table-row",
-  standalone: true,
-  imports: [HlmSkeletonComponent],
-  template: `
+    selector: "hlm-skeleton-table-row",
+    imports: [HlmSkeletonComponent],
+    template: `
     <div class="flex items-center space-x-4 py-4 border-b">
       <hlm-skeleton class="h-10 w-10 rounded-full" />
       <div class="space-y-2 flex-1">
@@ -55,15 +53,14 @@ export class HlmSkeletonCardComponent {}
       </div>
       <hlm-skeleton class="h-8 w-20" />
     </div>
-  `,
+  `
 })
 export class HlmSkeletonTableRowComponent {}
 
 @Component({
-  selector: "hlm-skeleton-list",
-  standalone: true,
-  imports: [HlmSkeletonComponent],
-  template: `
+    selector: "hlm-skeleton-list",
+    imports: [HlmSkeletonComponent],
+    template: `
     <div class="space-y-3">
       @for (_ of items(); track $index) {
       <div class="flex items-center space-x-4">
@@ -75,7 +72,7 @@ export class HlmSkeletonTableRowComponent {}
       </div>
       }
     </div>
-  `,
+  `
 })
 export class HlmSkeletonListComponent {
   public readonly count = input<number>(3);

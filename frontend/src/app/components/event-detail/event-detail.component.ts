@@ -28,23 +28,22 @@ import { HlmSkeletonComponent } from "../../ui/ui-skeleton-helm/src";
 import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
 
 @Component({
-  selector: "app-event-detail",
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    FormsModule,
-    HlmButtonDirective,
-    HlmInputDirective,
-    HlmBadgeDirective,
-    HlmCardDirective,
-    HlmCardHeaderDirective,
-    HlmCardTitleDirective,
-    HlmCardContentDirective,
-    HlmSkeletonComponent,
-    HlmAlertDialogComponent,
-  ],
-  templateUrl: "./event-detail.component.html",
+    selector: "app-event-detail",
+    imports: [
+        CommonModule,
+        RouterLink,
+        FormsModule,
+        HlmButtonDirective,
+        HlmInputDirective,
+        HlmBadgeDirective,
+        HlmCardDirective,
+        HlmCardHeaderDirective,
+        HlmCardTitleDirective,
+        HlmCardContentDirective,
+        HlmSkeletonComponent,
+        HlmAlertDialogComponent,
+    ],
+    templateUrl: "./event-detail.component.html"
 })
 export class EventDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

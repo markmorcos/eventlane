@@ -32,7 +32,6 @@ import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
 
 @Component({
   selector: "app-admin-event",
-  standalone: true,
   imports: [
     CommonModule,
     RouterLink,

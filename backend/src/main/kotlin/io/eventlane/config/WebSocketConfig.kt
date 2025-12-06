@@ -17,7 +17,6 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint("/ws")
-            .setAllowedOrigins("http://localhost:4200", "https://eventlane.io")
-            .withSockJS()
+            .setAllowedOriginPatterns("http://localhost:4200", "https://eventlane.io")
     }
 }

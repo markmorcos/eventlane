@@ -4,10 +4,9 @@ import type { ClassValue } from "clsx";
 import { HlmButtonDirective } from "../../ui-button-helm/src";
 
 @Component({
-  selector: "hlm-alert-dialog",
-  standalone: true,
-  imports: [HlmButtonDirective],
-  template: `
+    selector: "hlm-alert-dialog",
+    imports: [HlmButtonDirective],
+    template: `
     @if (open()) {
     <div class="fixed inset-0 z-50 flex items-center justify-center">
       <!-- Backdrop -->
@@ -43,7 +42,7 @@ import { HlmButtonDirective } from "../../ui-button-helm/src";
       </div>
     </div>
     }
-  `,
+  `
 })
 export class HlmAlertDialogComponent {
   public readonly open = input<boolean>(false);
