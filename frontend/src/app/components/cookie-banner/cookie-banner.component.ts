@@ -1,13 +1,11 @@
 import { Component, signal } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 
 @Component({
   selector: "app-cookie-banner",
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: "./cookie-banner.component.html",
-  styleUrls: ["./cookie-banner.component.scss"],
 })
 export class CookieBannerComponent {
   showBanner = signal(false);
