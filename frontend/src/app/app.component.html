@@ -1,145 +1,145 @@
 @if (authLoading()) {
-<div class="min-h-screen bg-background flex items-center justify-center">
-  <div class="flex flex-col items-center gap-4">
-    <svg
-      width="48"
-      height="48"
-      viewBox="0 0 60 60"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      class="animate-pulse"
-    >
-      <line
-        x1="10"
-        y1="20"
-        x2="50"
-        y2="20"
-        stroke="#2D5BFF"
-        stroke-width="3"
-        stroke-linecap="round"
-      />
-      <line
-        x1="10"
-        y1="40"
-        x2="50"
-        y2="40"
-        stroke="#2D5BFF"
-        stroke-width="3"
-        stroke-linecap="round"
-      />
-      <line
-        x1="10"
-        y1="30"
-        x2="20"
-        y2="30"
-        stroke="#2D5BFF"
-        stroke-width="2"
-        stroke-linecap="round"
-      />
-      <line
-        x1="25"
-        y1="30"
-        x2="35"
-        y2="30"
-        stroke="#2D5BFF"
-        stroke-width="2"
-        stroke-linecap="round"
-      />
-      <line
-        x1="40"
-        y1="30"
-        x2="50"
-        y2="30"
-        stroke="#2D5BFF"
-        stroke-width="2"
-        stroke-linecap="round"
-      />
-    </svg>
-    <span class="text-sm text-muted-foreground">Loading...</span>
-  </div>
-</div>
-} @else {
-<div
-  class="min-h-screen"
-  [class.bg-transparent]="isLandingPage"
-  [class.bg-background]="!isLandingPage"
->
-  @if (!isLandingPage) {
-  <header
-    class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-  >
-    <div
-      class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"
-    >
-      <a
-        routerLink="/"
-        class="flex items-center gap-2 hover:opacity-80 transition-opacity"
+  <div class="min-h-screen bg-background flex items-center justify-center">
+    <div class="flex flex-col items-center gap-4">
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 60 60"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="animate-pulse"
       >
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 60 60"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <line
-            x1="10"
-            y1="20"
-            x2="50"
-            y2="20"
-            stroke="#2D5BFF"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="10"
-            y1="40"
-            x2="50"
-            y2="40"
-            stroke="#2D5BFF"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="10"
-            y1="30"
-            x2="20"
-            y2="30"
-            stroke="#2D5BFF"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-          <line
-            x1="25"
-            y1="30"
-            x2="35"
-            y2="30"
-            stroke="#2D5BFF"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-          <line
-            x1="40"
-            y1="30"
-            x2="50"
-            y2="30"
-            stroke="#2D5BFF"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-        </svg>
-        <span class="text-xl font-bold text-foreground">EventLane</span>
-      </a>
-      <app-auth-button></app-auth-button>
+        <line
+          x1="10"
+          y1="20"
+          x2="50"
+          y2="20"
+          stroke="#2D5BFF"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+        <line
+          x1="10"
+          y1="40"
+          x2="50"
+          y2="40"
+          stroke="#2D5BFF"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+        <line
+          x1="10"
+          y1="30"
+          x2="20"
+          y2="30"
+          stroke="#2D5BFF"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <line
+          x1="25"
+          y1="30"
+          x2="35"
+          y2="30"
+          stroke="#2D5BFF"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <line
+          x1="40"
+          y1="30"
+          x2="50"
+          y2="30"
+          stroke="#2D5BFF"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+      <span class="text-sm text-muted-foreground">Loading...</span>
     </div>
-  </header>
-  }
+  </div>
+} @else {
+  <div
+    class="min-h-screen"
+    [class.bg-transparent]="isLandingPage"
+    [class.bg-background]="!isLandingPage"
+  >
+    @if (!isLandingPage) {
+      <header
+        class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      >
+        <div
+          class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"
+        >
+          <a
+            routerLink="/"
+            class="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 60 60"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line
+                x1="10"
+                y1="20"
+                x2="50"
+                y2="20"
+                stroke="#2D5BFF"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+              <line
+                x1="10"
+                y1="40"
+                x2="50"
+                y2="40"
+                stroke="#2D5BFF"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+              <line
+                x1="10"
+                y1="30"
+                x2="20"
+                y2="30"
+                stroke="#2D5BFF"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="25"
+                y1="30"
+                x2="35"
+                y2="30"
+                stroke="#2D5BFF"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="40"
+                y1="30"
+                x2="50"
+                y2="30"
+                stroke="#2D5BFF"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span class="text-xl font-bold text-foreground">EventLane</span>
+          </a>
+          <app-auth-button></app-auth-button>
+        </div>
+      </header>
+    }
 
-  <main>
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-  </main>
-</div>
+    <main>
+      <router-outlet></router-outlet>
+      <app-footer></app-footer>
+    </main>
+  </div>
 }
 
 <app-cookie-banner></app-cookie-banner>

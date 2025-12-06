@@ -23,7 +23,7 @@ export class AuthService {
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
   readonly userEmail = computed(() => this.currentUser()?.email ?? null);
   readonly userDisplayName = computed(
-    () => this.currentUser()?.displayName ?? ""
+    () => this.currentUser()?.displayName ?? "",
   );
 
   constructor() {

@@ -36,7 +36,7 @@ export class ToastService {
   success(
     title: string,
     description?: string,
-    duration = this.defaultDuration
+    duration = this.defaultDuration,
   ): string {
     return this.addToast({ type: "success", title, description, duration });
   }
@@ -44,7 +44,7 @@ export class ToastService {
   error(
     title: string,
     description?: string,
-    duration = this.defaultDuration
+    duration = this.defaultDuration,
   ): string {
     return this.addToast({ type: "error", title, description, duration });
   }
@@ -52,7 +52,7 @@ export class ToastService {
   info(
     title: string,
     description?: string,
-    duration = this.defaultDuration
+    duration = this.defaultDuration,
   ): string {
     return this.addToast({ type: "info", title, description, duration });
   }
@@ -60,7 +60,7 @@ export class ToastService {
   warning(
     title: string,
     description?: string,
-    duration = this.defaultDuration
+    duration = this.defaultDuration,
   ): string {
     return this.addToast({ type: "warning", title, description, duration });
   }

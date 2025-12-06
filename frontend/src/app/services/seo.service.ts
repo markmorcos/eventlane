@@ -20,7 +20,10 @@ export class SeoService {
   private defaultImage = "https://eventlane.io/og-image.png";
   private baseUrl = "https://eventlane.io";
 
-  constructor(private meta: Meta, private title: Title) {}
+  constructor(
+    private meta: Meta,
+    private title: Title,
+  ) {}
 
   updateTags(seoData: SeoData): void {
     const title = seoData.title || this.defaultTitle;
@@ -59,7 +62,7 @@ export class SeoService {
 
   updateCanonicalUrl(url: string): void {
     let link: HTMLLinkElement | null = document.querySelector(
-      'link[rel="canonical"]'
+      'link[rel="canonical"]',
     );
 
     if (link) {
@@ -74,7 +77,7 @@ export class SeoService {
 
   addStructuredData(data: any): void {
     let script: HTMLScriptElement | null = document.querySelector(
-      'script[type="application/ld+json"]'
+      'script[type="application/ld+json"]',
     );
 
     if (script) {

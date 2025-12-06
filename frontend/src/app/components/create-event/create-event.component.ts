@@ -19,8 +19,8 @@ import {
 } from "../../ui/ui-card-helm/src";
 
 @Component({
-    selector: "app-create-event",
-    imports: [
+  selector: "app-create-event",
+  imports: [
     FormsModule,
     RouterLink,
     HlmButtonDirective,
@@ -29,9 +29,9 @@ import {
     HlmCardDirective,
     HlmCardHeaderDirective,
     HlmCardTitleDirective,
-    HlmCardContentDirective
-],
-    templateUrl: "./create-event.component.html"
+    HlmCardContentDirective,
+  ],
+  templateUrl: "./create-event.component.html",
 })
 export class CreateEventComponent implements OnInit {
   private store = inject(EventListStore);
@@ -84,7 +84,7 @@ export class CreateEventComponent implements OnInit {
     if (!this.isFormValid()) {
       this.toastService.error(
         "Invalid form",
-        "Please check all fields and try again."
+        "Please check all fields and try again.",
       );
       return;
     }
@@ -98,13 +98,13 @@ export class CreateEventComponent implements OnInit {
     if (event) {
       this.toastService.success(
         "Event created!",
-        `${event.title} is ready to accept RSVPs.`
+        `${event.title} is ready to accept RSVPs.`,
       );
       this.router.navigate(["/events", event.slug]);
     } else {
       this.toastService.error(
         "Failed to create event",
-        this.store.error() || "Please try again or choose a different slug."
+        this.store.error() || "Please try again or choose a different slug.",
       );
     }
   }

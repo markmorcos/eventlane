@@ -147,10 +147,10 @@ export class EventDetailStore {
         }
 
         confirmed = confirmed.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.createdAt.localeCompare(b.createdAt),
         );
         waitlisted = waitlisted.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.createdAt.localeCompare(b.createdAt),
         );
 
         return {
@@ -191,18 +191,18 @@ export class EventDetailStore {
         }
 
         let confirmed = (event.confirmed ?? []).filter(
-          (a) => a.email !== d.attendeeEmail
+          (a) => a.email !== d.attendeeEmail,
         );
 
         let waitlisted = (event.waitlisted ?? []).filter(
-          (a) => a.email !== d.attendeeEmail
+          (a) => a.email !== d.attendeeEmail,
         );
 
         confirmed = confirmed.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.createdAt.localeCompare(b.createdAt),
         );
         waitlisted = waitlisted.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.createdAt.localeCompare(b.createdAt),
         );
 
         return {

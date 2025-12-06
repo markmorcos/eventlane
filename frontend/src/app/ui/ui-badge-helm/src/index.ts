@@ -24,7 +24,7 @@ export const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>;
@@ -41,6 +41,6 @@ export class HlmBadgeDirective {
   public readonly variant = input<BadgeVariants["variant"]>("default");
 
   protected _computedClass = computed(() =>
-    hlm(badgeVariants({ variant: this.variant() }), this.userClass())
+    hlm(badgeVariants({ variant: this.variant() }), this.userClass()),
   );
 }

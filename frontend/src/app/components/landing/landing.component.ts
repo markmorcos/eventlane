@@ -5,9 +5,9 @@ import { HowItWorksComponent } from "./how-it-works/how-it-works.component";
 import { SeoService } from "../../services/seo.service";
 
 @Component({
-    selector: "app-landing",
-    imports: [HeroComponent, FeaturesComponent, HowItWorksComponent],
-    templateUrl: "./landing.component.html"
+  selector: "app-landing",
+  imports: [HeroComponent, FeaturesComponent, HowItWorksComponent],
+  templateUrl: "./landing.component.html",
 })
 export class LandingComponent implements OnInit, OnDestroy {
   constructor(private seoService: SeoService) {}

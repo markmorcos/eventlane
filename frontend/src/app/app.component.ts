@@ -7,7 +7,6 @@ import {
 } from "@angular/router";
 import { filter } from "rxjs/operators";
 
-
 import { AuthService } from "./services/auth.service";
 import { AuthButtonComponent } from "./components/auth-button/auth-button.component";
 import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.component";
@@ -15,16 +14,16 @@ import { ToastContainerComponent } from "./components/toast-container/toast-cont
 import { FooterComponent } from "./components/landing/footer/footer.component";
 
 @Component({
-    selector: "app-root",
-    imports: [
+  selector: "app-root",
+  imports: [
     RouterOutlet,
     FooterComponent,
     RouterLink,
     AuthButtonComponent,
     CookieBannerComponent,
-    ToastContainerComponent
-],
-    templateUrl: "./app.component.html"
+    ToastContainerComponent,
+  ],
+  templateUrl: "./app.component.html",
 })
 export class AppComponent {
   private authService = inject(AuthService);

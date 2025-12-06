@@ -9,14 +9,14 @@ import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
 import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
 
 @Component({
-    selector: "app-events-list",
-    imports: [
+  selector: "app-events-list",
+  imports: [
     RouterLink,
     HlmButtonDirective,
     HlmBadgeDirective,
-    HlmSkeletonCardComponent
-],
-    templateUrl: "./events-list.component.html"
+    HlmSkeletonCardComponent,
+  ],
+  templateUrl: "./events-list.component.html",
 })
 export class EventsListComponent implements OnInit {
   private store = inject(EventListStore);

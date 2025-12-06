@@ -83,7 +83,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
           this.newCapacity.set(capacity);
         }
       },
-      { allowSignalWrites: true }
+      { allowSignalWrites: true },
     );
   }
 

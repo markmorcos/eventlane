@@ -28,22 +28,22 @@ import { HlmSkeletonComponent } from "../../ui/ui-skeleton-helm/src";
 import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
 
 @Component({
-    selector: "app-event-detail",
-    imports: [
-        CommonModule,
-        RouterLink,
-        FormsModule,
-        HlmButtonDirective,
-        HlmInputDirective,
-        HlmBadgeDirective,
-        HlmCardDirective,
-        HlmCardHeaderDirective,
-        HlmCardTitleDirective,
-        HlmCardContentDirective,
-        HlmSkeletonComponent,
-        HlmAlertDialogComponent,
-    ],
-    templateUrl: "./event-detail.component.html"
+  selector: "app-event-detail",
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    HlmButtonDirective,
+    HlmInputDirective,
+    HlmBadgeDirective,
+    HlmCardDirective,
+    HlmCardHeaderDirective,
+    HlmCardTitleDirective,
+    HlmCardContentDirective,
+    HlmSkeletonComponent,
+    HlmAlertDialogComponent,
+  ],
+  templateUrl: "./event-detail.component.html",
 })
 export class EventDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -77,7 +77,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
           this.store.reload();
         }
       },
-      { allowSignalWrites: true }
+      { allowSignalWrites: true },
     );
   }
 
@@ -153,9 +153,9 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     const evt = this.event();
     if (!evt) return;
 
+    this.showCancelDialog.set(false);
     await this.store.cancel(evt.slug, this.email()!);
     this.userName.set(this.displayName());
-    this.showCancelDialog.set(false);
   }
 
   shareEvent() {
@@ -169,7 +169,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
       },
       () => {
         this.toastService.error("Failed to copy link");
-      }
+      },
     );
   }
 }

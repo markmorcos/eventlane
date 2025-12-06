@@ -27,89 +27,96 @@
     </div>
 
     @if (isAuthenticated()) {
-    <div hlmCard>
-      <div hlmCardHeader>
-        <h3 hlmCardTitle class="text-2xl">New event</h3>
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle class="text-2xl">New event</h3>
+        </div>
+        <div hlmCardContent>
+          <form (ngSubmit)="createEvent()" class="space-y-6">
+            <div class="space-y-2">
+              <label hlmLabel for="title">Event title *</label>
+              <input
+                hlmInput
+                id="title"
+                type="text"
+                [(ngModel)]="title"
+                name="title"
+                placeholder="Summer Tech Conference 2025"
+                (input)="generateSlug()"
+                required
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label hlmLabel for="slug">Unique event name *</label>
+              <input
+                hlmInput
+                id="slug"
+                type="text"
+                [(ngModel)]="slug"
+                name="slug"
+                placeholder="summer-tech-conference-2025"
+                (input)="slug = slug.toLowerCase()"
+                required
+              />
+              <small
+                class="text-sm"
+                [class.text-muted-foreground]="isSlugValid() || !slug"
+                [class.text-destructive]="!isSlugValid() && slug"
+              >
+                @if (!isSlugValid() && slug) {
+                  Invalid format. Only lowercase letters, numbers, and hyphens
+                  (no consecutive or trailing hyphens).
+                } @else {
+                  Only lowercase letters, numbers, and hyphens
+                }
+              </small>
+            </div>
+
+            <div class="space-y-2">
+              <label hlmLabel for="capacity">Capacity *</label>
+              <input
+                hlmInput
+                id="capacity"
+                type="number"
+                [(ngModel)]="capacity"
+                name="capacity"
+                min="1"
+                required
+              />
+              <small class="text-sm text-muted-foreground"
+                >Maximum number of confirmed attendees</small
+              >
+            </div>
+
+            <div class="flex justify-end">
+              <button hlmBtn type="submit" [disabled]="!isFormValid()">
+                @if (loading()) {
+                  Creating...
+                } @else {
+                  Create event
+                }
+              </button>
+            </div>
+
+            @if (error()) {
+              <p
+                class="text-sm"
+                [class.text-destructive]="error()"
+                [class.text-success]="!error()"
+              >
+                {{ error() }}
+              </p>
+            }
+          </form>
+        </div>
       </div>
-      <div hlmCardContent>
-        <form (ngSubmit)="createEvent()" class="space-y-6">
-          <div class="space-y-2">
-            <label hlmLabel for="title">Event title *</label>
-            <input
-              hlmInput
-              id="title"
-              type="text"
-              [(ngModel)]="title"
-              name="title"
-              placeholder="Summer Tech Conference 2025"
-              (input)="generateSlug()"
-              required
-            />
-          </div>
-
-          <div class="space-y-2">
-            <label hlmLabel for="slug">Unique event name *</label>
-            <input
-              hlmInput
-              id="slug"
-              type="text"
-              [(ngModel)]="slug"
-              name="slug"
-              placeholder="summer-tech-conference-2025"
-              (input)="slug = slug.toLowerCase()"
-              required
-            />
-            <small
-              class="text-sm"
-              [class.text-muted-foreground]="isSlugValid() || !slug"
-              [class.text-destructive]="!isSlugValid() && slug"
-            >
-              @if (!isSlugValid() && slug) { Invalid format. Only lowercase
-              letters, numbers, and hyphens (no consecutive or trailing
-              hyphens). } @else { Only lowercase letters, numbers, and hyphens }
-            </small>
-          </div>
-
-          <div class="space-y-2">
-            <label hlmLabel for="capacity">Capacity *</label>
-            <input
-              hlmInput
-              id="capacity"
-              type="number"
-              [(ngModel)]="capacity"
-              name="capacity"
-              min="1"
-              required
-            />
-            <small class="text-sm text-muted-foreground"
-              >Maximum number of confirmed attendees</small
-            >
-          </div>
-
-          <div class="flex justify-end">
-            <button hlmBtn type="submit" [disabled]="!isFormValid()">
-              @if (loading()) { Creating... } @else { Create event }
-            </button>
-          </div>
-
-          @if (error()) {
-          <p
-            class="text-sm"
-            [class.text-destructive]="error()"
-            [class.text-success]="!error()"
-          >
-            {{ error() }}
-          </p>
-          }
-        </form>
-      </div>
-    </div>
     } @else {
-    <div hlmCard>
-      <div hlmCardContent class="py-12 text-center">
-        <p class="text-muted-foreground">Please sign in to create events.</p>
+      <div hlmCard>
+        <div hlmCardContent class="py-12 text-center">
+          <p class="text-muted-foreground">Please sign in to create events.</p>
+        </div>
       </div>
-    </div>
     }
   </div>
 </div>

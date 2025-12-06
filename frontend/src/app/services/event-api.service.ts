@@ -26,13 +26,13 @@ export class EventApiService {
   attend(slug: string, name: string) {
     return this.http.post<{ status: string; attendee: Attendee }>(
       `${this.attendancesBaseUrl}/${slug}/attend`,
-      { name }
+      { name },
     );
   }
 
   cancelAttendance(slug: string, email: string) {
     return this.http.delete(
-      `${this.attendancesBaseUrl}/${slug}/attend/${encodeURIComponent(email)}`
+      `${this.attendancesBaseUrl}/${slug}/attend/${encodeURIComponent(email)}`,
     );
   }
 
@@ -45,13 +45,13 @@ export class EventApiService {
   addAdmin(slug: string, email: string) {
     return this.http.post(
       `${this.adminsBaseUrl}/${slug}/admins/${encodeURIComponent(email)}`,
-      {}
+      {},
     );
   }
 
   removeAdmin(slug: string, email: string) {
     return this.http.delete(
-      `${this.adminsBaseUrl}/${slug}/admins/${encodeURIComponent(email)}`
+      `${this.adminsBaseUrl}/${slug}/admins/${encodeURIComponent(email)}`,
     );
   }
 

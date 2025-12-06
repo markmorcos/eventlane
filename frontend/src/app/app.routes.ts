@@ -6,28 +6,28 @@ export const routes: Routes = [
     path: "",
     loadComponent: () =>
       import("./components/landing/landing.component").then(
-        (m) => m.LandingComponent
+        (m) => m.LandingComponent,
       ),
   },
   {
     path: "events",
     loadComponent: () =>
       import("./components/events-list/events-list.component").then(
-        (m) => m.EventsListComponent
+        (m) => m.EventsListComponent,
       ),
   },
   {
     path: "events/create",
     loadComponent: () =>
       import("./components/create-event/create-event.component").then(
-        (m) => m.CreateEventComponent
+        (m) => m.CreateEventComponent,
       ),
   },
   {
     path: "events/:slug",
     loadComponent: () =>
       import("./components/event-detail/event-detail.component").then(
-        (m) => m.EventDetailComponent
+        (m) => m.EventDetailComponent,
       ),
   },
   {
@@ -35,7 +35,7 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadComponent: () =>
       import("./components/admin-event/admin-event.component").then(
-        (m) => m.AdminEventComponent
+        (m) => m.AdminEventComponent,
       ),
   },
   // Legal pages - lazy loaded as a group

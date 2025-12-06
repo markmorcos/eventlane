@@ -15,8 +15,8 @@ export class HlmCardDirective {
   protected _computedClass = computed(() =>
     hlm(
       "rounded-lg border bg-card text-card-foreground shadow-sm",
-      this.userClass()
-    )
+      this.userClass(),
+    ),
   );
 }
 
@@ -31,7 +31,7 @@ export class HlmCardHeaderDirective {
   public readonly userClass = input<ClassValue>("", { alias: "class" });
 
   protected _computedClass = computed(() =>
-    hlm("flex flex-col space-y-1.5 p-6", this.userClass())
+    hlm("flex flex-col space-y-1.5 p-6", this.userClass()),
   );
 }
 
@@ -46,7 +46,7 @@ export class HlmCardTitleDirective {
   public readonly userClass = input<ClassValue>("", { alias: "class" });
 
   protected _computedClass = computed(() =>
-    hlm("text-2xl font-semibold leading-none tracking-tight", this.userClass())
+    hlm("text-2xl font-semibold leading-none tracking-tight", this.userClass()),
   );
 }
 
@@ -61,7 +61,7 @@ export class HlmCardDescriptionDirective {
   public readonly userClass = input<ClassValue>("", { alias: "class" });
 
   protected _computedClass = computed(() =>
-    hlm("text-sm text-muted-foreground", this.userClass())
+    hlm("text-sm text-muted-foreground", this.userClass()),
   );
 }
 
@@ -89,7 +89,7 @@ export class HlmCardFooterDirective {
   public readonly userClass = input<ClassValue>("", { alias: "class" });
 
   protected _computedClass = computed(() =>
-    hlm("flex items-center p-6 pt-0", this.userClass())
+    hlm("flex items-center p-6 pt-0", this.userClass()),
   );
 }
 
