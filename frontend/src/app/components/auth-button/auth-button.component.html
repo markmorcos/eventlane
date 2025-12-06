@@ -1,7 +1,6 @@
 <div class="flex items-center gap-3">
   @if (!authLoading()) {
-    @if (currentUser(); as user) {
-      <span class="text-sm text-muted-foreground">{{ user.email }}</span>
+    @if (currentUser()) {
       <button hlmBtn variant="secondary" (click)="signOut()">Sign out</button>
     } @else {
       <button hlmBtn class="gap-2" (click)="signInWithGoogle()">
