@@ -3,10 +3,12 @@ import { EventApiService } from "../services/event-api.service";
 import { EventSummary } from "../models/event.model";
 import { firstValueFrom } from "rxjs";
 import { EventSocketService } from "../services/event-socket.service";
+import { ToastService } from "../services/toast.service";
 
 @Injectable({ providedIn: "root" })
 export class EventListStore {
   private api = inject(EventApiService);
+  private toast = inject(ToastService);
 
   private readonly _events = signal<EventSummary[]>([]);
   private readonly _loading = signal(false);
@@ -42,6 +44,7 @@ export class EventListStore {
     try {
       const newEvent = await firstValueFrom(this.api.createEvent(eventData));
       this._events.update((events) => [newEvent, ...events]);
+      this.toast.success("Event created successfully!");
       return newEvent;
     } catch (err: any) {
       this._error.set("Failed to create event");

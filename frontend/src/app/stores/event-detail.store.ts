@@ -15,6 +15,7 @@ import {
 import { EventApiService } from "../services/event-api.service";
 import { EventSocketService } from "../services/event-socket.service";
 import { AuthService } from "../services/auth.service";
+import { ToastService } from "../services/toast.service";
 
 @Injectable({ providedIn: "root" })
 export class EventDetailStore {
@@ -22,6 +23,7 @@ export class EventDetailStore {
   private socket = inject(EventSocketService);
   private auth = inject(AuthService);
   private route = inject(Router);
+  private toast = inject(ToastService);
 
   private userEmail = this.auth.userEmail;
   private readonly _event = signal<EventDetail | null>(null);
@@ -274,25 +276,31 @@ export class EventDetailStore {
 
   async attend(slug: string, name: string): Promise<void> {
     await firstValueFrom(this.api.attend(slug, name));
+    this.toast.success("Successfully registered for event!");
   }
 
   async cancel(slug: string, email: string): Promise<void> {
     await firstValueFrom(this.api.cancelAttendance(slug, email));
+    this.toast.success("RSVP cancelled successfully");
   }
 
   async updateCapacity(slug: string, capacity: number): Promise<void> {
     await firstValueFrom(this.api.updateCapacity(slug, capacity));
+    this.toast.success("Capacity updated successfully");
   }
 
   async addAdmin(slug: string, email: string): Promise<void> {
     await firstValueFrom(this.api.addAdmin(slug, email));
+    this.toast.success("Admin added successfully");
   }
 
   async removeAdmin(slug: string, email: string): Promise<void> {
     await firstValueFrom(this.api.removeAdmin(slug, email));
+    this.toast.success("Admin removed successfully");
   }
 
   async deleteEvent(slug: string): Promise<void> {
     await firstValueFrom(this.api.deleteEvent(slug));
+    this.toast.success("Event deleted successfully");
   }
 }

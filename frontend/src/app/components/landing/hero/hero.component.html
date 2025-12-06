@@ -1,6 +1,10 @@
-<div class="hero">
-  <div class="hero-content">
-    <div class="logo">
+<div
+  class="min-h-screen bg-gradient-to-br from-primary via-primary/90 to-primary/80 flex items-center justify-center text-white text-center px-6 py-12"
+>
+  <div class="mx-auto w-full max-w-4xl">
+    <div
+      class="mb-8 flex justify-center animate-in fade-in slide-in-from-top-4 duration-700"
+    >
       <svg
         width="60"
         height="60"
@@ -56,25 +60,45 @@
       </svg>
     </div>
 
-    <h1 class="title">EventLane</h1>
-    <p class="tagline">The fast lane for your events.</p>
+    <h1
+      class="mb-4 text-6xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 sm:text-7xl"
+    >
+      EventLane
+    </h1>
 
-    <div class="cta-buttons">
-      <button class="btn-primary" routerLink="/events">Get started</button>
+    <p
+      class="mb-12 text-xl font-normal opacity-95 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 sm:text-2xl"
+    >
+      The fast lane for your events.
+    </p>
+
+    <div
+      class="mb-16 flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500"
+    >
+      <button
+        hlmBtn
+        size="lg"
+        class="bg-white text-primary hover:bg-white/90 hover:-translate-y-0.5 hover:shadow-xl transition-all"
+        routerLink="/events"
+      >
+        Get started
+      </button>
     </div>
 
-    <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-number">10k+</div>
-        <div class="stat-label">Events created</div>
+    <div
+      class="flex flex-wrap justify-center gap-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700 sm:gap-16"
+    >
+      <div class="text-center">
+        <div class="mb-2 text-4xl font-extrabold">10k+</div>
+        <div class="text-sm font-medium opacity-90">Events created</div>
       </div>
-      <div class="stat">
-        <div class="stat-number">50k+</div>
-        <div class="stat-label">RSVPs managed</div>
+      <div class="text-center">
+        <div class="mb-2 text-4xl font-extrabold">50k+</div>
+        <div class="text-sm font-medium opacity-90">RSVPs managed</div>
       </div>
-      <div class="stat">
-        <div class="stat-number">&lt;2s</div>
-        <div class="stat-label">Avg. response time</div>
+      <div class="text-center">
+        <div class="mb-2 text-4xl font-extrabold">&lt;2s</div>
+        <div class="text-sm font-medium opacity-90">Avg. response time</div>
       </div>
     </div>
   </div>

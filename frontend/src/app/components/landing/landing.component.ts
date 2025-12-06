@@ -2,18 +2,12 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { HeroComponent } from "./hero/hero.component";
 import { FeaturesComponent } from "./features/features.component";
 import { HowItWorksComponent } from "./how-it-works/how-it-works.component";
-import { FooterComponent } from "./footer/footer.component";
 import { SeoService } from "../../services/seo.service";
 
 @Component({
   selector: "app-landing",
   standalone: true,
-  imports: [
-    HeroComponent,
-    FeaturesComponent,
-    HowItWorksComponent,
-    FooterComponent,
-  ],
+  imports: [HeroComponent, FeaturesComponent, HowItWorksComponent],
   templateUrl: "./landing.component.html",
 })
 export class LandingComponent implements OnInit, OnDestroy {

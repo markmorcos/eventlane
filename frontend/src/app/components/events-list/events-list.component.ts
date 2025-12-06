@@ -6,7 +6,6 @@ import { EventListStore } from "../../stores/event-list.store";
 import { SeoService } from "../../services/seo.service";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
-import { HlmSpinnerComponent } from "../../ui/ui-spinner-helm/src";
 import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
 
 @Component({
@@ -17,7 +16,6 @@ import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
     RouterLink,
     HlmButtonDirective,
     HlmBadgeDirective,
-    HlmSpinnerComponent,
     HlmSkeletonCardComponent,
   ],
   templateUrl: "./events-list.component.html",

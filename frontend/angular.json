@@ -41,8 +41,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "600kb",
+                  "maximumError": "700kb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -51,6 +51,15 @@
                 }
               ],
               "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": {
+                "scripts": false,
+                "styles": false,
+                "vendor": false
+              },
+              "buildOptimizer": true,
+              "namedChunks": false,
+              "extractLicenses": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

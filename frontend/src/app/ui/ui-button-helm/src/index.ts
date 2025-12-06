@@ -21,10 +21,10 @@ export const buttonVariants = cva(
         warning: "bg-warning text-warning-foreground hover:bg-warning/90",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-9 px-3 py-1.5",
+        sm: "h-8 rounded-md px-2.5 text-xs",
+        lg: "h-10 rounded-md px-6",
+        icon: "h-9 w-9",
       },
     },
     defaultVariants: {

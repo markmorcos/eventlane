@@ -30,13 +30,31 @@
 } @else { @if (event(); as evt) {
 <div class="min-h-screen bg-background py-16">
   <div class="mx-auto max-w-5xl px-4 sm:px-6">
-    <div class="mb-8 flex items-center justify-between">
-      <h2 class="text-3xl font-bold text-foreground">
-        Manage: {{ evt.title }}
-      </h2>
-      <button hlmBtn variant="secondary" [routerLink]="['/events', evt.slug]">
-        Back to event
+    <div class="mb-8 flex items-center gap-3">
+      <button
+        hlmBtn
+        variant="ghost"
+        size="sm"
+        [routerLink]="['/events', evt.slug]"
+        class="-ml-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="mr-1.5"
+        >
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+        Back
       </button>
+      <h2 class="text-2xl font-bold text-foreground">{{ evt.title }}</h2>
     </div>
 
     <div class="space-y-6">
@@ -50,7 +68,7 @@
               waitlisted attendees to confirmed status.
             </p>
           </div>
-          <h3 hlmCardTitle>Capacity Management</h3>
+          <h3 hlmCardTitle>Capacity management</h3>
         </div>
         <div hlmCardContent>
           <form class="flex gap-3" (ngSubmit)="updateCapacity()">
@@ -64,7 +82,7 @@
               class="flex-1"
             />
             <button hlmBtn type="submit" [disabled]="loading()">
-              Update Capacity
+              Update capacity
             </button>
           </form>
         </div>
@@ -72,7 +90,7 @@
 
       <div hlmCard>
         <div hlmCardHeader>
-          <h3 hlmCardTitle>Confirmed Attendees ({{ confirmed().length }})</h3>
+          <h3 hlmCardTitle>Confirmed attendees ({{ confirmed().length }})</h3>
         </div>
         <div hlmCardContent>
           @if (confirmed().length) {
@@ -121,7 +139,7 @@
 
       <div hlmCard>
         <div hlmCardHeader>
-          <h3 hlmCardTitle>Waitlisted Attendees ({{ waitlisted().length }})</h3>
+          <h3 hlmCardTitle>Waitlisted attendees ({{ waitlisted().length }})</h3>
         </div>
         <div hlmCardContent>
           @if (waitlisted().length) {
@@ -170,7 +188,7 @@
 
       <div hlmCard>
         <div hlmCardHeader>
-          <h3 hlmCardTitle>Admin Management</h3>
+          <h3 hlmCardTitle>Admin management</h3>
         </div>
         <div hlmCardContent class="space-y-4">
           @if (admins().length) {
@@ -206,7 +224,7 @@
               type="submit"
               [disabled]="!newAdminEmail() || loading()"
             >
-              Add Admin
+              Add admin
             </button>
           </form>
         </div>
@@ -215,11 +233,11 @@
       @if (event()?.creatorEmail === email()) {
       <div hlmCard class="border-destructive/50">
         <div hlmCardHeader>
-          <h3 hlmCardTitle class="text-destructive">Danger Zone</h3>
+          <h3 hlmCardTitle class="text-destructive">Danger zone</h3>
         </div>
         <div hlmCardContent>
           <button hlmBtn variant="destructive" (click)="deleteEvent()">
-            Delete Event
+            Delete event
           </button>
         </div>
       </div>
@@ -227,4 +245,38 @@
     </div>
   </div>
 </div>
+
+<!-- Alert Dialogs -->
+<hlm-alert-dialog
+  [open]="showRemoveAttendeeDialog()"
+  title="Remove Attendee"
+  description="Are you sure you want to remove this attendee from the event?"
+  confirmText="Remove"
+  cancelText="Cancel"
+  [destructive]="true"
+  (confirmed)="confirmRemoveAttendee()"
+  (cancelled)="showRemoveAttendeeDialog.set(false)"
+/>
+
+<hlm-alert-dialog
+  [open]="showRemoveAdminDialog()"
+  [title]="'Remove ' + (pendingAction()?.email || '') + ' as admin?'"
+  description="This person will no longer have admin access to this event."
+  confirmText="Remove"
+  cancelText="Cancel"
+  [destructive]="true"
+  (confirmed)="confirmRemoveAdmin()"
+  (cancelled)="showRemoveAdminDialog.set(false)"
+/>
+
+<hlm-alert-dialog
+  [open]="showDeleteEventDialog()"
+  [title]="'Delete ' + (event()?.title || 'event') + '?'"
+  description="This action cannot be undone. All attendee data and event information will be permanently deleted."
+  confirmText="Delete Event"
+  cancelText="Cancel"
+  [destructive]="true"
+  (confirmed)="confirmDeleteEvent()"
+  (cancelled)="showDeleteEventDialog.set(false)"
+/>
 } }

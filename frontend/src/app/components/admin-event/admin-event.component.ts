@@ -28,6 +28,7 @@ import {
   HlmSkeletonComponent,
   HlmSkeletonTableRowComponent,
 } from "../../ui/ui-skeleton-helm/src";
+import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
 
 @Component({
   selector: "app-admin-event",
@@ -44,6 +45,7 @@ import {
     HlmCardContentDirective,
     HlmSkeletonComponent,
     HlmSkeletonTableRowComponent,
+    HlmAlertDialogComponent,
   ],
   templateUrl: "./admin-event.component.html",
 })
@@ -66,6 +68,12 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
   newCapacity = signal(0);
   newAdminEmail = signal("");
+
+  // Dialog state
+  showRemoveAttendeeDialog = signal(false);
+  showRemoveAdminDialog = signal(false);
+  showDeleteEventDialog = signal(false);
+  pendingAction = signal<{ type: string; email?: string } | null>(null);
 
   constructor() {
     effect(
@@ -110,12 +118,20 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   }
 
   async removeAttendee(email: string) {
+    this.pendingAction.set({ type: "removeAttendee", email });
+    this.showRemoveAttendeeDialog.set(true);
+  }
+
+  confirmRemoveAttendee() {
+    const action = this.pendingAction();
+    if (!action?.email) return;
+
     const evt = this.event();
     if (!evt) return;
 
-    if (!confirm("Are you sure you want to remove this attendee?")) return;
-
-    this.store.cancel(evt.slug, email);
+    this.store.cancel(evt.slug, action.email);
+    this.showRemoveAttendeeDialog.set(false);
+    this.pendingAction.set(null);
   }
 
   async addAdmin() {
@@ -127,26 +143,32 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   }
 
   async removeAdmin(adminEmail: string) {
+    this.pendingAction.set({ type: "removeAdmin", email: adminEmail });
+    this.showRemoveAdminDialog.set(true);
+  }
+
+  confirmRemoveAdmin() {
+    const action = this.pendingAction();
+    if (!action?.email) return;
+
     const evt = this.event();
     if (!evt) return;
 
-    if (!confirm(`Remove ${adminEmail} as admin?`)) return;
-
-    this.store.removeAdmin(evt.slug, adminEmail);
+    this.store.removeAdmin(evt.slug, action.email);
+    this.showRemoveAdminDialog.set(false);
+    this.pendingAction.set(null);
   }
 
   async deleteEvent() {
+    this.showDeleteEventDialog.set(true);
+  }
+
+  async confirmDeleteEvent() {
     const evt = this.event();
     if (!evt) return;
 
-    if (
-      !confirm(
-        `Are you sure you want to delete "${evt.title}"? This action cannot be undone.`
-      )
-    )
-      return;
-
     await this.store.deleteEvent(evt.slug);
+    this.showDeleteEventDialog.set(false);
     this.router.navigate(["/events"]);
   }
 }

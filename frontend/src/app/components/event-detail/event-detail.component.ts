@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
 import { EventDetailStore } from "../../stores/event-detail.store";
 import { SeoService } from "../../services/seo.service";
+import { ToastService } from "../../services/toast.service";
 import { EventDetail } from "../../models/event.model";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
@@ -24,6 +25,7 @@ import {
   HlmCardContentDirective,
 } from "../../ui/ui-card-helm/src";
 import { HlmSkeletonComponent } from "../../ui/ui-skeleton-helm/src";
+import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
 
 @Component({
   selector: "app-event-detail",
@@ -40,6 +42,7 @@ import { HlmSkeletonComponent } from "../../ui/ui-skeleton-helm/src";
     HlmCardTitleDirective,
     HlmCardContentDirective,
     HlmSkeletonComponent,
+    HlmAlertDialogComponent,
   ],
   templateUrl: "./event-detail.component.html",
 })
@@ -48,6 +51,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private store = inject(EventDetailStore);
   private seoService = inject(SeoService);
+  private toastService = inject(ToastService);
 
   event = this.store.event;
   loading = this.store.loading;
@@ -57,6 +61,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   displayName = this.authService.userDisplayName;
 
   userName = signal("");
+  showCancelDialog = signal(false);
 
   constructor() {
     effect(() => {
@@ -142,12 +147,30 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   }
 
   async cancel() {
+    this.showCancelDialog.set(true);
+  }
+
+  async confirmCancel() {
     const evt = this.event();
     if (!evt) return;
 
-    if (!confirm("Are you sure you want to cancel your RSVP?")) return;
-
     await this.store.cancel(evt.slug, this.email()!);
     this.userName.set(this.displayName());
+    this.showCancelDialog.set(false);
+  }
+
+  shareEvent() {
+    const evt = this.event();
+    if (!evt) return;
+
+    const url = `${window.location.origin}/events/${evt.slug}`;
+    navigator.clipboard.writeText(url).then(
+      () => {
+        this.toastService.success("Link copied to clipboard!");
+      },
+      () => {
+        this.toastService.error("Failed to copy link");
+      }
+    );
   }
 }
