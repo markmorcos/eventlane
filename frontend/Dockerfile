@@ -10,10 +10,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist/web/browser/ /usr/share/nginx/html
+FROM node:alpine
+WORKDIR /app
+COPY --from=builder /app/dist/web ./dist/web
+COPY --from=builder /app/package.json ./
 
-EXPOSE 80
+EXPOSE 4000
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "dist/web/server/server.mjs"]
