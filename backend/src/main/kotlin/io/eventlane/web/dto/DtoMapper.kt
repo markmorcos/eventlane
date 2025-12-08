@@ -9,6 +9,7 @@ object DtoMapper {
         email = a.email,
         name = a.name,
         userId = a.userId,
+        createdAt = a.createdAt.toString(),
     )
 
     fun toEventResponse(event: Event, requesterEmail: String): EventResponseDto {

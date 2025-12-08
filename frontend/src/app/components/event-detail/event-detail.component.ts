@@ -70,15 +70,12 @@ export class EventDetailComponent implements OnInit, OnDestroy {
       }
     });
 
-    effect(
-      () => {
-        if (this.displayName()) {
-          this.userName.set(this.displayName());
-          this.store.reload();
-        }
-      },
-      { allowSignalWrites: true },
-    );
+    effect(() => {
+      if (this.displayName()) {
+        this.userName.set(this.displayName());
+        this.store.reload();
+      }
+    });
   }
 
   async ngOnInit() {
@@ -169,7 +166,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
       },
       () => {
         this.toastService.error("Failed to copy link");
-      },
+      }
     );
   }
 }

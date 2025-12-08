@@ -14,17 +14,17 @@ class AttendanceService(
 ) {
 
     fun attend(slug: String, userId: String, name: String, email: String): EventDelta {
-        val (_, delta) = retry.run(slug) { event ->
+        val (saved, delta) = retry.run(slug) { event ->
             EventBehavior.addAttendee(event, userId, name, email)
         }
 
-        publisher.publish(slug, listOf(delta))
+        publisher.publish(saved, listOf(delta))
 
         return delta
     }
 
     fun cancel(slug: String, email: String, requesterEmail: String): List<EventDelta> {
-        val (_, deltas) = retry.run(slug) { event ->
+        val (saved, deltas) = retry.run(slug) { event ->
             val removingSelf = email == requesterEmail
             val isAdmin = event.isAdmin(requesterEmail)
 
@@ -35,9 +35,7 @@ class AttendanceService(
             EventBehavior.removeAttendee(event, email)
         }
 
-        if (deltas.isNotEmpty()) {
-            publisher.publish(slug, deltas)
-        }
+        publisher.publish(saved, deltas)
 
         return deltas
     }

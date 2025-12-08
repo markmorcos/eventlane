@@ -1,300 +1,286 @@
 @if (loading() && !event()) {
-  <div class="min-h-screen bg-background py-16">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6">
-      <div class="mb-8">
-        <hlm-skeleton class="h-10 w-64 mb-4" />
-      </div>
-
-      <div class="space-y-6">
-        <div class="rounded-lg border bg-card p-6 shadow-sm">
-          <hlm-skeleton class="h-6 w-48 mb-4" />
-          <div class="flex gap-3">
-            <hlm-skeleton class="h-10 flex-1" />
-            <hlm-skeleton class="h-10 w-32" />
-          </div>
-        </div>
-
-        @for (_ of [1, 2]; track $index) {
-          <div class="rounded-lg border bg-card p-6 shadow-sm">
-            <hlm-skeleton class="h-6 w-48 mb-4" />
-            <div class="space-y-3">
-              @for (row of [1, 2, 3]; track row) {
-                <hlm-skeleton-table-row />
-              }
-            </div>
-          </div>
-        }
-      </div>
+<div class="min-h-screen bg-background py-16">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    <div class="mb-8">
+      <hlm-skeleton class="h-10 w-64 mb-4" />
     </div>
-  </div>
-} @else {
-  @if (event(); as evt) {
-    <div class="min-h-screen bg-background py-16">
-      <div class="mx-auto max-w-5xl px-4 sm:px-6">
-        <div class="mb-8 flex items-center gap-3">
-          <button
-            hlmBtn
-            variant="ghost"
-            size="sm"
-            [routerLink]="['/events', evt.slug]"
-            class="-ml-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="mr-1.5"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-            Back
-          </button>
-          <h2 class="text-2xl font-bold text-foreground">{{ evt.title }}</h2>
+
+    <div class="space-y-6">
+      <div class="rounded-lg border bg-card p-6 shadow-sm">
+        <hlm-skeleton class="h-6 w-48 mb-4" />
+        <div class="flex gap-3">
+          <hlm-skeleton class="h-10 flex-1" />
+          <hlm-skeleton class="h-10 w-32" />
         </div>
+      </div>
 
-        <div class="space-y-6">
-          <div hlmCard>
-            <div hlmCardHeader>
-              <div class="rounded-lg bg-primary/10 p-4 mb-4">
-                <p class="text-sm text-foreground">
-                  <strong>Note:</strong> Adjusting capacity will automatically
-                  manage attendee status. Reducing capacity moves confirmed
-                  attendees to the waitlist, while increasing capacity promotes
-                  waitlisted attendees to confirmed status.
-                </p>
-              </div>
-              <h3 hlmCardTitle>Capacity management</h3>
-            </div>
-            <div hlmCardContent>
-              <form class="flex gap-3" (ngSubmit)="updateCapacity()">
-                <input
-                  hlmInput
-                  name="capacity"
-                  type="number"
-                  [(ngModel)]="newCapacity"
-                  min="0"
-                  placeholder="Capacity"
-                  class="flex-1"
-                />
-                <button hlmBtn type="submit" [disabled]="loading()">
-                  Update capacity
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <div hlmCard>
-            <div hlmCardHeader>
-              <h3 hlmCardTitle>
-                Confirmed attendees ({{ confirmed().length }})
-              </h3>
-            </div>
-            <div hlmCardContent>
-              @if (confirmed().length) {
-                <div class="overflow-x-auto">
-                  <table class="w-full">
-                    <thead>
-                      <tr
-                        class="border-b border-border text-left text-sm text-muted-foreground"
-                      >
-                        <th class="pb-3 font-medium">Name</th>
-                        <th class="pb-3 font-medium">Email</th>
-                        <th class="pb-3 font-medium">Registered</th>
-                        <th class="pb-3 font-medium">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody class="text-sm">
-                      @for (attendee of confirmed(); track attendee.id) {
-                        <tr class="border-b border-border">
-                          <td class="py-3 text-foreground">
-                            {{ attendee.name }}
-                          </td>
-                          <td class="py-3 text-muted-foreground">
-                            {{ attendee.email }}
-                          </td>
-                          <td class="py-3 text-muted-foreground">
-                            {{
-                              attendee.createdAt | date: "dd.MM.yyyy HH:mm:ss"
-                            }}
-                          </td>
-                          <td class="py-3">
-                            <button
-                              hlmBtn
-                              variant="destructive"
-                              size="sm"
-                              (click)="removeAttendee(attendee.email)"
-                            >
-                              Remove
-                            </button>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
-              } @else {
-                <p class="text-sm text-muted-foreground">
-                  No confirmed attendees
-                </p>
-              }
-            </div>
-          </div>
-
-          <div hlmCard>
-            <div hlmCardHeader>
-              <h3 hlmCardTitle>
-                Waitlisted attendees ({{ waitlisted().length }})
-              </h3>
-            </div>
-            <div hlmCardContent>
-              @if (waitlisted().length) {
-                <div class="overflow-x-auto">
-                  <table class="w-full">
-                    <thead>
-                      <tr
-                        class="border-b border-border text-left text-sm text-muted-foreground"
-                      >
-                        <th class="pb-3 font-medium">Name</th>
-                        <th class="pb-3 font-medium">Email</th>
-                        <th class="pb-3 font-medium">Registered</th>
-                        <th class="pb-3 font-medium">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody class="text-sm">
-                      @for (attendee of waitlisted(); track attendee.id) {
-                        <tr class="border-b border-border">
-                          <td class="py-3 text-foreground">
-                            {{ attendee.name }}
-                          </td>
-                          <td class="py-3 text-muted-foreground">
-                            {{ attendee.email }}
-                          </td>
-                          <td class="py-3 text-muted-foreground">
-                            {{
-                              attendee.createdAt | date: "dd.MM.yyyy HH:mm:ss"
-                            }}
-                          </td>
-                          <td class="py-3">
-                            <button
-                              hlmBtn
-                              variant="destructive"
-                              size="sm"
-                              (click)="removeAttendee(attendee.email)"
-                            >
-                              Remove
-                            </button>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
-              } @else {
-                <p class="text-sm text-muted-foreground">
-                  No waitlisted attendees
-                </p>
-              }
-            </div>
-          </div>
-
-          <div hlmCard>
-            <div hlmCardHeader>
-              <h3 hlmCardTitle>Admin management</h3>
-            </div>
-            <div hlmCardContent class="space-y-4">
-              @if (admins().length) {
-                <div class="space-y-2">
-                  @for (admin of admins(); track admin) {
-                    <div
-                      class="flex items-center justify-between rounded-lg border border-border p-3"
-                    >
-                      <span class="text-sm text-foreground">{{ admin }}</span>
-                      <button
-                        hlmBtn
-                        variant="destructive"
-                        size="sm"
-                        (click)="removeAdmin(admin)"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  }
-                </div>
-              }
-              <form class="flex gap-3" (ngSubmit)="addAdmin()">
-                <input
-                  hlmInput
-                  type="email"
-                  name="email"
-                  [(ngModel)]="newAdminEmail"
-                  placeholder="Admin email"
-                  class="flex-1"
-                />
-                <button
-                  hlmBtn
-                  type="submit"
-                  [disabled]="!newAdminEmail() || loading()"
-                >
-                  Add admin
-                </button>
-              </form>
-            </div>
-          </div>
-
-          @if (event()?.creatorEmail === email()) {
-            <div hlmCard class="border-destructive/50">
-              <div hlmCardHeader>
-                <h3 hlmCardTitle class="text-destructive">Danger zone</h3>
-              </div>
-              <div hlmCardContent>
-                <button hlmBtn variant="destructive" (click)="deleteEvent()">
-                  Delete event
-                </button>
-              </div>
-            </div>
+      @for (_ of [1, 2]; track $index) {
+      <div class="rounded-lg border bg-card p-6 shadow-sm">
+        <hlm-skeleton class="h-6 w-48 mb-4" />
+        <div class="space-y-3">
+          @for (row of [1, 2, 3]; track row) {
+          <hlm-skeleton-table-row />
           }
         </div>
       </div>
+      }
+    </div>
+  </div>
+</div>
+} @else { @if (event(); as evt) {
+<div class="min-h-screen bg-background py-16">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    <div class="mb-8 flex items-center gap-3">
+      <button
+        hlmBtn
+        variant="ghost"
+        size="sm"
+        [routerLink]="['/events', evt.slug]"
+        class="-ml-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="mr-1.5"
+        >
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+        Back
+      </button>
+      <h2 class="text-2xl font-bold text-foreground">{{ evt.title }}</h2>
     </div>
 
-    <!-- Alert Dialogs -->
-    <hlm-alert-dialog
-      [open]="showRemoveAttendeeDialog()"
-      title="Remove Attendee"
-      description="Are you sure you want to remove this attendee from the event?"
-      confirmText="Remove"
-      cancelText="Cancel"
-      [destructive]="true"
-      (confirmed)="confirmRemoveAttendee()"
-      (cancelled)="showRemoveAttendeeDialog.set(false)"
-    />
+    <div class="space-y-6">
+      <div hlmCard>
+        <div hlmCardHeader>
+          <div class="rounded-lg bg-primary/10 p-4 mb-4">
+            <p class="text-sm text-foreground">
+              <strong>Note:</strong> Adjusting capacity will automatically
+              manage attendee status. Reducing capacity moves confirmed
+              attendees to the waitlist, while increasing capacity promotes
+              waitlisted attendees to confirmed status.
+            </p>
+          </div>
+          <h3 hlmCardTitle>Capacity management</h3>
+        </div>
+        <div hlmCardContent>
+          <form class="flex gap-3" (ngSubmit)="updateCapacity()">
+            <input
+              hlmInput
+              name="capacity"
+              type="number"
+              [(ngModel)]="newCapacity"
+              min="0"
+              placeholder="Capacity"
+              class="flex-1"
+            />
+            <button hlmBtn type="submit" [disabled]="loading()">
+              Update capacity
+            </button>
+          </form>
+        </div>
+      </div>
 
-    <hlm-alert-dialog
-      [open]="showRemoveAdminDialog()"
-      [title]="'Remove ' + (pendingAction()?.email || '') + ' as admin?'"
-      description="This person will no longer have admin access to this event."
-      confirmText="Remove"
-      cancelText="Cancel"
-      [destructive]="true"
-      (confirmed)="confirmRemoveAdmin()"
-      (cancelled)="showRemoveAdminDialog.set(false)"
-    />
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Confirmed attendees ({{ confirmed().length }})</h3>
+        </div>
+        <div hlmCardContent>
+          @if (confirmed().length) {
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr
+                  class="border-b border-border text-left text-sm text-muted-foreground"
+                >
+                  <th class="pb-3 font-medium">Name</th>
+                  <th class="pb-3 font-medium">Email</th>
+                  <th class="pb-3 font-medium">Registered</th>
+                  <th class="pb-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                @for (attendee of confirmed(); track attendee.email) {
+                <tr class="border-b border-border">
+                  <td class="py-3 text-foreground">
+                    {{ attendee.name }}
+                  </td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.email }}
+                  </td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}
+                  </td>
+                  <td class="py-3">
+                    <button
+                      hlmBtn
+                      variant="destructive"
+                      size="sm"
+                      (click)="removeAttendee(attendee.email)"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          } @else {
+          <p class="text-sm text-muted-foreground">No confirmed attendees</p>
+          }
+        </div>
+      </div>
 
-    <hlm-alert-dialog
-      [open]="showDeleteEventDialog()"
-      [title]="'Delete ' + (event()?.title || 'event') + '?'"
-      description="This action cannot be undone. All attendee data and event information will be permanently deleted."
-      confirmText="Delete Event"
-      cancelText="Cancel"
-      [destructive]="true"
-      (confirmed)="confirmDeleteEvent()"
-      (cancelled)="showDeleteEventDialog.set(false)"
-    />
-  }
-}
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Waitlisted attendees ({{ waitlisted().length }})</h3>
+        </div>
+        <div hlmCardContent>
+          @if (waitlisted().length) {
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr
+                  class="border-b border-border text-left text-sm text-muted-foreground"
+                >
+                  <th class="pb-3 font-medium">Name</th>
+                  <th class="pb-3 font-medium">Email</th>
+                  <th class="pb-3 font-medium">Registered</th>
+                  <th class="pb-3 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                @for (attendee of waitlisted(); track attendee.email) {
+                <tr class="border-b border-border">
+                  <td class="py-3 text-foreground">
+                    {{ attendee.name }}
+                  </td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.email }}
+                  </td>
+                  <td class="py-3 text-muted-foreground">
+                    {{ attendee.createdAt | date : "dd.MM.yyyy HH:mm:ss" }}
+                  </td>
+                  <td class="py-3">
+                    <button
+                      hlmBtn
+                      variant="destructive"
+                      size="sm"
+                      (click)="removeAttendee(attendee.email)"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          } @else {
+          <p class="text-sm text-muted-foreground">No waitlisted attendees</p>
+          }
+        </div>
+      </div>
+
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Admin management</h3>
+        </div>
+        <div hlmCardContent class="space-y-4">
+          @if (admins().length) {
+          <div class="space-y-2">
+            @for (admin of admins(); track admin) {
+            <div
+              class="flex items-center justify-between rounded-lg border border-border p-3"
+            >
+              <span class="text-sm text-foreground">{{ admin }}</span>
+              <button
+                hlmBtn
+                variant="destructive"
+                size="sm"
+                (click)="removeAdmin(admin)"
+              >
+                Remove
+              </button>
+            </div>
+            }
+          </div>
+          }
+          <form class="flex gap-3" (ngSubmit)="addAdmin()">
+            <input
+              hlmInput
+              type="email"
+              name="email"
+              [(ngModel)]="newAdminEmail"
+              placeholder="Admin email"
+              class="flex-1"
+            />
+            <button
+              hlmBtn
+              type="submit"
+              [disabled]="!newAdminEmail() || loading()"
+            >
+              Add admin
+            </button>
+          </form>
+        </div>
+      </div>
+
+      @if (event()?.creatorEmail === email()) {
+      <div hlmCard class="border-destructive/50">
+        <div hlmCardHeader>
+          <h3 hlmCardTitle class="text-destructive">Danger zone</h3>
+        </div>
+        <div hlmCardContent>
+          <button hlmBtn variant="destructive" (click)="deleteEvent()">
+            Delete event
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Alert Dialogs -->
+<hlm-alert-dialog
+  [open]="showRemoveAttendeeDialog()"
+  title="Remove Attendee"
+  description="Are you sure you want to remove this attendee from the event?"
+  confirmText="Remove"
+  cancelText="Cancel"
+  [destructive]="true"
+  (confirmed)="confirmRemoveAttendee()"
+  (cancelled)="showRemoveAttendeeDialog.set(false)"
+/>
+
+<hlm-alert-dialog
+  [open]="showRemoveAdminDialog()"
+  [title]="'Remove ' + (pendingAction()?.email || '') + ' as admin?'"
+  description="This person will no longer have admin access to this event."
+  confirmText="Remove"
+  cancelText="Cancel"
+  [destructive]="true"
+  (confirmed)="confirmRemoveAdmin()"
+  (cancelled)="showRemoveAdminDialog.set(false)"
+/>
+
+<hlm-alert-dialog
+  [open]="showDeleteEventDialog()"
+  [title]="'Delete ' + (event()?.title || 'event') + '?'"
+  description="This action cannot be undone. All attendee data and event information will be permanently deleted."
+  confirmText="Delete Event"
+  cancelText="Cancel"
+  [destructive]="true"
+  (confirmed)="confirmDeleteEvent()"
+  (cancelled)="showDeleteEventDialog.set(false)"
+/>
+} }

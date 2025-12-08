@@ -4,4 +4,5 @@ data class AttendeeDto(
     val email: String,
     val name: String,
     val userId: String,
+    val createdAt: String,
 )

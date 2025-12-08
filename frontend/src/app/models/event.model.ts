@@ -16,6 +16,7 @@ export interface EventSummary {
   creatorEmail: string;
   isAdmin: boolean;
   createdAt: string;
+  version: number;
 }
 
 export interface EventDetail extends EventSummary {

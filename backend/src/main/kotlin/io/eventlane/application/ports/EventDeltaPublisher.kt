@@ -1,7 +1,8 @@
 package io.eventlane.application.ports
 
+import io.eventlane.domain.model.Event
 import io.eventlane.domain.model.EventDelta
 
 interface EventDeltaPublisher {
-    fun publish(slug: String, deltas: List<EventDelta>)
+    fun publish(event: Event, deltas: List<EventDelta>)
 }

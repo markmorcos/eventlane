@@ -1,4 +1,5 @@
-import { Component, signal } from "@angular/core";
+import { Component, signal, PLATFORM_ID, inject } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 import { RouterLink } from "@angular/router";
 
 @Component({
@@ -7,24 +8,31 @@ import { RouterLink } from "@angular/router";
   templateUrl: "./cookie-banner.component.html",
 })
 export class CookieBannerComponent {
+  private platformId = inject(PLATFORM_ID);
   showBanner = signal(false);
 
   ngOnInit() {
-    const consent = localStorage.getItem("cookieConsent");
-    if (!consent) {
-      this.showBanner.set(true);
+    if (isPlatformBrowser(this.platformId)) {
+      const consent = localStorage.getItem("cookieConsent");
+      if (!consent) {
+        this.showBanner.set(true);
+      }
     }
   }
 
   acceptCookies() {
-    localStorage.setItem("cookieConsent", "accepted");
-    localStorage.setItem("cookieConsentDate", new Date().toISOString());
-    this.showBanner.set(false);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem("cookieConsent", "accepted");
+      localStorage.setItem("cookieConsentDate", new Date().toISOString());
+      this.showBanner.set(false);
+    }
   }
 
   declineCookies() {
-    localStorage.setItem("cookieConsent", "declined");
-    localStorage.setItem("cookieConsentDate", new Date().toISOString());
-    this.showBanner.set(false);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem("cookieConsent", "declined");
+      localStorage.setItem("cookieConsentDate", new Date().toISOString());
+      this.showBanner.set(false);
+    }
   }
 }

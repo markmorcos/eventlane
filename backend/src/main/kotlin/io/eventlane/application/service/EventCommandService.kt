@@ -47,17 +47,17 @@ class EventCommandService(
             capacity = saved.capacity,
         )
 
-        publisher.publish(slug, listOf(delta))
+        publisher.publish(saved, listOf(delta))
 
         return delta
     }
 
     fun updateCapacity(slug: String, newCapacity: Int): List<EventDelta> {
-        val (_, deltas) = retry.run(slug) { event ->
+        val (saved, deltas) = retry.run(slug) { event ->
             EventBehavior.updateCapacity(event, newCapacity)
         }
 
-        publisher.publish(slug, deltas)
+        publisher.publish(saved, deltas)
 
         return deltas
     }
@@ -67,35 +67,35 @@ class EventCommandService(
 
         val event = repository.findBySlug(slug)
 
-        repository.deleteBySlug(slug)
-
         val delta = EventDeleted(
-            version = event.version ?: 0L,
+            version = (event.version ?: 0L) + 1,
             timestamp = now,
             eventSlug = event.slug,
         )
 
-        publisher.publish(slug, listOf(delta))
+        publisher.publish(event, listOf(delta))
+
+        repository.deleteBySlug(slug)
 
         return delta
     }
 
     fun addAdmin(slug: String, adminEmail: String): List<EventDelta> {
-        val (_, deltas) = retry.run(slug) { event ->
+        val (saved, deltas) = retry.run(slug) { event ->
             EventBehavior.addAdmin(event, adminEmail)
         }
 
-        publisher.publish(slug, deltas)
+        publisher.publish(saved, deltas)
 
         return deltas
     }
 
     fun removeAdmin(slug: String, adminEmail: String): List<EventDelta> {
-        val (_, deltas) = retry.run(slug) { event ->
+        val (saved, deltas) = retry.run(slug) { event ->
             EventBehavior.removeAdmin(event, adminEmail)
         }
 
-        publisher.publish(slug, deltas)
+        publisher.publish(saved, deltas)
 
         return deltas
     }

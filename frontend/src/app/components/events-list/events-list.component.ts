@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, OnDestroy } from "@angular/core";
 
 import { RouterLink } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
@@ -18,7 +18,7 @@ import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
   ],
   templateUrl: "./events-list.component.html",
 })
-export class EventsListComponent implements OnInit {
+export class EventsListComponent implements OnInit, OnDestroy {
   private store = inject(EventListStore);
   private authService = inject(AuthService);
   private seoService = inject(SeoService);
@@ -39,5 +39,9 @@ export class EventsListComponent implements OnInit {
     });
     this.seoService.removeStructuredData();
     this.store.loadManagedEvents();
+  }
+
+  ngOnDestroy() {
+    this.store.destroy();
   }
 }

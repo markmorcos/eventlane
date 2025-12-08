@@ -40,6 +40,7 @@ export class EventDetailStore {
   async init(slug: string): Promise<void> {
     this.currentSlug = slug;
 
+    this._event.set(null);
     this._loading.set(true);
     this._error.set(null);
 
@@ -98,6 +99,10 @@ export class EventDetailStore {
   }
 
   private applyDelta(event: EventDetail, delta: EventDelta): EventDetail {
+    // if (delta.version < event.version) {
+    //   return event;
+    // }
+
     switch (delta.type) {
       case "EventCapacityUpdated": {
         const d = delta as EventCapacityUpdatedDelta;
@@ -147,10 +152,10 @@ export class EventDetailStore {
         }
 
         confirmed = confirmed.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt),
+          a.createdAt.localeCompare(b.createdAt)
         );
         waitlisted = waitlisted.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt),
+          a.createdAt.localeCompare(b.createdAt)
         );
 
         return {
@@ -191,18 +196,18 @@ export class EventDetailStore {
         }
 
         let confirmed = (event.confirmed ?? []).filter(
-          (a) => a.email !== d.attendeeEmail,
+          (a) => a.email !== d.attendeeEmail
         );
 
         let waitlisted = (event.waitlisted ?? []).filter(
-          (a) => a.email !== d.attendeeEmail,
+          (a) => a.email !== d.attendeeEmail
         );
 
         confirmed = confirmed.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt),
+          a.createdAt.localeCompare(b.createdAt)
         );
         waitlisted = waitlisted.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt),
+          a.createdAt.localeCompare(b.createdAt)
         );
 
         return {
@@ -217,13 +222,29 @@ export class EventDetailStore {
 
       case "AttendeeStatusChanged": {
         const d = delta as AttendeeStatusChangedDelta;
-        if (!event.confirmed || !event.waitlisted) return event;
 
+        const isCurrentUser = d.attendeeEmail === this.userEmail();
         const fromConfirmed = d.oldStatus === "CONFIRMED";
         const toConfirmed = d.newStatus === "CONFIRMED";
+        const requesterStatus = isCurrentUser
+          ? d.newStatus
+          : event.requesterStatus;
 
-        let confirmed = [...event.confirmed];
-        let waitlisted = [...event.waitlisted];
+        if (!event.isAdmin) {
+          return {
+            ...event,
+            requesterStatus,
+            confirmedCount: fromConfirmed
+              ? event.confirmedCount - 1
+              : event.confirmedCount + 1,
+            waitlistedCount: fromConfirmed
+              ? event.waitlistedCount + 1
+              : event.waitlistedCount - 1,
+          };
+        }
+
+        let confirmed = [...event.confirmed!];
+        let waitlisted = [...event.waitlisted!];
 
         const removeFrom = fromConfirmed ? confirmed : waitlisted;
         const addTo = toConfirmed ? confirmed : waitlisted;
@@ -232,22 +253,29 @@ export class EventDetailStore {
         if (idx === -1) return event;
 
         const [attendee] = removeFrom.splice(idx, 1);
-        addTo.push(attendee);
+        if (fromConfirmed) {
+          addTo.unshift(attendee);
+        } else {
+          addTo.push(attendee);
+        }
 
         if (fromConfirmed) {
           confirmed = removeFrom;
-          waitlisted = addTo;
+          waitlisted = addTo.sort((a, b) =>
+            a.createdAt.localeCompare(b.createdAt)
+          );
         } else {
           waitlisted = removeFrom;
-          confirmed = addTo;
+          confirmed = addTo.sort((a, b) =>
+            a.createdAt.localeCompare(b.createdAt)
+          );
         }
 
         return {
           ...event,
           confirmed,
           waitlisted,
-          requesterStatus:
-            attendee.email === this.userEmail() ? d.newStatus : undefined,
+          requesterStatus,
           confirmedCount: confirmed.length,
           waitlistedCount: waitlisted.length,
         };
@@ -255,18 +283,20 @@ export class EventDetailStore {
 
       case "AdminAdded": {
         const d = delta as AdminAddedDelta;
-        if (!event.admins) return event;
-        if (event.admins.includes(d.adminEmail)) return event;
-        return { ...event, admins: [...event.admins, d.adminEmail] };
+        const admins = event.admins || [];
+        const isAdmin = d.adminEmail === this.userEmail();
+        return { ...event, isAdmin, admins: [...admins, d.adminEmail] };
       }
 
       case "AdminRemoved": {
         const d = delta as AdminRemovedDelta;
-        if (!event.admins) return event;
-        return {
-          ...event,
-          admins: event.admins.filter((a) => a !== d.adminEmail),
-        };
+        const admins = (event.admins || []).filter((a) => a !== d.adminEmail);
+        const affected = d.adminEmail === this.userEmail();
+        const isAdmin = affected ? false : event.isAdmin;
+        if (affected) {
+          this.route.navigate(["/events", event.slug]);
+        }
+        return { ...event, isAdmin, admins };
       }
 
       default:

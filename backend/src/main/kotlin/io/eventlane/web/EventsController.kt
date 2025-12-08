@@ -21,9 +21,11 @@ class EventsController(
     private val commands: EventCommandService,
 ) {
     @GetMapping
-    fun listManagedEvents(@AuthenticationPrincipal user: SecurityUser): List<EventResponseDto> {
-        return repository.findByAdmin(user.email)
-            .map { DtoMapper.toEventResponse(it, user.email) }
+    fun listManagedEvents(@AuthenticationPrincipal user: SecurityUser?): List<EventResponseDto> {
+        val userEmail = user?.email ?: return emptyList()
+
+        return repository.findByAdmin(userEmail)
+            .map { DtoMapper.toEventResponse(it, userEmail) }
     }
 
     @PostMapping

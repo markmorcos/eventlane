@@ -75,16 +75,13 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   pendingAction = signal<{ type: string; email?: string } | null>(null);
 
   constructor() {
-    effect(
-      () => {
-        const capacity = this.eventCapacity();
-        const newCapacity = untracked(() => this.newCapacity());
-        if (capacity !== newCapacity) {
-          this.newCapacity.set(capacity);
-        }
-      },
-      { allowSignalWrites: true },
-    );
+    effect(() => {
+      const capacity = this.eventCapacity();
+      const newCapacity = untracked(() => this.newCapacity());
+      if (capacity !== newCapacity) {
+        this.newCapacity.set(capacity);
+      }
+    });
   }
 
   async ngOnInit() {
@@ -97,10 +94,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     await this.store.init(slug);
 
     const evt = this.event();
-    if (!evt?.isAdmin) {
-      this.router.navigate(["/events", evt?.slug]);
-      return;
-    }
+    if (!evt) return;
 
     this.newCapacity.set(evt.capacity);
   }
