@@ -87,22 +87,19 @@ export class EventDetailStore {
     this.deltaSub = undefined;
   }
 
-  private applyDeltas(deltas: EventDelta[]): void {
-    let current = this._event();
-    if (!current) return;
+  private applyDeltas(deltas: EventDelta[]) {
+    let event = this._event();
+    if (!event) return;
 
+    if (deltas[0] && event && deltas[0].version < event.version) return;
     for (const delta of deltas) {
-      current = this.applyDelta(current, delta);
+      event = this.applyDelta(event, delta);
     }
 
-    this._event.set(current);
+    this._event.set(event);
   }
 
   private applyDelta(event: EventDetail, delta: EventDelta): EventDetail {
-    // if (delta.version < event.version) {
-    //   return event;
-    // }
-
     switch (delta.type) {
       case "EventCapacityUpdated": {
         const d = delta as EventCapacityUpdatedDelta;
@@ -284,16 +281,17 @@ export class EventDetailStore {
       case "AdminAdded": {
         const d = delta as AdminAddedDelta;
         const admins = event.admins || [];
-        const isAdmin = d.adminEmail === this.userEmail();
+        const isAffected = d.adminEmail === this.userEmail();
+        const isAdmin = isAffected ? true : event.isAdmin;
         return { ...event, isAdmin, admins: [...admins, d.adminEmail] };
       }
 
       case "AdminRemoved": {
         const d = delta as AdminRemovedDelta;
         const admins = (event.admins || []).filter((a) => a !== d.adminEmail);
-        const affected = d.adminEmail === this.userEmail();
-        const isAdmin = affected ? false : event.isAdmin;
-        if (affected) {
+        const isAffected = d.adminEmail === this.userEmail();
+        const isAdmin = isAffected ? false : event.isAdmin;
+        if (isAffected) {
           this.route.navigate(["/events", event.slug]);
         }
         return { ...event, isAdmin, admins };

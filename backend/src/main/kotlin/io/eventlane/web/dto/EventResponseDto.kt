@@ -14,4 +14,6 @@ data class EventResponseDto(
     val confirmed: List<AttendeeDto>?,
     val waitlisted: List<AttendeeDto>?,
     val admins: List<String>?,
+    val createdAt: Long,
+    val version: Long,
 )

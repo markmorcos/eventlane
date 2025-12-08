@@ -33,6 +33,9 @@ object DtoMapper {
             confirmed = if (isAdmin) event.confirmedList.map { toAttendeeDto(it) } else null,
             waitlisted = if (isAdmin) event.waitingList.map { toAttendeeDto(it) } else null,
             admins = if (isAdmin) event.admins else null,
+
+            createdAt = event.createdAt.toEpochMilli(),
+            version = event.version ?: 0L,
         )
     }
 }

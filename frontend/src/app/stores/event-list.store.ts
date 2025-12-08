@@ -97,8 +97,23 @@ export class EventListStore {
   }
 
   private async applyDeltas(deltas: EventDelta[]): Promise<void> {
-    for (const delta of deltas) {
-      await this.applyDelta(delta);
+    const deltasByEvent = deltas.reduce((result, delta) => {
+      if (!result[delta.eventSlug]) result[delta.eventSlug] = [];
+      result[delta.eventSlug].push(delta);
+      return result;
+    }, {} as Record<string, EventDelta[]>);
+
+    for (const eventSlug of Object.keys(deltasByEvent)) {
+      const eventDeltas = deltasByEvent[eventSlug];
+      const event = this._events().find((e) => e.slug === eventSlug);
+
+      if (eventDeltas[0] && event && eventDeltas[0].version < event.version) {
+        continue;
+      }
+
+      for (const delta of eventDeltas) {
+        await this.applyDelta(delta);
+      }
     }
   }
 
@@ -106,18 +121,15 @@ export class EventListStore {
     const events = this._events();
     const index = events.findIndex((e) => e.slug === delta.eventSlug);
 
-    const event = events[index];
-
-    if (event && delta.version < event.version) {
-      return;
+    let event = events[index];
+    if (!event) {
+      event = await firstValueFrom(this.api.getEvent(delta.eventSlug));
     }
 
     let updated: EventSummary | null = null;
 
     switch (delta.type) {
       case "EventCapacityUpdated": {
-        if (!event) return;
-
         const d = delta as EventCapacityUpdatedDelta;
         updated = { ...event, capacity: d.newCapacity };
         break;
@@ -125,18 +137,13 @@ export class EventListStore {
 
       case "AdminAdded": {
         const d = delta as AdminAddedDelta;
-        if (d.adminEmail !== this.userEmail() || event) break;
-
-        const newEvent = await firstValueFrom(this.api.getEvent(d.eventSlug));
-        if (!newEvent || delta.version < newEvent.version) {
-          break;
-        }
+        if (d.adminEmail !== this.userEmail()) break;
 
         this._events.update((events) =>
-          [...events, newEvent].sort((a, b) => a.title.localeCompare(b.title))
+          [...events, event].sort((a, b) => a.title.localeCompare(b.title))
         );
 
-        this.toast.info(`You've been added as an admin to "${newEvent.title}"`);
+        this.toast.info(`You've been added as an admin to "${event.title}"`);
 
         break;
       }
