@@ -13,9 +13,9 @@ class AttendanceService(
     private val publisher: EventDeltaPublisher,
 ) {
 
-    fun attend(slug: String, userId: String, name: String, email: String): EventDelta {
+    fun attend(slug: String, name: String, email: String): EventDelta {
         val (saved, delta) = retry.run(slug) { event ->
-            EventBehavior.addAttendee(event, userId, name, email)
+            EventBehavior.addAttendee(event, name, email)
         }
 
         publisher.publish(saved, listOf(delta))

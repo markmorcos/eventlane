@@ -13,7 +13,7 @@ class FirebaseTokenVerifier {
     fun verifyToken(idToken: String): FirebaseToken? {
         return try {
             val decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken)
-            logger.debug("Token verified for uid: ${decodedToken.uid}, email: ${decodedToken.email}")
+            logger.debug("Token verified for email: ${decodedToken.email}")
             decodedToken
         } catch (e: Exception) {
             logger.error("Failed to verify Firebase token: ${e.message}")

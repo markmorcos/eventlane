@@ -1,6 +1,4 @@
 export interface Attendee {
-  id: string;
-  userId: string;
   name: string;
   email: string;
   createdAt: string;

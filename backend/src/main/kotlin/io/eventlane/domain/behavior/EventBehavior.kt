@@ -16,7 +16,7 @@ import java.time.Instant
 import kotlin.math.min
 
 object EventBehavior {
-    fun addAttendee(event: Event, userId: String, name: String, email: String): Pair<Event, EventDelta> {
+    fun addAttendee(event: Event, name: String, email: String): Pair<Event, EventDelta> {
         val normalized = email.lowercase()
         val now = Instant.now()
 
@@ -38,7 +38,6 @@ object EventBehavior {
         }
 
         val newAttendee = Attendee(
-            userId = userId,
             name = name,
             email = normalized,
             createdAt = now,

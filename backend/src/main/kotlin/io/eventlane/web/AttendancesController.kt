@@ -25,7 +25,6 @@ class AttendancesController(private val attendance: AttendanceService) {
     ): AttendanceResponseDto {
         val delta = attendance.attend(
             slug = slug,
-            userId = user.uid,
             name = body.name,
             email = user.email,
         )

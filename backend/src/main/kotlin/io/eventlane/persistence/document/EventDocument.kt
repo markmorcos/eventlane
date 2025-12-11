@@ -28,8 +28,6 @@ data class EventDocument(
 )
 
 data class AttendeeDocument(
-    val id: String,
-    val userId: String,
     val name: String,
     val email: String,
     val createdAt: Instant,

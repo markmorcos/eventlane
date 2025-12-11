@@ -8,7 +8,6 @@ object DtoMapper {
     fun toAttendeeDto(a: Attendee): AttendeeDto = AttendeeDto(
         email = a.email,
         name = a.name,
-        userId = a.userId,
         createdAt = a.createdAt.toString(),
     )
 

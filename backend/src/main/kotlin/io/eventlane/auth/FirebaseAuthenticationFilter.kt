@@ -24,11 +24,8 @@ class FirebaseAuthenticationFilter(
             val idToken = authHeader.substring(7)
             val decodedToken = tokenVerifier.verifyToken(idToken)
 
-            if (decodedToken != null) {
-                val uid = decodedToken.uid
-                val email = decodedToken.email ?: ""
-
-                val user = SecurityUser(uid, email)
+            if (decodedToken != null && decodedToken.isEmailVerified()) {
+                val user = SecurityUser(email = decodedToken.email)
                 val authentication = UsernamePasswordAuthenticationToken(
                     user,
                     null,

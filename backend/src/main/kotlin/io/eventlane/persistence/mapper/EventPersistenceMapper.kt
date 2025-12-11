@@ -35,16 +35,12 @@ object EventPersistenceMapper {
     )
 
     fun toDomainAttendee(doc: AttendeeDocument): Attendee = Attendee(
-        id = doc.id,
-        userId = doc.userId,
         name = doc.name,
         email = doc.email,
         createdAt = doc.createdAt,
     )
 
     fun toDocumentAttendee(attendee: Attendee): AttendeeDocument = AttendeeDocument(
-        id = attendee.id,
-        userId = attendee.userId,
         name = attendee.name,
         email = attendee.email,
         createdAt = attendee.createdAt,
