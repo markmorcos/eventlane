@@ -99,3 +99,8 @@
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  margin-left: -1rem;
+  filter: invert(1);
+}

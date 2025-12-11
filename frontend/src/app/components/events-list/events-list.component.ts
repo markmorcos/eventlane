@@ -7,6 +7,7 @@ import { SeoService } from "../../services/seo.service";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
 import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
+import { formatEventDateTime } from "../../utils/date-format";
 
 @Component({
   selector: "app-events-list",
@@ -27,6 +28,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
   events = this.store.events;
   loading = this.store.loading;
   error = this.store.error;
+
+  formatEventDateTime = formatEventDateTime;
 
   ngOnInit() {
     this.seoService.updateTags({

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
 
 @RestController
 @RequestMapping("/api/events")
@@ -37,6 +38,8 @@ class EventsController(
             slug = request.slug,
             title = request.title,
             capacity = request.capacity,
+            eventDate = Instant.parse(request.eventDate),
+            timezone = request.timezone,
             creatorEmail = user.email,
         )
 

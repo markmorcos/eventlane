@@ -33,6 +33,9 @@ dependencies {
     // Firebase Admin SDK
     implementation("com.google.firebase:firebase-admin:9.2.0")
 
+    // MinIO
+    implementation("io.minio:minio:8.5.7")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

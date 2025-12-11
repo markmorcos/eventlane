@@ -11,6 +11,10 @@ import {
   EventCapacityUpdatedDelta,
   AdminAddedDelta,
   AdminRemovedDelta,
+  EventDateTimeUpdatedDelta,
+  EventLocationUpdatedDelta,
+  EventDescriptionUpdatedDelta,
+  EventCoverImageUpdatedDelta,
 } from "../models/event-delta.model";
 import { EventApiService } from "../services/event-api.service";
 import { EventSocketService } from "../services/event-socket.service";
@@ -295,6 +299,26 @@ export class EventDetailStore {
           this.route.navigate(["/events", event.slug]);
         }
         return { ...event, isAdmin, admins };
+      }
+
+      case "EventDateTimeUpdated": {
+        const d = delta as EventDateTimeUpdatedDelta;
+        return { ...event, eventDate: d.eventDate, timezone: d.timezone };
+      }
+
+      case "EventLocationUpdated": {
+        const d = delta as EventLocationUpdatedDelta;
+        return { ...event, location: d.location || undefined };
+      }
+
+      case "EventDescriptionUpdated": {
+        const d = delta as EventDescriptionUpdatedDelta;
+        return { ...event, description: d.description || undefined };
+      }
+
+      case "EventCoverImageUpdated": {
+        const d = delta as EventCoverImageUpdatedDelta;
+        return { ...event, coverImageUrl: d.coverImageUrl || undefined };
       }
 
       default:

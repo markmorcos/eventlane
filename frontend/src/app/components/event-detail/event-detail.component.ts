@@ -26,6 +26,11 @@ import {
 } from "../../ui/ui-card-helm/src";
 import { HlmSkeletonComponent } from "../../ui/ui-skeleton-helm/src";
 import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
+import {
+  formatEventDate,
+  formatEventTime,
+  getRelativeTime,
+} from "../../utils/date-format";
 
 @Component({
   selector: "app-event-detail",
@@ -169,4 +174,9 @@ export class EventDetailComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  // Date/time formatting utilities
+  formatEventDate = formatEventDate;
+  formatEventTime = formatEventTime;
+  getRelativeTime = getRelativeTime;
 }

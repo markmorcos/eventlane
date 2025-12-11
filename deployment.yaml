@@ -18,6 +18,23 @@ services:
         value: eventlane-cd9d2
       - name: FIREBASE_CREDENTIALS_PATH
         value: /secrets/firebase-service-account.json
+      - name: MINIO_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: MINIO_ENDPOINT
+      - name: MINIO_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: MINIO_ACCESS_KEY
+      - name: MINIO_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: MINIO_SECRET_KEY
+      - name: MINIO_BUCKET_NAME
+        value: eventlane-images
     volumes:
       - name: firebase-credentials
         secret:

@@ -8,6 +8,12 @@ data class Event(
     val title: String,
     val capacity: Int,
 
+    val eventDate: Instant,
+    val timezone: String,
+    val location: Location? = null,
+    val description: String? = null,
+    val coverImageUrl: String? = null,
+
     val confirmedList: List<Attendee>,
     val waitingList: List<Attendee>,
 

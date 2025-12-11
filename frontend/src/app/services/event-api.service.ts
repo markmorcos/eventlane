@@ -1,7 +1,12 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { EventDetail, EventSummary, Attendee } from "../models/event.model";
+import {
+  EventDetail,
+  EventSummary,
+  Attendee,
+  Location,
+} from "../models/event.model";
 import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
@@ -19,20 +24,26 @@ export class EventApiService {
     return this.http.get<EventDetail>(`${this.eventsBaseUrl}/${slug}`);
   }
 
-  createEvent(payload: { slug: string; title: string; capacity: number }) {
+  createEvent(payload: {
+    slug: string;
+    title: string;
+    capacity: number;
+    eventDate: string;
+    timezone: string;
+  }) {
     return this.http.post<EventDetail>(this.eventsBaseUrl, payload);
   }
 
   attend(slug: string, name: string) {
     return this.http.post<{ status: string; attendee: Attendee }>(
       `${this.attendancesBaseUrl}/${slug}/attend`,
-      { name },
+      { name }
     );
   }
 
   cancelAttendance(slug: string, email: string) {
     return this.http.delete(
-      `${this.attendancesBaseUrl}/${slug}/attend/${encodeURIComponent(email)}`,
+      `${this.attendancesBaseUrl}/${slug}/attend/${encodeURIComponent(email)}`
     );
   }
 
@@ -45,17 +56,43 @@ export class EventApiService {
   addAdmin(slug: string, email: string) {
     return this.http.post(
       `${this.adminsBaseUrl}/${slug}/admins/${encodeURIComponent(email)}`,
-      {},
+      {}
     );
   }
 
   removeAdmin(slug: string, email: string) {
     return this.http.delete(
-      `${this.adminsBaseUrl}/${slug}/admins/${encodeURIComponent(email)}`,
+      `${this.adminsBaseUrl}/${slug}/admins/${encodeURIComponent(email)}`
     );
   }
 
   deleteEvent(slug: string) {
     return this.http.delete(`${this.adminsBaseUrl}/${slug}`);
+  }
+
+  updateMetadata(
+    slug: string,
+    payload: { location?: Location; description?: string }
+  ) {
+    return this.http.patch(`${this.adminsBaseUrl}/${slug}/metadata`, payload);
+  }
+
+  getImageUploadUrl(slug: string) {
+    return this.http.get<{ uploadUrl: string }>(
+      `${this.adminsBaseUrl}/${slug}/cover-image/upload-url`
+    );
+  }
+
+  processCoverImage(slug: string, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return this.http.post(
+      `${this.adminsBaseUrl}/${slug}/cover-image`,
+      formData
+    );
+  }
+
+  deleteCoverImage(slug: string) {
+    return this.http.delete(`${this.adminsBaseUrl}/${slug}/cover-image`);
   }
 }

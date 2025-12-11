@@ -1,4 +1,4 @@
-import { Attendee } from "./event.model";
+import { Attendee, Location } from "./event.model";
 
 export type AttendeeStatus = "CONFIRMED" | "WAITLISTED";
 
@@ -54,6 +54,27 @@ export interface AdminRemovedDelta extends BaseDelta {
   adminEmail: string;
 }
 
+export interface EventDateTimeUpdatedDelta extends BaseDelta {
+  type: "EventDateTimeUpdated";
+  eventDate: number;
+  timezone: string;
+}
+
+export interface EventLocationUpdatedDelta extends BaseDelta {
+  type: "EventLocationUpdated";
+  location: Location | null;
+}
+
+export interface EventDescriptionUpdatedDelta extends BaseDelta {
+  type: "EventDescriptionUpdated";
+  description: string | null;
+}
+
+export interface EventCoverImageUpdatedDelta extends BaseDelta {
+  type: "EventCoverImageUpdated";
+  coverImageUrl: string | null;
+}
+
 export type EventDelta =
   | EventCreatedDelta
   | EventCapacityUpdatedDelta
@@ -62,4 +83,8 @@ export type EventDelta =
   | AttendeeRemovedDelta
   | AttendeeStatusChangedDelta
   | AdminAddedDelta
-  | AdminRemovedDelta;
+  | AdminRemovedDelta
+  | EventDateTimeUpdatedDelta
+  | EventLocationUpdatedDelta
+  | EventDescriptionUpdatedDelta
+  | EventCoverImageUpdatedDelta;

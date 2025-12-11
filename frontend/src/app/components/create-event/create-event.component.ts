@@ -17,6 +17,7 @@ import {
   HlmCardTitleDirective,
   HlmCardContentDirective,
 } from "../../ui/ui-card-helm/src";
+import { TimezoneSelectorComponent } from "../timezone-selector/timezone-selector.component";
 
 @Component({
   selector: "app-create-event",
@@ -30,6 +31,7 @@ import {
     HlmCardHeaderDirective,
     HlmCardTitleDirective,
     HlmCardContentDirective,
+    TimezoneSelectorComponent,
   ],
   templateUrl: "./create-event.component.html",
 })
@@ -47,6 +49,15 @@ export class CreateEventComponent implements OnInit {
   title = "";
   slug = "";
   capacity = 8;
+  eventDate = "";
+  timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  getDefaultDate() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(18, 0, 0, 0);
+    return tomorrow.toISOString().slice(0, 16);
+  }
 
   ngOnInit() {
     this.seoService.updateTags({
@@ -58,6 +69,8 @@ export class CreateEventComponent implements OnInit {
       type: "website",
     });
     this.seoService.removeStructuredData();
+
+    this.eventDate = this.getDefaultDate();
   }
 
   generateSlug() {
@@ -76,6 +89,8 @@ export class CreateEventComponent implements OnInit {
       this.slug.trim().length > 0 &&
       this.isSlugValid() &&
       this.capacity >= 1 &&
+      this.eventDate.length > 0 &&
+      this.timezone.length > 0 &&
       !this.loading()
     );
   }
@@ -84,7 +99,7 @@ export class CreateEventComponent implements OnInit {
     if (!this.isFormValid()) {
       this.toastService.error(
         "Invalid form",
-        "Please check all fields and try again.",
+        "Please check all fields and try again."
       );
       return;
     }
@@ -93,18 +108,20 @@ export class CreateEventComponent implements OnInit {
       title: this.title,
       slug: this.slug,
       capacity: this.capacity,
+      eventDate: new Date(this.eventDate).toISOString(),
+      timezone: this.timezone,
     });
 
     if (event) {
       this.toastService.success(
         "Event created!",
-        `${event.title} is ready to accept RSVPs.`,
+        `${event.title} is ready to accept RSVPs.`
       );
       this.router.navigate(["/events", event.slug]);
     } else {
       this.toastService.error(
         "Failed to create event",
-        this.store.error() || "Please try again or choose a different slug.",
+        this.store.error() || "Please try again or choose a different slug."
       );
     }
   }

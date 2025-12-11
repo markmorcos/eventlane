@@ -13,6 +13,12 @@ firebase:
   project-id: ${FIREBASE_PROJECT_ID:eventlane-cd9d2}
   credentials-path: ${FIREBASE_CREDENTIALS_PATH:firebase-service-account.json}
 
+minio:
+  endpoint: ${MINIO_ENDPOINT:https://minio.morcos.tech}
+  access-key: ${MINIO_ACCESS_KEY:minio-user}
+  secret-key: ${MINIO_SECRET_KEY:passwordforminio}
+  bucket-name: ${MINIO_BUCKET_NAME:eventlane}
+
 logging:
   level:
     io.eventlane: DEBUG

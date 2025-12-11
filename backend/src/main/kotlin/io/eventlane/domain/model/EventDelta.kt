@@ -18,6 +18,10 @@ import java.time.Instant
     JsonSubTypes.Type(value = AttendeeStatusChanged::class, name = "AttendeeStatusChanged"),
     JsonSubTypes.Type(value = AdminAdded::class, name = "AdminAdded"),
     JsonSubTypes.Type(value = AdminRemoved::class, name = "AdminRemoved"),
+    JsonSubTypes.Type(value = EventDateTimeUpdated::class, name = "EventDateTimeUpdated"),
+    JsonSubTypes.Type(value = EventLocationUpdated::class, name = "EventLocationUpdated"),
+    JsonSubTypes.Type(value = EventDescriptionUpdated::class, name = "EventDescriptionUpdated"),
+    JsonSubTypes.Type(value = EventCoverImageUpdated::class, name = "EventCoverImageUpdated"),
 )
 sealed class EventDelta(
     open val version: Long,
@@ -83,4 +87,33 @@ data class AdminRemoved(
     override val timestamp: Instant,
     override val eventSlug: String,
     val adminEmail: String,
+) : EventDelta(version, timestamp, eventSlug)
+
+data class EventDateTimeUpdated(
+    override val version: Long,
+    override val timestamp: Instant,
+    override val eventSlug: String,
+    val eventDate: Instant,
+    val timezone: String,
+) : EventDelta(version, timestamp, eventSlug)
+
+data class EventLocationUpdated(
+    override val version: Long,
+    override val timestamp: Instant,
+    override val eventSlug: String,
+    val location: Location?,
+) : EventDelta(version, timestamp, eventSlug)
+
+data class EventDescriptionUpdated(
+    override val version: Long,
+    override val timestamp: Instant,
+    override val eventSlug: String,
+    val description: String?,
+) : EventDelta(version, timestamp, eventSlug)
+
+data class EventCoverImageUpdated(
+    override val version: Long,
+    override val timestamp: Instant,
+    override val eventSlug: String,
+    val coverImageUrl: String?,
 ) : EventDelta(version, timestamp, eventSlug)

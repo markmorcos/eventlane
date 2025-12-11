@@ -15,6 +15,12 @@ data class EventDocument(
     val title: String,
     val capacity: Int,
 
+    val eventDate: Instant,
+    val timezone: String,
+    val location: LocationDocument? = null,
+    val description: String? = null,
+    val coverImageUrl: String? = null,
+
     val creatorEmail: String,
     val admins: List<String>,
 

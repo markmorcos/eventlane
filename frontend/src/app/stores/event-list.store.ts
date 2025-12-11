@@ -67,6 +67,8 @@ export class EventListStore {
     title: string;
     slug: string;
     capacity: number;
+    eventDate: string;
+    timezone: string;
   }) {
     this._loading.set(true);
     this._error.set(null);
