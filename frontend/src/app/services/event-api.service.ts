@@ -25,7 +25,6 @@ export class EventApiService {
   }
 
   createEvent(payload: {
-    slug: string;
     title: string;
     capacity: number;
     eventDate: string;
@@ -72,7 +71,13 @@ export class EventApiService {
 
   updateMetadata(
     slug: string,
-    payload: { location?: Location; description?: string }
+    payload: {
+      eventDate?: string;
+      timezone?: string;
+      location?: Location;
+      clearLocation?: boolean;
+      description?: string;
+    }
   ) {
     return this.http.patch(`${this.adminsBaseUrl}/${slug}/metadata`, payload);
   }
@@ -94,5 +99,10 @@ export class EventApiService {
 
   deleteCoverImage(slug: string) {
     return this.http.delete(`${this.adminsBaseUrl}/${slug}/cover-image`);
+  }
+
+  async uploadCoverImage(slug: string, blob: Blob): Promise<void> {
+    const file = new File([blob], "cover.webp", { type: "image/webp" });
+    await this.processCoverImage(slug, file).toPromise();
   }
 }

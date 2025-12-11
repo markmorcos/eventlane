@@ -1,5 +1,6 @@
 package io.eventlane.web.dto
 
+import io.eventlane.application.service.ImageStorageService
 import io.eventlane.domain.model.Attendee
 import io.eventlane.domain.model.AttendeeStatus
 import io.eventlane.domain.model.Event
@@ -42,12 +43,21 @@ object DtoMapper {
         formatted = dto.formatted,
     )
 
-    fun toEventResponse(event: Event, requesterEmail: String): EventResponseDto {
+    fun toEventResponse(event: Event, requesterEmail: String, imageService: ImageStorageService): EventResponseDto {
         val isAdmin = event.isAdmin(requesterEmail.lowercase())
         val status = when {
             event.confirmedList.any { it.email == requesterEmail.lowercase() } -> AttendeeStatus.CONFIRMED
             event.waitingList.any { it.email == requesterEmail.lowercase() } -> AttendeeStatus.WAITLISTED
             else -> null
+        }
+
+        val coverImages = if (event.coverImageUrl != null) {
+            CoverImagesDto(
+                desktop = imageService.getPublicImageUrl(event.slug, "desktop"),
+                mobile = imageService.getPublicImageUrl(event.slug, "mobile"),
+            )
+        } else {
+            null
         }
 
         return EventResponseDto(
@@ -58,7 +68,7 @@ object DtoMapper {
             timezone = event.timezone,
             location = event.location?.let { toLocationDto(it) },
             description = event.description,
-            coverImageUrl = event.coverImageUrl,
+            coverImages = coverImages,
             confirmedCount = event.confirmedList.size,
             waitlistedCount = event.waitingList.size,
             creatorEmail = event.creatorEmail,

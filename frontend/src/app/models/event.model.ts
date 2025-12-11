@@ -19,6 +19,11 @@ export interface Location {
   formatted: string;
 }
 
+export interface CoverImages {
+  desktop: string;
+  mobile: string;
+}
+
 export interface EventSummary {
   slug: string;
   title: string;
@@ -27,7 +32,7 @@ export interface EventSummary {
   timezone: string;
   location?: Location;
   description?: string;
-  coverImageUrl?: string;
+  coverImages?: CoverImages;
   confirmedCount: number;
   waitlistedCount: number;
   requesterStatus?: "CONFIRMED" | "WAITLISTED";

@@ -9,7 +9,7 @@ import { isPlatformBrowser } from "@angular/common";
 import { firstValueFrom, Subscription } from "rxjs";
 
 import { EventApiService } from "../services/event-api.service";
-import { EventSummary } from "../models/event.model";
+import { EventSummary, Location } from "../models/event.model";
 import { EventSocketService } from "../services/event-socket.service";
 import { ToastService } from "../services/toast.service";
 import { AuthService } from "../services/auth.service";
@@ -65,7 +65,6 @@ export class EventListStore {
 
   async createEvent(eventData: {
     title: string;
-    slug: string;
     capacity: number;
     eventDate: string;
     timezone: string;

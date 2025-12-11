@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayInputStream
 import java.util.concurrent.TimeUnit
-import javax.imageio.ImageIO
 
 @Service
 class ImageStorageService(
@@ -120,30 +119,27 @@ class ImageStorageService(
      */
     fun processUploadedImage(slug: String, file: MultipartFile): Map<String, String> {
         try {
-            // Read the original image
-            val originalImage = ImageIO.read(file.inputStream)
-                ?: throw IllegalArgumentException("Invalid image file")
-
-            val width = originalImage.width
-            val height = originalImage.height
-
-            // Validate aspect ratio (16:9 = 1.778)
-            val aspectRatio = width.toDouble() / height.toDouble()
-            if (aspectRatio < 1.7 || aspectRatio > 1.85) {
-                throw IllegalArgumentException("Image must have a 16:9 aspect ratio")
+            // Validate file size (10MB max)
+            if (file.size > 10 * 1024 * 1024) {
+                throw IllegalArgumentException("File size exceeds 10MB limit")
             }
 
-            // Note: For now, we'll store the original as-is
-            // In a production scenario, you'd generate WebP thumbnails here
-            // For simplicity, we'll assume the client sends pre-optimized WebP
+            // Validate content type
+            val contentType = file.contentType
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw IllegalArgumentException("File must be an image")
+            }
+
+            // For WebP files from the image cropper, we trust the client-side processing
+            // The frontend already ensures 16:9 aspect ratio and WebP format
+            val imageBytes = file.bytes
 
             // Upload original
-            uploadImage(file.bytes, "events/$slug/cover-original.webp", file.contentType ?: "image/webp")
+            uploadImage(imageBytes, "events/$slug/cover-original.webp", "image/webp")
 
             // For now, use the same image for all sizes
-            // TODO: Implement actual thumbnail generation
-            uploadImage(file.bytes, "events/$slug/cover-desktop.webp", file.contentType ?: "image/webp")
-            uploadImage(file.bytes, "events/$slug/cover-mobile.webp", file.contentType ?: "image/webp")
+            uploadImage(imageBytes, "events/$slug/cover-desktop.webp", "image/webp")
+            uploadImage(imageBytes, "events/$slug/cover-mobile.webp", "image/webp")
 
             return mapOf(
                 "desktop" to getPublicImageUrl(slug, "desktop"),

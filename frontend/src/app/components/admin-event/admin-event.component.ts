@@ -15,6 +15,8 @@ import { FormsModule } from "@angular/forms";
 import { EventDetailStore } from "../../stores/event-detail.store";
 import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
+import { EventApiService } from "../../services/event-api.service";
+import { ToastService } from "../../services/toast.service";
 import { Meta } from "@angular/platform-browser";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
@@ -29,6 +31,12 @@ import {
   HlmSkeletonTableRowComponent,
 } from "../../ui/ui-skeleton-helm/src";
 import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
+import { TimezoneSelectorComponent } from "../timezone-selector/timezone-selector.component";
+import { LocationInputComponent } from "../location-input/location-input.component";
+import { ImageUploadComponent } from "../image-upload/image-upload.component";
+import { Location } from "../../models/event.model";
+import { formatEventDate } from "../../utils/date-format";
+import { firstValueFrom } from "rxjs";
 
 @Component({
   selector: "app-admin-event",
@@ -45,6 +53,9 @@ import { HlmAlertDialogComponent } from "../../ui/ui-alertdialog-helm/src";
     HlmSkeletonComponent,
     HlmSkeletonTableRowComponent,
     HlmAlertDialogComponent,
+    TimezoneSelectorComponent,
+    LocationInputComponent,
+    ImageUploadComponent,
   ],
   templateUrl: "./admin-event.component.html",
 })
@@ -55,6 +66,8 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   private seoService = inject(SeoService);
   private meta = inject(Meta);
   private authService = inject(AuthService);
+  private eventApiService = inject(EventApiService);
+  private toastService = inject(ToastService);
 
   email = this.authService.userEmail;
   event = this.store.event;
@@ -67,6 +80,18 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
   newCapacity = signal(0);
   newAdminEmail = signal("");
+
+  // Metadata editing state
+  editingDateTime = signal(false);
+  editingLocation = signal(false);
+  editingDescription = signal(false);
+  editingCoverImage = signal(false);
+  newEventDate = "";
+  newTimezone = "";
+  newLocation: Location | null = null;
+  newDescription = "";
+
+  formatEventDate = formatEventDate;
 
   // Dialog state
   showRemoveAttendeeDialog = signal(false);
@@ -163,5 +188,134 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     await this.store.deleteEvent(evt.slug);
     this.showDeleteEventDialog.set(false);
     this.router.navigate(["/events"]);
+  }
+
+  // Metadata editing methods
+  startEditingDateTime() {
+    const evt = this.event();
+    if (!evt) return;
+    this.newEventDate = new Date(evt.eventDate).toISOString().slice(0, 16);
+    this.newTimezone = evt.timezone;
+    this.editingDateTime.set(true);
+  }
+
+  cancelEditingDateTime() {
+    this.editingDateTime.set(false);
+  }
+
+  async saveDateTime() {
+    const evt = this.event();
+    if (!evt) return;
+
+    try {
+      await firstValueFrom(
+        this.eventApiService.updateMetadata(evt.slug, {
+          eventDate: new Date(this.newEventDate).toISOString(),
+          timezone: this.newTimezone,
+        })
+      );
+      this.toastService.success("Date & time updated", "");
+      this.editingDateTime.set(false);
+    } catch (err) {
+      this.toastService.error("Failed to update date & time", "");
+      console.error(err);
+    }
+  }
+
+  startEditingLocation() {
+    const evt = this.event();
+    if (!evt) return;
+    this.newLocation = evt.location || null;
+    this.editingLocation.set(true);
+  }
+
+  cancelEditingLocation() {
+    this.editingLocation.set(false);
+  }
+
+  async saveLocation() {
+    const evt = this.event();
+    if (!evt) return;
+
+    try {
+      await firstValueFrom(
+        this.eventApiService.updateMetadata(
+          evt.slug,
+          this.newLocation
+            ? { location: this.newLocation }
+            : { clearLocation: true }
+        )
+      );
+      this.toastService.success("Location updated", "");
+      this.editingLocation.set(false);
+    } catch (err) {
+      this.toastService.error("Failed to update location", "");
+      console.error(err);
+    }
+  }
+
+  startEditingDescription() {
+    const evt = this.event();
+    if (!evt) return;
+    this.newDescription = evt.description || "";
+    this.editingDescription.set(true);
+  }
+
+  cancelEditingDescription() {
+    this.editingDescription.set(false);
+  }
+
+  async saveDescription() {
+    const evt = this.event();
+    if (!evt) return;
+
+    try {
+      await firstValueFrom(
+        this.eventApiService.updateMetadata(evt.slug, {
+          description: this.newDescription.trim() || "",
+        })
+      );
+      this.toastService.success("Description updated", "");
+      this.editingDescription.set(false);
+    } catch (err) {
+      this.toastService.error("Failed to update description", "");
+      console.error(err);
+    }
+  }
+
+  startEditingCoverImage() {
+    this.editingCoverImage.set(true);
+  }
+
+  cancelEditingCoverImage() {
+    this.editingCoverImage.set(false);
+  }
+
+  async saveCoverImage(blob: Blob) {
+    const evt = this.event();
+    if (!evt) return;
+
+    try {
+      await this.eventApiService.uploadCoverImage(evt.slug, blob);
+      this.toastService.success("Cover image uploaded", "");
+      this.editingCoverImage.set(false);
+    } catch (err) {
+      this.toastService.error("Failed to upload cover image", "");
+      console.error(err);
+    }
+  }
+
+  async removeCoverImage() {
+    const evt = this.event();
+    if (!evt) return;
+
+    try {
+      await firstValueFrom(this.eventApiService.deleteCoverImage(evt.slug));
+      this.toastService.success("Cover image removed", "");
+      this.editingCoverImage.set(false);
+    } catch (err) {
+      this.toastService.error("Failed to remove cover image", "");
+      console.error(err);
+    }
   }
 }

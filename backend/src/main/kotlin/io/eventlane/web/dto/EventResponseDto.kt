@@ -2,6 +2,11 @@ package io.eventlane.web.dto
 
 import io.eventlane.domain.model.AttendeeStatus
 
+data class CoverImagesDto(
+    val desktop: String,
+    val mobile: String,
+)
+
 data class EventResponseDto(
     val slug: String,
     val title: String,
@@ -10,7 +15,7 @@ data class EventResponseDto(
     val timezone: String,
     val location: LocationDto?,
     val description: String?,
-    val coverImageUrl: String?,
+    val coverImages: CoverImagesDto?,
     val confirmedCount: Int,
     val waitlistedCount: Int,
     val requesterStatus: AttendeeStatus?,

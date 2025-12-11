@@ -42,32 +42,8 @@
               [(ngModel)]="title"
               name="title"
               placeholder="Summer Tech Conference 2025"
-              (input)="generateSlug()"
               required
             />
-          </div>
-
-          <div class="space-y-2">
-            <label hlmLabel for="slug">Unique event name *</label>
-            <input
-              hlmInput
-              id="slug"
-              type="text"
-              [(ngModel)]="slug"
-              name="slug"
-              placeholder="summer-tech-conference-2025"
-              (input)="slug = slug.toLowerCase()"
-              required
-            />
-            <small
-              class="text-sm"
-              [class.text-muted-foreground]="isSlugValid() || !slug"
-              [class.text-destructive]="!isSlugValid() && slug"
-            >
-              @if (!isSlugValid() && slug) { Invalid format. Only lowercase
-              letters, numbers, and hyphens (no consecutive or trailing
-              hyphens). } @else { Only lowercase letters, numbers, and hyphens }
-            </small>
           </div>
 
           <div class="space-y-2">

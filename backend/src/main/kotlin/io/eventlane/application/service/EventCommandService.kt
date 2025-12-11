@@ -13,6 +13,7 @@ import io.eventlane.domain.model.EventDelta
 import io.eventlane.domain.model.EventDescriptionUpdated
 import io.eventlane.domain.model.EventLocationUpdated
 import io.eventlane.domain.model.Location
+import io.eventlane.domain.util.SlugGenerator
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -24,16 +25,13 @@ class EventCommandService(
 ) {
 
     fun createEvent(
-        slug: String,
         title: String,
         capacity: Int,
         eventDate: Instant,
         timezone: String,
         creatorEmail: String,
     ): EventDelta {
-        if (repository.existsBySlug(slug)) {
-            throw IllegalArgumentException("Event already exists: $slug")
-        }
+        val slug = SlugGenerator.generateUniqueSlug(title) { repository.existsBySlug(it) }
 
         val now = Instant.now()
 
@@ -165,7 +163,7 @@ class EventCommandService(
         val (saved, delta) = retry.run(slug) { event ->
             val now = Instant.now()
             val updated = event.copy(
-                description = description?.take(700),
+                description = description?.takeIf { it.isNotBlank() }?.take(700),
                 updatedAt = now,
             )
             val delta = EventDescriptionUpdated(

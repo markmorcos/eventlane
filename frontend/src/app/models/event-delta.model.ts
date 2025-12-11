@@ -1,4 +1,4 @@
-import { Attendee, Location } from "./event.model";
+import { Attendee, Location, CoverImages } from "./event.model";
 
 export type AttendeeStatus = "CONFIRMED" | "WAITLISTED";
 
@@ -72,7 +72,7 @@ export interface EventDescriptionUpdatedDelta extends BaseDelta {
 
 export interface EventCoverImageUpdatedDelta extends BaseDelta {
   type: "EventCoverImageUpdated";
-  coverImageUrl: string | null;
+  coverImages: CoverImages | null;
 }
 
 export type EventDelta =

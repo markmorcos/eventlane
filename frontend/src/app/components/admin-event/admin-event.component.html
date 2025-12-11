@@ -58,6 +58,240 @@
     </div>
 
     <div class="space-y-6">
+      <!-- Event Metadata Section -->
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Event details</h3>
+        </div>
+        <div hlmCardContent class="space-y-4">
+          <!-- Date & Time -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Date & time</label>
+            @if (!editingDateTime()) {
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm">
+                  {{ formatEventDate(evt.eventDate, evt.timezone) }}
+                </p>
+                <p class="text-xs text-muted-foreground">{{ evt.timezone }}</p>
+              </div>
+              <button
+                type="button"
+                hlmBtn
+                variant="outline"
+                size="sm"
+                (click)="startEditingDateTime()"
+              >
+                Edit
+              </button>
+            </div>
+            } @else {
+            <div class="space-y-3">
+              <input
+                hlmInput
+                type="datetime-local"
+                [(ngModel)]="newEventDate"
+                name="eventDate"
+              />
+              <app-timezone-selector
+                [timezone]="newTimezone"
+                (timezoneChange)="newTimezone = $event"
+              />
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  hlmBtn
+                  size="sm"
+                  (click)="saveDateTime()"
+                  [disabled]="loading()"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  (click)="cancelEditingDateTime()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            }
+          </div>
+
+          <!-- Location -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Location</label>
+            @if (!editingLocation()) {
+            <div class="flex items-center justify-between">
+              @if (evt.location) {
+              <div>
+                <p class="text-sm">{{ evt.location.formatted }}</p>
+                @if (evt.location.lat && evt.location.lng) {
+                <p class="text-xs text-muted-foreground">
+                  {{ evt.location.lat }}, {{ evt.location.lng }}
+                </p>
+                }
+              </div>
+              } @else {
+              <p class="text-sm text-muted-foreground">No location set</p>
+              }
+              <button
+                type="button"
+                hlmBtn
+                variant="outline"
+                size="sm"
+                (click)="startEditingLocation()"
+              >
+                Edit
+              </button>
+            </div>
+            } @else {
+            <div class="space-y-3">
+              <app-location-input
+                [location]="newLocation"
+                (locationChange)="newLocation = $event"
+              />
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  hlmBtn
+                  size="sm"
+                  (click)="saveLocation()"
+                  [disabled]="loading()"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  (click)="cancelEditingLocation()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            }
+          </div>
+
+          <!-- Description -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Description</label>
+            @if (!editingDescription()) {
+            <div class="flex items-start justify-between gap-3">
+              @if (evt.description) {
+              <p class="text-sm flex-1 whitespace-pre-wrap">
+                {{ evt.description }}
+              </p>
+              } @else {
+              <p class="text-sm text-muted-foreground">No description</p>
+              }
+              <button
+                type="button"
+                hlmBtn
+                variant="outline"
+                size="sm"
+                (click)="startEditingDescription()"
+              >
+                Edit
+              </button>
+            </div>
+            } @else {
+            <div class="space-y-3">
+              <textarea
+                hlmInput
+                [(ngModel)]="newDescription"
+                name="description"
+                rows="4"
+                maxlength="700"
+                placeholder="Describe your event..."
+                class="resize-none"
+              ></textarea>
+              <p class="text-xs text-muted-foreground text-right">
+                {{ newDescription.length }}/700 characters
+              </p>
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  hlmBtn
+                  size="sm"
+                  (click)="saveDescription()"
+                  [disabled]="loading() || newDescription.length > 700"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  (click)="cancelEditingDescription()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            }
+          </div>
+
+          <!-- Cover Image -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium">Cover image</label>
+            @if (!editingCoverImage()) {
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                @if (evt.coverImages) {
+                <picture>
+                  <source
+                    media="(max-width: 768px)"
+                    [srcset]="evt.coverImages.mobile"
+                  />
+                  <img
+                    [src]="evt.coverImages.desktop"
+                    alt="Cover"
+                    class="w-full rounded-md border"
+                  />
+                </picture>
+                } @else {
+                <p class="text-sm text-muted-foreground">No cover image</p>
+                }
+              </div>
+              <button
+                type="button"
+                hlmBtn
+                variant="outline"
+                size="sm"
+                (click)="startEditingCoverImage()"
+              >
+                {{ evt.coverImages ? "Change" : "Add" }}
+              </button>
+            </div>
+            } @else {
+            <div class="space-y-3">
+              <app-image-upload
+                [currentImageUrl]="evt.coverImages?.desktop"
+                (imageUploaded)="saveCoverImage($event)"
+                (imageRemoved)="removeCoverImage()"
+              />
+              <button
+                type="button"
+                hlmBtn
+                variant="outline"
+                size="sm"
+                (click)="cancelEditingCoverImage()"
+              >
+                Cancel
+              </button>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
       <div hlmCard>
         <div hlmCardHeader>
           <div class="rounded-lg bg-primary/10 p-4 mb-4">

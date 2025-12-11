@@ -11,4 +11,5 @@ export const environment = {
   },
   apiBaseUrl: "https://eventlane.io/api",
   wsBaseUrl: "https://eventlane.io/ws",
+  googleMapsApiKey: "AIzaSyCA_JV56DejP1o1y1C8uIRJ0YaZ-38fVW0",
 };

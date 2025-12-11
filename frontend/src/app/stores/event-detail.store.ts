@@ -318,7 +318,7 @@ export class EventDetailStore {
 
       case "EventCoverImageUpdated": {
         const d = delta as EventCoverImageUpdatedDelta;
-        return { ...event, coverImageUrl: d.coverImageUrl || undefined };
+        return { ...event, coverImages: d.coverImages || undefined };
       }
 
       default:

@@ -7,7 +7,6 @@ import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
 import { ToastService } from "../../services/toast.service";
 import { EventListStore } from "../../stores/event-list.store";
-import { toSlug } from "../../utils/slug.util";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
 import { HlmLabelDirective } from "../../ui/ui-label-helm/src";
@@ -47,7 +46,6 @@ export class CreateEventComponent implements OnInit {
   error = this.store.error;
 
   title = "";
-  slug = "";
   capacity = 8;
   eventDate = "";
   timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -73,21 +71,9 @@ export class CreateEventComponent implements OnInit {
     this.eventDate = this.getDefaultDate();
   }
 
-  generateSlug() {
-    if (this.title) {
-      this.slug = toSlug(this.title);
-    }
-  }
-
-  isSlugValid(): boolean {
-    return /^[a-z0-9]+(-[a-z0-9]+)*$/.test(this.slug);
-  }
-
   isFormValid(): boolean {
     return (
       this.title.trim().length > 0 &&
-      this.slug.trim().length > 0 &&
-      this.isSlugValid() &&
       this.capacity >= 1 &&
       this.eventDate.length > 0 &&
       this.timezone.length > 0 &&
@@ -106,7 +92,6 @@ export class CreateEventComponent implements OnInit {
 
     const event = await this.store.createEvent({
       title: this.title,
-      slug: this.slug,
       capacity: this.capacity,
       eventDate: new Date(this.eventDate).toISOString(),
       timezone: this.timezone,
@@ -121,7 +106,7 @@ export class CreateEventComponent implements OnInit {
     } else {
       this.toastService.error(
         "Failed to create event",
-        this.store.error() || "Please try again or choose a different slug."
+        this.store.error() || "Please try again."
       );
     }
   }

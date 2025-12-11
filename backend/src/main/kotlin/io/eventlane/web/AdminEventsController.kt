@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.time.Instant
 
 @RestController
 @RequestMapping("/api/admin/events/{slug}")
@@ -81,13 +82,25 @@ class AdminEventsController(
 
         val deltas = mutableListOf<EventDelta>()
 
-        request.location?.let {
-            val delta = commands.updateLocation(slug, DtoMapper.fromLocationDto(it))
+        if (request.timezone != null && request.eventDate != null) {
+            val delta = commands.updateDateTime(
+                slug,
+                Instant.parse(request.eventDate),
+                request.timezone,
+            )
             deltas.add(delta)
         }
 
-        request.description?.let {
-            val delta = commands.updateDescription(slug, it)
+        if (request.clearLocation == true) {
+            val delta = commands.updateLocation(slug, null)
+            deltas.add(delta)
+        } else if (request.location != null) {
+            val delta = commands.updateLocation(slug, DtoMapper.fromLocationDto(request.location))
+            deltas.add(delta)
+        }
+
+        if (request.description != null) {
+            val delta = commands.updateDescription(slug, request.description)
             deltas.add(delta)
         }
 
@@ -95,10 +108,7 @@ class AdminEventsController(
     }
 
     @GetMapping("/cover-image/upload-url")
-    fun getUploadUrl(
-        @PathVariable slug: String,
-        @AuthenticationPrincipal user: SecurityUser,
-    ): Map<String, String> {
+    fun getUploadUrl(@PathVariable slug: String, @AuthenticationPrincipal user: SecurityUser): Map<String, String> {
         ensureAdmin(slug, user.email)
         val url = imageStorage.generatePresignedUploadUrl(slug)
         return mapOf("uploadUrl" to url)
@@ -129,10 +139,7 @@ class AdminEventsController(
     }
 
     @DeleteMapping("/cover-image")
-    fun deleteCoverImage(
-        @PathVariable slug: String,
-        @AuthenticationPrincipal user: SecurityUser,
-    ): EventDelta {
+    fun deleteCoverImage(@PathVariable slug: String, @AuthenticationPrincipal user: SecurityUser): EventDelta {
         ensureAdmin(slug, user.email)
         imageStorage.deleteEventImages(slug)
         return commands.updateCoverImage(slug, null)

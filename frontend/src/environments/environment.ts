@@ -11,4 +11,5 @@ export const environment = {
   },
   apiBaseUrl: "http://localhost:8080/api",
   wsBaseUrl: "http://localhost:8080/ws",
+  googleMapsApiKey: "AIzaSyCA_JV56DejP1o1y1C8uIRJ0YaZ-38fVW0",
 };
