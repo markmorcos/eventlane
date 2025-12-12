@@ -14,20 +14,28 @@ import { FormsModule } from "@angular/forms";
 import { Location } from "../../models/event.model";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
+import { HlmLabelDirective } from "../../ui/ui-label-helm/src";
 
 @Component({
   selector: "app-location-input",
-  imports: [FormsModule, HlmInputDirective, HlmButtonDirective],
+  imports: [
+    FormsModule,
+    HlmInputDirective,
+    HlmButtonDirective,
+    HlmLabelDirective,
+  ],
   template: `
-    <div class="space-y-2">
+    <div class="space-y-3">
+      <!-- Google Places Search -->
       <div class="relative">
+        <label hlmLabel class="mb-1.5">Search for a place</label>
         <input
           #searchInput
           hlmInput
           type="text"
           [(ngModel)]="searchQuery"
           (input)="onSearchChange()"
-          placeholder="Search for a place..."
+          placeholder="Search Google Places..."
           class="pr-20"
         />
         @if (searchQuery()) {
@@ -36,8 +44,8 @@ import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
           hlmBtn
           variant="ghost"
           size="sm"
-          (click)="clearLocation()"
-          class="absolute right-1 top-1 h-8"
+          (click)="clearSearch()"
+          class="absolute right-1 top-8 h-8"
         >
           Clear
         </button>
@@ -63,23 +71,48 @@ import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
         </button>
         }
       </div>
-      } @if (location()) {
+      }
+
+      <!-- Manual Place Name -->
+      <div>
+        <label hlmLabel class="mb-1.5">Place Name (Display)</label>
+        <input
+          hlmInput
+          type="text"
+          [(ngModel)]="displayName"
+          (input)="onDisplayNameChange()"
+          placeholder="Enter place name..."
+        />
+      </div>
+
+      @if (location() && (location()!.lat || location()!.lng)) {
       <div class="rounded-md border bg-muted/50 p-3 text-sm">
         <div class="flex items-start justify-between gap-2">
           <div class="flex-1">
-            <div class="font-medium">{{ location()!.formatted }}</div>
-            @if (location()!.lat && location()!.lng) {
-            <div class="text-xs text-muted-foreground mt-1">
+            <div class="text-xs text-muted-foreground">
               {{ location()!.lat }}, {{ location()!.lng }}
+            </div>
+            @if (location()!.city || location()!.country) {
+            <div class="text-xs text-muted-foreground mt-1">
+              {{ getLocationSummary(location()!) }}
             </div>
             }
           </div>
+          <button
+            type="button"
+            hlmBtn
+            variant="ghost"
+            size="sm"
+            (click)="clearLocation()"
+          >
+            Clear
+          </button>
         </div>
       </div>
       }
 
       <small class="text-sm text-muted-foreground">
-        Search using Google Places or enter manually
+        Search using Google Places or enter a place name manually
       </small>
     </div>
   `,
@@ -99,6 +132,7 @@ export class LocationInputComponent implements OnInit {
 
   @ViewChild("searchInput") searchInputRef!: HTMLInputElement;
   protected searchQuery = signal<string>("");
+  protected displayName = signal<string>("");
   protected predictions = signal<any[]>([]);
   protected showDropdown = signal<boolean>(false);
 
@@ -110,7 +144,7 @@ export class LocationInputComponent implements OnInit {
     effect(() => {
       const loc = this.location();
       if (loc) {
-        this.searchQuery.set(loc.formatted);
+        this.displayName.set(loc.formatted || "");
       }
     });
   }
@@ -174,8 +208,9 @@ export class LocationInputComponent implements OnInit {
       },
       (place: any, status: any) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && place) {
-          this.parsePlace(place);
-          this.searchQuery.set(place.name || place.formatted_address || "");
+          this.parsePlace(prediction.place_id, place);
+          this.displayName.set(place.name || place.formatted_address || "");
+          this.searchQuery.set("");
           this.showDropdown.set(false);
           this.predictions.set([]);
         }
@@ -183,14 +218,42 @@ export class LocationInputComponent implements OnInit {
     );
   }
 
+  protected clearSearch(): void {
+    this.searchQuery.set("");
+    this.predictions.set([]);
+    this.showDropdown.set(false);
+  }
+
+  protected onDisplayNameChange(): void {
+    const name = this.displayName();
+
+    // If there's a current location with coordinates, update its formatted name
+    const currentLocation = this.location();
+    if (currentLocation && (currentLocation.lat || currentLocation.lng)) {
+      this.locationChange.emit({
+        ...currentLocation,
+        formatted: name,
+      });
+    } else if (name.trim()) {
+      // Create a minimal location with just the name
+      this.locationChange.emit({
+        formatted: name.trim(),
+      });
+    } else {
+      // Clear location if name is empty
+      this.locationChange.emit(null);
+    }
+  }
+
   protected clearLocation(): void {
     this.searchQuery.set("");
+    this.displayName.set("");
     this.predictions.set([]);
     this.showDropdown.set(false);
     this.locationChange.emit(null);
   }
 
-  private parsePlace(place: any): void {
+  private parsePlace(placeId: string, place: any): void {
     if (!this.isBrowser) {
       return;
     }
@@ -216,8 +279,13 @@ export class LocationInputComponent implements OnInit {
       lat: place.geometry?.location?.lat(),
       lng: place.geometry?.location?.lng(),
       formatted: place.name || place.formatted_address || "",
+      placeId,
     };
 
     this.locationChange.emit(location);
+  }
+
+  protected getLocationSummary(location: Location): string {
+    return [location.city, location.country].filter((v) => !!v).join(", ");
   }
 }

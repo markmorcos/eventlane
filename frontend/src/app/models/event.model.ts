@@ -17,6 +17,7 @@ export interface Location {
   lat?: number;
   lng?: number;
   formatted: string;
+  placeId?: string;
 }
 
 export interface CoverImages {

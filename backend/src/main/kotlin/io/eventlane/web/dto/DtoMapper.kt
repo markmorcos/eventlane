@@ -26,6 +26,7 @@ object DtoMapper {
         lat = location.lat,
         lng = location.lng,
         formatted = location.formatted,
+        placeId = location.placeId,
     )
 
     fun fromLocationDto(dto: LocationDto): Location = Location(
@@ -41,6 +42,7 @@ object DtoMapper {
         lat = dto.lat,
         lng = dto.lng,
         formatted = dto.formatted,
+        placeId = dto.placeId,
     )
 
     fun toEventResponse(event: Event, requesterEmail: String, imageService: ImageStorageService): EventResponseDto {

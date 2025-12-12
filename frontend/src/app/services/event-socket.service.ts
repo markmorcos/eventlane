@@ -87,7 +87,6 @@ export class EventSocketService implements OnDestroy {
     const dest = `/topic/events/${slug}`;
 
     const sub = this.client.subscribe(dest, (msg: IMessage) => {
-      console.log("Received event notification", slug, msg.body);
       subject.next(JSON.parse(msg.body));
     });
 
@@ -130,7 +129,6 @@ export class EventSocketService implements OnDestroy {
     const dest = `/topic/users/${email}`;
 
     const sub = this.client.subscribe(dest, (msg: IMessage) => {
-      console.log("Received user notification", msg.body);
       subject.next(JSON.parse(msg.body));
     });
 

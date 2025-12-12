@@ -1,15 +1,12 @@
 import { Component, input, output, signal } from "@angular/core";
 import { ImageCroppedEvent, ImageCropperComponent } from "ngx-image-cropper";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
-import { HlmLabelDirective } from "../../ui/ui-label-helm/src";
 
 @Component({
   selector: "app-image-upload",
-  imports: [ImageCropperComponent, HlmButtonDirective, HlmLabelDirective],
+  imports: [ImageCropperComponent, HlmButtonDirective],
   template: `
     <div class="space-y-4">
-      <label hlmLabel>Cover image (optional)</label>
-
       @if (!imageChangedEvent() && !currentImageUrl()) {
       <div
         class="rounded-md border-2 border-dashed border-border p-8 text-center"

@@ -63,6 +63,17 @@
     </div>
 
     <div hlmCard>
+      @if (evt.coverImages) {
+      <picture class="block w-full">
+        <source media="(max-width: 768px)" [srcset]="evt.coverImages.mobile" />
+        <img
+          [src]="evt.coverImages.desktop"
+          [alt]="evt.title + ' cover image'"
+          class="w-full h-auto object-cover rounded-t-lg"
+          style="aspect-ratio: 16/9"
+        />
+      </picture>
+      }
       <div
         hlmCardHeader
         class="flex flex-row items-start justify-between gap-4"
@@ -152,13 +163,18 @@
               <div class="font-medium text-foreground">
                 {{ evt.location.formatted }}
               </div>
-              @if (evt.location.lat && evt.location.lng) {
               <a
                 [href]="
-                  'https://www.google.com/maps/search/?api=1&query=' +
-                  evt.location.lat +
-                  ',' +
-                  evt.location.lng
+                  evt.location.placeId
+                    ? 'https://www.google.com/maps/place/?q=place_id:' +
+                      evt.location.placeId
+                    : evt.location.lat && evt.location.lng
+                    ? 'https://www.google.com/maps/search/?query=' +
+                      evt.location.lat +
+                      ',' +
+                      evt.location.lng
+                    : 'https://www.google.com/maps/search/?query=' +
+                      encodeURIComponent(evt.location.formatted)
                 "
                 target="_blank"
                 rel="noopener noreferrer"
@@ -166,7 +182,6 @@
               >
                 View on map →
               </a>
-              }
             </div>
           </div>
           } @if (evt.description) {

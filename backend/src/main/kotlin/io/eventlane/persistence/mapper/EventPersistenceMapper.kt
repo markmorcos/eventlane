@@ -71,6 +71,7 @@ object EventPersistenceMapper {
         lat = doc.lat,
         lng = doc.lng,
         formatted = doc.formatted,
+        placeId = doc.placeId,
     )
 
     fun toDocumentLocation(location: Location): LocationDocument = LocationDocument(
@@ -86,5 +87,6 @@ object EventPersistenceMapper {
         lat = location.lat,
         lng = location.lng,
         formatted = location.formatted,
+        placeId = location.placeId,
     )
 }

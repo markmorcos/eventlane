@@ -135,7 +135,7 @@ class AdminEventsController(
 
         val urls = imageStorage.processUploadedImage(slug, file)
 
-        return commands.updateCoverImage(slug, urls["desktop"])
+        return commands.updateCoverImage(slug, "events/$slug/cover")
     }
 
     @DeleteMapping("/cover-image")

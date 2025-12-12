@@ -179,4 +179,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   formatEventDate = formatEventDate;
   formatEventTime = formatEventTime;
   getRelativeTime = getRelativeTime;
+
+  // URL encoding for template
+  encodeURIComponent = encodeURIComponent;
 }

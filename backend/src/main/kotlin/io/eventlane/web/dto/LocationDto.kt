@@ -13,4 +13,5 @@ data class LocationDto(
     val lat: Double? = null,
     val lng: Double? = null,
     val formatted: String,
+    val placeId: String? = null,
 )

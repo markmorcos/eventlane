@@ -115,5 +115,5 @@ data class EventCoverImageUpdated(
     override val version: Long,
     override val timestamp: Instant,
     override val eventSlug: String,
-    val coverImageUrl: String?,
+    val coverImages: Map<String, String>?, // {"desktop": "url", "mobile": "url"}
 ) : EventDelta(version, timestamp, eventSlug)
