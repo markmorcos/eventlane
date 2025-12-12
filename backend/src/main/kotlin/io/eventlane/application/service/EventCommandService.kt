@@ -1,10 +1,8 @@
 package io.eventlane.application.service
 
-
 import io.eventlane.application.OptimisticRetry
 import io.eventlane.application.ports.EventDeltaPublisher
 import io.eventlane.application.ports.EventRepository
-import io.eventlane.application.service.ImageStorageService
 import io.eventlane.domain.behavior.EventBehavior
 import io.eventlane.domain.model.Event
 import io.eventlane.domain.model.EventCoverImageUpdated
@@ -190,14 +188,16 @@ class EventCommandService(
                 coverImageUrl = coverImageUrl,
                 updatedAt = now,
             )
-            
+
             val coverImages = if (coverImageUrl != null) {
                 mapOf(
                     "desktop" to imageService.getPublicImageUrl(slug, "desktop"),
-                    "mobile" to imageService.getPublicImageUrl(slug, "mobile")
+                    "mobile" to imageService.getPublicImageUrl(slug, "mobile"),
                 )
-            } else null
-            
+            } else {
+                null
+            }
+
             val delta = EventCoverImageUpdated(
                 version = (updated.version ?: 0L) + 1,
                 timestamp = now,
