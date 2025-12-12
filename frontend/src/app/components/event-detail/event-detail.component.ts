@@ -107,6 +107,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
       keywords: `${event.title}, RSVP, event registration, event signup`,
       url: `/events/${event.slug}`,
       type: "website",
+      image: event.coverImages?.desktop,
     });
 
     // Add Event structured data
