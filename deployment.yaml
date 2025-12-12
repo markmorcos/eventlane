@@ -34,7 +34,7 @@ services:
             name: minio-credentials
             key: MINIO_SECRET_KEY
       - name: MINIO_BUCKET_NAME
-        value: eventlane-images
+        value: eventlane
     volumes:
       - name: firebase-credentials
         secret:
