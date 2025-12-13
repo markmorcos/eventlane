@@ -19,14 +19,17 @@ import java.util.*
 class EmailNotificationService(
     @Value("\${resend.api-key:}") private val resendApiKey: String,
     @Value("\${resend.from-email:}") private val fromEmail: String,
-    @Value("\${app.email.from-name:EventLane}") private val fromName: String,
+    @Value("\${app.email.from-name:}") private val fromName: String,
+    @Value("\${app.email.enabled:}") private val emailEnabled: Boolean
 ) {
 
     private val logger = LoggerFactory.getLogger(EmailNotificationService::class.java)
     private val resend: Resend? = if (resendApiKey.isNotBlank()) Resend(resendApiKey) else null
 
     init {
-        if (resendApiKey.isBlank()) {
+        if (!emailEnabled) {
+            logger.info("Email notifications are disabled.")
+        } else if (resendApiKey.isBlank()) {
             logger.error("Resend API key is missing! Email notifications will not be sent.")
         } else if (fromEmail.isBlank()) {
             logger.error("From email is missing! Email notifications will not be sent.")
@@ -157,8 +160,8 @@ class EmailNotificationService(
     }
 
     private fun sendEmail(toEmail: String, subject: String, htmlContent: String) {
-        if (resend == null || fromEmail.isBlank()) {
-            logger.debug("Email sending not configured, skipping email to $toEmail with subject: $subject")
+        if (!emailEnabled || resend == null || fromEmail.isBlank()) {
+            logger.debug("Email sending is either disabled or not configured, skipping email to $toEmail with subject: $subject")
             return
         }
 

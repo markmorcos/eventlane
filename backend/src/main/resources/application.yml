@@ -22,6 +22,7 @@ minio:
 app:
   email:
     from-name: ${EMAIL_FROM_NAME:EventLane}
+    enabled: ${EMAIL_ENABLED:false}
 
 resend:
   api-key: ${RESEND_API_KEY:re_f7uvLrhY_4MJCFcQW4btBWkTgvQPeXE2e}
