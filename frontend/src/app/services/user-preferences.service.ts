@@ -25,19 +25,18 @@ export class UserPreferencesService {
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
+  private initialized = false;
 
   readonly language = signal<"en" | "de">("de");
-  private initialized = signal(false);
-
-  isLoading = computed(() => !this.initialized());
+  readonly userPreferencesLoading = signal(true);
 
   constructor() {
     this.initializeLanguage();
   }
 
-  private initializeLanguage() {
-    if (this.initialized()) return;
-    this.initialized.set(true);
+  private async initializeLanguage() {
+    if (this.initialized) return;
+    this.initialized = true;
 
     // Priority: localStorage → browser language → default DE
     const savedLanguage = this.getStoredLanguage();
@@ -48,9 +47,11 @@ export class UserPreferencesService {
     this.translate.use(initialLanguage);
 
     // Load from backend after auth
-    this.authService.isAuthenticated()
+    (await this.authService.isAuthenticated())
       ? this.loadPreferencesFromBackend()
       : null;
+
+    this.userPreferencesLoading.set(false);
   }
 
   private getStoredLanguage(): string | null {

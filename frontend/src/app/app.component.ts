@@ -1,4 +1,11 @@
-import { Component, computed, inject } from "@angular/core";
+import {
+  Component,
+  computed,
+  inject,
+  PLATFORM_ID,
+  signal,
+} from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 import {
   Router,
   NavigationEnd,
@@ -32,14 +39,23 @@ export class AppComponent {
   private authService = inject(AuthService);
   private userPreferencesService = inject(UserPreferencesService);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
+
+  private isBrowser = signal(false);
 
   isInitializing = computed(
     () =>
-      this.authService.authLoading() || this.userPreferencesService.isLoading()
+      !this.isBrowser() ||
+      this.authService.authLoading() ||
+      this.userPreferencesService.userPreferencesLoading()
   );
   isLandingPage = false;
 
   constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isBrowser.set(true);
+    }
+
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
