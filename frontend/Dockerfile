@@ -1,19 +1,23 @@
+FROM node:20-alpine AS deps
 
-FROM node:alpine AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
 
-FROM node:alpine AS builder
+COPY package.json package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci
+
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY angular.json tsconfig*.json ./
+COPY src ./src
+
 RUN npm run build
 
-FROM node:alpine
+FROM node:20-alpine
 WORKDIR /app
+
 COPY --from=builder /app/dist/web ./dist/web
-COPY --from=builder /app/package.json ./
+COPY package.json ./
 
 EXPOSE 4000
 
