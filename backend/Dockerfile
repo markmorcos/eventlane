@@ -2,10 +2,15 @@ FROM gradle:8-jdk21-alpine AS build
 
 WORKDIR /app
 
+COPY gradle gradle
+COPY gradlew .
 COPY build.gradle.kts settings.gradle.kts ./
+
+RUN ./gradlew dependencies --no-daemon
+
 COPY src ./src
 
-RUN gradle bootJar --no-daemon
+RUN ./gradlew bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
 
