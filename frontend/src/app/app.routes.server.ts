@@ -9,6 +9,5 @@ export const serverRoutes: ServerRoute[] = [
   { path: "privacy-policy", renderMode: RenderMode.Prerender },
   { path: "terms-of-service", renderMode: RenderMode.Prerender },
   { path: "cookie-policy", renderMode: RenderMode.Prerender },
-  { path: "gdpr", renderMode: RenderMode.Prerender },
   { path: "**", renderMode: RenderMode.Prerender },
 ];

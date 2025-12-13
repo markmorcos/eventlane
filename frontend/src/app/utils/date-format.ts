@@ -4,11 +4,14 @@ export function formatEventDateTime(
   options: {
     dateStyle?: "full" | "long" | "medium" | "short";
     timeStyle?: "full" | "long" | "medium" | "short";
+    locale?: string;
   } = {}
 ): string {
   try {
     const date = new Date(timestamp);
-    const formatter = new Intl.DateTimeFormat("en-US", {
+    const locale = options.locale || "en";
+    const localeCode = locale === "de" ? "de-DE" : "en-US";
+    const formatter = new Intl.DateTimeFormat(localeCode, {
       timeZone: timezone,
       dateStyle: options.dateStyle || "long",
       timeStyle: options.timeStyle || "short",
@@ -21,10 +24,15 @@ export function formatEventDateTime(
   }
 }
 
-export function formatEventDate(timestamp: number, timezone: string): string {
+export function formatEventDate(
+  timestamp: number,
+  timezone: string,
+  locale: string = "en"
+): string {
   try {
     const date = new Date(timestamp);
-    const formatter = new Intl.DateTimeFormat("en-US", {
+    const localeCode = locale === "de" ? "de-DE" : "en-US";
+    const formatter = new Intl.DateTimeFormat(localeCode, {
       timeZone: timezone,
       weekday: "long",
       year: "numeric",
@@ -38,10 +46,15 @@ export function formatEventDate(timestamp: number, timezone: string): string {
   }
 }
 
-export function formatEventTime(timestamp: number, timezone: string): string {
+export function formatEventTime(
+  timestamp: number,
+  timezone: string,
+  locale: string = "en"
+): string {
   try {
     const date = new Date(timestamp);
-    const formatter = new Intl.DateTimeFormat("en-US", {
+    const localeCode = locale === "de" ? "de-DE" : "en-US";
+    const formatter = new Intl.DateTimeFormat(localeCode, {
       timeZone: timezone,
       hour: "numeric",
       minute: "2-digit",

@@ -1,25 +1,22 @@
 @if (showBanner()) {
+<div
+  class="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg z-[9999] animate-slide-in-from-bottom"
+>
   <div
-    class="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg z-[9999] animate-slide-in-from-bottom"
+    class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4"
   >
-    <div
-      class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4"
-    >
-      <p class="flex-1 text-sm text-muted-foreground leading-relaxed">
-        We only use essential cookies necessary for authentication and session
-        management. No tracking or analytics cookies are used. Learn more in our
-        <a routerLink="/cookie-policy" class="text-primary hover:underline"
-          >Cookie Policy</a
-        >.
-      </p>
-      <div class="flex gap-2 flex-shrink-0 w-full sm:w-auto">
-        <button
-          class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-          (click)="acceptCookies()"
-        >
-          Got it
-        </button>
-      </div>
+    <p class="flex-1 text-sm text-muted-foreground leading-relaxed">
+      {{ "cookie.message" | translate }}
+      <a routerLink="/cookie-policy" class="text-primary hover:underline">{{
+        "cookie.learnMore" | translate
+      }}</a
+      >.
+    </p>
+    <div class="flex gap-2 flex-shrink-0 w-full sm:w-auto">
+      <button hlmBtn class="flex-1 sm:flex-none" (click)="acceptCookies()">
+        {{ "cookie.accept" | translate }}
+      </button>
     </div>
   </div>
+</div>
 }

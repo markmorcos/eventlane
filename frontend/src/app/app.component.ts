@@ -12,6 +12,7 @@ import { AuthButtonComponent } from "./components/auth-button/auth-button.compon
 import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.component";
 import { ToastContainerComponent } from "./components/toast-container/toast-container.component";
 import { FooterComponent } from "./components/landing/footer/footer.component";
+import { LanguageSelectorComponent } from "./components/language-selector/language-selector.component";
 
 @Component({
   selector: "app-root",
@@ -22,6 +23,7 @@ import { FooterComponent } from "./components/landing/footer/footer.component";
     AuthButtonComponent,
     CookieBannerComponent,
     ToastContainerComponent,
+    LanguageSelectorComponent,
   ],
   templateUrl: "./app.component.html",
 })

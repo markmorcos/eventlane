@@ -3,10 +3,10 @@
     <h2
       class="text-3xl font-bold tracking-tight text-center text-foreground sm:text-4xl"
     >
-      Everything you need to manage your events
+      {{ "features.title" | translate }}
     </h2>
     <p class="mt-4 text-lg text-center text-muted-foreground max-w-2xl mx-auto">
-      Powerful features that make event management effortless
+      {{ "features.subtitle" | translate }}
     </p>
 
     <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,10 +47,11 @@
             />
           </svg>
         </div>
-        <h3 class="text-xl font-semibold text-foreground mb-2">Fast RSVPs</h3>
+        <h3 class="text-xl font-semibold text-foreground mb-2">
+          {{ "features.fastRsvps" | translate }}
+        </h3>
         <p class="text-muted-foreground leading-relaxed">
-          One-click RSVP system with passwordless authentication. Your attendees
-          can confirm in seconds.
+          {{ "features.fastRsvpsDesc" | translate }}
         </p>
       </div>
 
@@ -86,11 +87,10 @@
           </svg>
         </div>
         <h3 class="text-xl font-semibold text-foreground mb-2">
-          Automatic Capacity Control
+          {{ "features.capacityControl" | translate }}
         </h3>
         <p class="text-muted-foreground leading-relaxed">
-          Set your event capacity and let EventLane handle the rest. Overflow
-          goes to waitlist automatically.
+          {{ "features.capacityControlDesc" | translate }}
         </p>
       </div>
 
@@ -124,11 +124,10 @@
           </svg>
         </div>
         <h3 class="text-xl font-semibold text-foreground mb-2">
-          Real-Time Updates
+          {{ "features.realTimeUpdates" | translate }}
         </h3>
         <p class="text-muted-foreground leading-relaxed">
-          See changes instantly with WebSocket-powered live updates. No refresh
-          needed.
+          {{ "features.realTimeUpdatesDesc" | translate }}
         </p>
       </div>
 
@@ -159,11 +158,10 @@
           </svg>
         </div>
         <h3 class="text-xl font-semibold text-foreground mb-2">
-          Multiple Admins
+          {{ "features.multipleAdmins" | translate }}
         </h3>
         <p class="text-muted-foreground leading-relaxed">
-          Share admin access with your team. Everyone stays in sync with
-          real-time collaboration.
+          {{ "features.multipleAdminsDesc" | translate }}
         </p>
       </div>
 
@@ -191,11 +189,10 @@
           </svg>
         </div>
         <h3 class="text-xl font-semibold text-foreground mb-2">
-          Smart Notifications
+          {{ "features.smartNotifications" | translate }}
         </h3>
         <p class="text-muted-foreground leading-relaxed">
-          Automated email notifications keep everyone informed about status
-          changes and updates.
+          {{ "features.smartNotificationsDesc" | translate }}
         </p>
       </div>
 
@@ -236,11 +233,10 @@
           </svg>
         </div>
         <h3 class="text-xl font-semibold text-foreground mb-2">
-          Passwordless Login
+          {{ "features.passwordlessLogin" | translate }}
         </h3>
         <p class="text-muted-foreground leading-relaxed">
-          Secure Firebase authentication with magic links. No passwords to
-          remember or manage.
+          {{ "features.passwordlessLoginDesc" | translate }}
         </p>
       </div>
     </div>

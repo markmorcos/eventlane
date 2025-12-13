@@ -1,9 +1,11 @@
 import { Component, inject, OnInit, OnDestroy } from "@angular/core";
 
 import { RouterLink } from "@angular/router";
+import { TranslateModule } from "@ngx-translate/core";
 import { AuthService } from "../../services/auth.service";
 import { EventListStore } from "../../stores/event-list.store";
 import { SeoService } from "../../services/seo.service";
+import { UserPreferencesService } from "../../services/user-preferences.service";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
 import { HlmSkeletonCardComponent } from "../../ui/ui-skeleton-helm/src";
@@ -13,6 +15,7 @@ import { formatEventDateTime } from "../../utils/date-format";
   selector: "app-events-list",
   imports: [
     RouterLink,
+    TranslateModule,
     HlmButtonDirective,
     HlmBadgeDirective,
     HlmSkeletonCardComponent,
@@ -23,13 +26,27 @@ export class EventsListComponent implements OnInit, OnDestroy {
   private store = inject(EventListStore);
   private authService = inject(AuthService);
   private seoService = inject(SeoService);
+  private preferencesService = inject(UserPreferencesService);
 
   isAuthenticated = this.authService.isAuthenticated;
   events = this.store.events;
   loading = this.store.loading;
   error = this.store.error;
+  language = this.preferencesService.language;
 
-  formatEventDateTime = formatEventDateTime;
+  formatEventDateTime(
+    timestamp: number,
+    timezone: string,
+    options?: {
+      dateStyle?: "full" | "long" | "medium" | "short";
+      timeStyle?: "full" | "long" | "medium" | "short";
+    }
+  ) {
+    return formatEventDateTime(timestamp, timezone, {
+      ...options,
+      locale: this.language(),
+    });
+  }
 
   ngOnInit() {
     this.seoService.updateTags({

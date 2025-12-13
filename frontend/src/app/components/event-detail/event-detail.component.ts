@@ -9,11 +9,13 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink, ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+import { TranslateModule } from "@ngx-translate/core";
 
 import { AuthService } from "../../services/auth.service";
 import { EventDetailStore } from "../../stores/event-detail.store";
 import { SeoService } from "../../services/seo.service";
 import { ToastService } from "../../services/toast.service";
+import { UserPreferencesService } from "../../services/user-preferences.service";
 import { EventDetail } from "../../models/event.model";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
@@ -38,6 +40,7 @@ import {
     CommonModule,
     RouterLink,
     FormsModule,
+    TranslateModule,
     HlmButtonDirective,
     HlmInputDirective,
     HlmBadgeDirective,
@@ -56,6 +59,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   private store = inject(EventDetailStore);
   private seoService = inject(SeoService);
   private toastService = inject(ToastService);
+  private preferencesService = inject(UserPreferencesService);
 
   event = this.store.event;
   loading = this.store.loading;
@@ -66,6 +70,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
   userName = signal("");
   showCancelDialog = signal(false);
+  language = this.preferencesService.language;
 
   constructor() {
     effect(() => {
@@ -177,8 +182,14 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   }
 
   // Date/time formatting utilities
-  formatEventDate = formatEventDate;
-  formatEventTime = formatEventTime;
+  formatEventDate(timestamp: number, timezone: string) {
+    return formatEventDate(timestamp, timezone, this.language());
+  }
+
+  formatEventTime(timestamp: number, timezone: string) {
+    return formatEventTime(timestamp, timezone, this.language());
+  }
+
   getRelativeTime = getRelativeTime;
 
   // URL encoding for template

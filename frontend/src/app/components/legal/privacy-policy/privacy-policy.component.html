@@ -1,6 +1,7 @@
 <div class="min-h-screen bg-background py-16">
   <div class="mx-auto max-w-3xl px-4 sm:px-6">
     <div class="rounded-xl border border-border bg-card p-8 shadow-sm">
+      @if (language() === 'en') {
       <article class="prose prose-slate dark:prose-invert max-w-none">
         <h1>Privacy Policy</h1>
         <p class="text-sm text-muted-foreground">
@@ -47,6 +48,10 @@
               <strong>Essential Cookies:</strong>
               Session cookies required for authentication only
             </li>
+            <li>
+              <strong>Language Preference:</strong>
+              Your selected language preference (EN/DE) stored in localStorage
+            </li>
           </ul>
 
           <p>
@@ -63,6 +68,9 @@
             <li>To provide and maintain our event management services</li>
             <li>To manage your account and authenticate your identity</li>
             <li>To send you event notifications and updates</li>
+            <li>
+              To remember your language preference for a better user experience
+            </li>
             <li>To improve our services and user experience</li>
             <li>To comply with legal obligations</li>
           </ul>
@@ -140,18 +148,22 @@
         </section>
 
         <section>
-          <h2>9. Cookies</h2>
+          <h2>9. Cookies and Local Storage</h2>
           <p>
             We only use essential cookies required for authentication and
             session management. We do not use tracking cookies, analytics
             cookies, or any third-party cookies.
           </p>
-          <p>The only cookies stored are:</p>
+          <p>The data stored includes:</p>
           <ul>
             <li>Firebase authentication tokens (required for login)</li>
             <li>
               Cookie consent preference (to remember you've seen the cookie
               notice)
+            </li>
+            <li>
+              Language preference (EN/DE) stored as "eventlane_language" in
+              localStorage
             </li>
           </ul>
           <p>
@@ -167,7 +179,7 @@
           <p>
             Your data may be transferred to and processed in countries outside
             your country of residence. We ensure appropriate safeguards are in
-            place to protect your data.
+            place to protect your data in compliance with GDPR requirements.
           </p>
         </section>
 
@@ -204,6 +216,241 @@
           </p>
         </section>
       </article>
+      } @else {
+      <article class="prose prose-slate dark:prose-invert max-w-none">
+        <h1>Datenschutzerklärung</h1>
+        <p class="text-sm text-muted-foreground">
+          Zuletzt aktualisiert: 2. Dezember 2025
+        </p>
+
+        <section>
+          <h2>1. Einleitung</h2>
+          <p>
+            Willkommen bei EventLane. Wir respektieren Ihre Privatsphäre und
+            verpflichten uns, Ihre personenbezogenen Daten zu schützen. Diese
+            Datenschutzerklärung informiert Sie darüber, wie wir Ihre
+            personenbezogenen Daten verarbeiten, wenn Sie unsere Website
+            besuchen, und über Ihre Datenschutzrechte und wie das Gesetz Sie
+            schützt.
+          </p>
+        </section>
+
+        <section>
+          <h2>2. Welche Informationen wir sammeln</h2>
+
+          <h3>2.1 Von Ihnen bereitgestellte Informationen</h3>
+          <ul>
+            <li>
+              <strong>Kontoinformationen:</strong>
+              E-Mail-Adresse (über Google Sign-In)
+            </li>
+            <li>
+              <strong>Event-Informationen:</strong> Von Ihnen erstellte
+              Event-Details (Titel, Beschreibung, Datum, Ort, Kapazität)
+            </li>
+            <li>
+              <strong>RSVP-Informationen:</strong> Ihr Name und RSVP-Status bei
+              Teilnahme an Events
+            </li>
+          </ul>
+
+          <h3>2.2 Automatisch erfasste Informationen</h3>
+          <ul>
+            <li>
+              <strong>Authentifizierungsdaten:</strong>
+              Firebase-Authentifizierungstoken für Sitzungsverwaltung
+            </li>
+            <li>
+              <strong>Essentielle Cookies:</strong>
+              Sitzungscookies, die nur für Authentifizierung erforderlich sind
+            </li>
+            <li>
+              <strong>Sprachpräferenz:</strong>
+              Ihre gewählte Spracheinstellung (EN/DE) gespeichert im
+              localStorage
+            </li>
+          </ul>
+
+          <p>
+            <strong>Hinweis:</strong> Wir sammeln KEINE IP-Adressen,
+            Browser-Fingerprints, Geräteinformationen oder
+            Analytics-/Tracking-Daten. Wir verwenden keine
+            Drittanbieter-Analysedienste.
+          </p>
+        </section>
+
+        <section>
+          <h2>3. Wie wir Ihre Informationen verwenden</h2>
+          <p>Wir verwenden Ihre personenbezogenen Daten für folgende Zwecke:</p>
+          <ul>
+            <li>
+              Um unsere Event-Management-Dienste bereitzustellen und
+              aufrechtzuerhalten
+            </li>
+            <li>
+              Um Ihr Konto zu verwalten und Ihre Identität zu authentifizieren
+            </li>
+            <li>Um Ihnen Event-Benachrichtigungen und Updates zu senden</li>
+            <li>
+              Um Ihre Sprachpräferenz für eine bessere Benutzererfahrung zu
+              speichern
+            </li>
+            <li>Um unsere Dienste und Benutzererfahrung zu verbessern</li>
+            <li>Um gesetzlichen Verpflichtungen nachzukommen</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>4. Rechtsgrundlage für die Verarbeitung</h2>
+          <p>Wir verarbeiten Ihre personenbezogenen Daten auf Grundlage von:</p>
+          <ul>
+            <li>
+              <strong>Einwilligung:</strong> Wenn Sie sich anmelden und unseren
+              Bedingungen zustimmen
+            </li>
+            <li>
+              <strong>Vertrag:</strong> Um die von Ihnen angeforderten Dienste
+              bereitzustellen
+            </li>
+            <li>
+              <strong>Berechtigte Interessen:</strong> Um unsere Dienste zu
+              verbessern und die Sicherheit zu gewährleisten
+            </li>
+            <li>
+              <strong>Gesetzliche Verpflichtung:</strong> Um geltenden Gesetzen
+              nachzukommen
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>5. Datenweitergabe und Offenlegung</h2>
+          <p>Wir können Ihre Daten weitergeben an:</p>
+          <ul>
+            <li>
+              <strong>Event-Organisatoren:</strong> Wenn Sie sich für deren
+              Events anmelden
+            </li>
+            <li>
+              <strong>Dienstleister:</strong> Wie Google Firebase für
+              Authentifizierung und MongoDB für Datenspeicherung
+            </li>
+            <li>
+              <strong>Behörden:</strong> Wenn gesetzlich vorgeschrieben oder zum
+              Schutz unserer Rechte
+            </li>
+          </ul>
+          <p>Wir verkaufen Ihre personenbezogenen Daten nicht an Dritte.</p>
+        </section>
+
+        <section>
+          <h2>6. Datensicherheit</h2>
+          <p>
+            Wir implementieren angemessene Sicherheitsmaßnahmen, um Ihre
+            personenbezogenen Daten vor unbefugtem Zugriff, Änderung,
+            Offenlegung oder Zerstörung zu schützen. Allerdings ist keine
+            Übertragungsmethode über das Internet 100% sicher.
+          </p>
+        </section>
+
+        <section>
+          <h2>7. Datenspeicherung</h2>
+          <p>
+            Wir bewahren Ihre personenbezogenen Daten nur so lange auf, wie es
+            zur Erfüllung der in dieser Richtlinie dargelegten Zwecke oder
+            gesetzlich erforderlich ist. Sie können jederzeit die Löschung Ihres
+            Kontos und Ihrer Daten beantragen.
+          </p>
+        </section>
+
+        <section>
+          <h2>8. Ihre Rechte</h2>
+          <p>
+            Gemäß DSGVO und anderen Datenschutzgesetzen haben Sie das Recht auf:
+          </p>
+          <ul>
+            <li>Zugang zu Ihren personenbezogenen Daten</li>
+            <li>Berichtigung unrichtiger Daten</li>
+            <li>Löschung Ihrer Daten</li>
+            <li>Widerspruch gegen die Verarbeitung Ihrer Daten</li>
+            <li>Datenübertragbarkeit</li>
+            <li>Widerruf der Einwilligung jederzeit</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>9. Cookies und lokaler Speicher</h2>
+          <p>
+            Wir verwenden nur essentielle Cookies, die für Authentifizierung und
+            Sitzungsverwaltung erforderlich sind. Wir verwenden keine
+            Tracking-Cookies, Analytics-Cookies oder Drittanbieter-Cookies.
+          </p>
+          <p>Die gespeicherten Daten umfassen:</p>
+          <ul>
+            <li>Firebase-Authentifizierungstoken (erforderlich für Login)</li>
+            <li>
+              Cookie-Einwilligungspräferenz (um sich zu merken, dass Sie die
+              Cookie-Benachrichtigung gesehen haben)
+            </li>
+            <li>
+              Sprachpräferenz (EN/DE) gespeichert als "eventlane_language" im
+              localStorage
+            </li>
+          </ul>
+          <p>
+            Weitere Informationen finden Sie in unserer
+            <a routerLink="/cookie-policy" class="text-primary hover:underline"
+              >Cookie-Richtlinie</a
+            >.
+          </p>
+        </section>
+
+        <section>
+          <h2>10. Internationale Datenübertragungen</h2>
+          <p>
+            Ihre Daten können in Länder außerhalb Ihres Wohnsitzlandes
+            übertragen und dort verarbeitet werden. Wir stellen sicher, dass
+            angemessene Schutzmaßnahmen zum Schutz Ihrer Daten in
+            Übereinstimmung mit den DSGVO-Anforderungen vorhanden sind.
+          </p>
+        </section>
+
+        <section>
+          <h2>11. Datenschutz für Kinder</h2>
+          <p>
+            Unsere Dienste sind nicht für Kinder unter 13 Jahren bestimmt. Wir
+            sammeln wissentlich keine personenbezogenen Daten von Kindern unter
+            13 Jahren.
+          </p>
+        </section>
+
+        <section>
+          <h2>12. Änderungen dieser Richtlinie</h2>
+          <p>
+            Wir können diese Datenschutzerklärung von Zeit zu Zeit
+            aktualisieren. Wir werden Sie über Änderungen informieren, indem wir
+            die neue Richtlinie auf dieser Seite veröffentlichen und das Datum
+            "Zuletzt aktualisiert" aktualisieren.
+          </p>
+        </section>
+
+        <section>
+          <h2>13. Kontaktieren Sie uns</h2>
+          <p>
+            Wenn Sie Fragen zu dieser Datenschutzerklärung oder unseren
+            Datenschutzpraktiken haben, kontaktieren Sie uns bitte unter:
+          </p>
+          <p>
+            E-Mail:
+            <a
+              href="mailto:privacy@eventlane.io"
+              class="text-primary hover:underline"
+              >privacy&#64;eventlane.io</a
+            >
+          </p>
+        </section>
+      </article>
+      }
     </div>
   </div>
 </div>

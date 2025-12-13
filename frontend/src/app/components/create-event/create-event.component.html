@@ -29,25 +29,31 @@
     @if (isAuthenticated()) {
     <div hlmCard>
       <div hlmCardHeader>
-        <h3 hlmCardTitle class="text-2xl">New event</h3>
+        <h3 hlmCardTitle class="text-2xl">
+          {{ "createEvent.title" | translate }}
+        </h3>
       </div>
       <div hlmCardContent>
         <form (ngSubmit)="createEvent()" class="space-y-6">
           <div class="space-y-2">
-            <label hlmLabel for="title">Event title *</label>
+            <label hlmLabel for="title"
+              >{{ "createEvent.eventTitle" | translate }} *</label
+            >
             <input
               hlmInput
               id="title"
               type="text"
               [(ngModel)]="title"
               name="title"
-              placeholder="Summer Tech Conference 2025"
+              [placeholder]="'createEvent.eventTitlePlaceholder' | translate"
               required
             />
           </div>
 
           <div class="space-y-2">
-            <label hlmLabel for="capacity">Capacity *</label>
+            <label hlmLabel for="capacity"
+              >{{ "createEvent.capacity" | translate }} *</label
+            >
             <input
               hlmInput
               id="capacity"
@@ -57,13 +63,15 @@
               min="1"
               required
             />
-            <small class="text-sm text-muted-foreground"
-              >Maximum number of confirmed attendees</small
-            >
+            <small class="text-sm text-muted-foreground">{{
+              "createEvent.capacityHint" | translate
+            }}</small>
           </div>
 
           <div class="space-y-2">
-            <label hlmLabel for="eventDate">Event date & time *</label>
+            <label hlmLabel for="eventDate"
+              >{{ "createEvent.eventDate" | translate }} *</label
+            >
             <input
               hlmInput
               id="eventDate"
@@ -77,12 +85,13 @@
           <app-timezone-selector
             [timezone]="timezone"
             (timezoneChange)="timezone = $event"
-            [hint]="'Auto-detected from your browser'"
+            [hint]="'createEvent.timezoneHint' | translate"
           />
 
           <div class="flex justify-end">
             <button hlmBtn type="submit" [disabled]="!isFormValid()">
-              @if (loading()) { Creating... } @else { Create event }
+              @if (loading()) { {{ "createEvent.creating" | translate }} } @else
+              { {{ "createEvent.createButton" | translate }} }
             </button>
           </div>
 

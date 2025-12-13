@@ -1,6 +1,7 @@
 <div class="min-h-screen bg-background py-16">
   <div class="mx-auto max-w-3xl px-4 sm:px-6">
     <div class="rounded-xl border border-border bg-card p-8 shadow-sm">
+      @if (language() === 'en') {
       <article class="prose prose-slate dark:prose-invert max-w-none">
         <h1>Cookie Policy</h1>
         <p class="text-sm text-muted-foreground">
@@ -24,10 +25,6 @@
               <strong>Authentication Cookies:</strong> To keep you signed in to
               your account (Firebase tokens)
             </li>
-            <li>
-              <strong>Cookie Consent:</strong> To remember that you've
-              acknowledged our cookie notice
-            </li>
           </ul>
         </section>
 
@@ -43,10 +40,6 @@
             <li>
               <strong>Firebase Authentication Tokens:</strong> Required to keep
               you logged in
-            </li>
-            <li>
-              <strong>Cookie Consent Status:</strong> Remembers that you've seen
-              the cookie notice
             </li>
           </ul>
         </section>
@@ -120,17 +113,28 @@
 
         <section>
           <h2>8. Local Storage and Other Technologies</h2>
-          <p>In addition to cookies, we may use other technologies such as:</p>
+          <p>
+            In addition to cookies, we use other browser storage technologies:
+          </p>
           <ul>
             <li>
-              <strong>Local Storage:</strong> To store data locally in your
-              browser
+              <strong>Local Storage:</strong> Used to store user preferences
+              (such as language selection) and cookie consent status locally in
+              your browser. This data never leaves your device and is not
+              transmitted to our servers except when you explicitly update your
+              preferences while signed in.
             </li>
             <li>
-              <strong>Session Storage:</strong> To store temporary session data
+              <strong>Session Storage:</strong> May be used to store temporary
+              session data that is cleared when you close your browser.
             </li>
-            <li><strong>IndexedDB:</strong> For client-side data storage</li>
           </ul>
+          <p>
+            These storage mechanisms are used for essential functionality and
+            improving user experience. Like our cookies, they do not track you
+            across websites or collect personal information for advertising
+            purposes.
+          </p>
         </section>
 
         <section>
@@ -157,6 +161,178 @@
           </p>
         </section>
       </article>
+      } @else {
+      <article class="prose prose-slate dark:prose-invert max-w-none">
+        <h1>Cookie-Richtlinie</h1>
+        <p class="text-sm text-muted-foreground">
+          Zuletzt aktualisiert: 2. Dezember 2025
+        </p>
+
+        <section>
+          <h2>1. Was sind Cookies</h2>
+          <p>
+            Cookies sind kleine Textdateien, die auf Ihrem Gerät platziert
+            werden, wenn Sie eine Website besuchen. Sie werden häufig verwendet,
+            um Websites effizienter zu gestalten und Informationen an
+            Website-Betreiber weiterzugeben.
+          </p>
+        </section>
+
+        <section>
+          <h2>2. Wie wir Cookies verwenden</h2>
+          <p>EventLane verwendet Cookies nur für wesentliche Zwecke:</p>
+          <ul>
+            <li>
+              <strong>Authentifizierungs-Cookies:</strong> Um Sie in Ihrem Konto
+              angemeldet zu halten (Firebase-Tokens)
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>3. Arten von Cookies, die wir verwenden</h2>
+
+          <h3>Nur essentielle Cookies</h3>
+          <p>
+            Wir verwenden nur essentielle Cookies, die für die Funktionsweise
+            der Website erforderlich sind:
+          </p>
+          <ul>
+            <li>
+              <strong>Firebase-Authentifizierungstoken:</strong> Erforderlich,
+              um Sie angemeldet zu halten
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>4. Drittanbieter-Dienste</h2>
+          <p>Wir verwenden den folgenden Drittanbieter-Dienst:</p>
+          <ul>
+            <li>
+              <strong>Google Firebase:</strong> Nur für Authentifizierung
+              (speichert Auth-Tokens)
+            </li>
+          </ul>
+          <p>
+            Firebase-Authentifizierungstoken sind essentielle Cookies, die für
+            die Login-Funktionalität erforderlich sind. Wir verwenden weder
+            Google Analytics noch andere Drittanbieter-Tracking-Dienste.
+          </p>
+        </section>
+
+        <section>
+          <h2>5. Cookie-Dauer</h2>
+          <p>Wir verwenden sowohl Sitzungs- als auch persistente Cookies:</p>
+          <ul>
+            <li>
+              <strong>Sitzungs-Cookies:</strong> Werden gelöscht, wenn Sie Ihren
+              Browser schließen
+            </li>
+            <li>
+              <strong>Persistente Cookies:</strong> Verbleiben für einen
+              festgelegten Zeitraum auf Ihrem Gerät oder bis sie manuell
+              gelöscht werden
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6. Cookies verwalten</h2>
+
+          <h3>Browser-Einstellungen</h3>
+          <p>
+            Sie können Cookies über Ihre Browser-Einstellungen verwalten. Bitte
+            beachten Sie jedoch:
+          </p>
+          <ul>
+            <li>
+              Das Deaktivieren von Authentifizierungs-Cookies verhindert die
+              Anmeldung
+            </li>
+            <li>
+              Alle von uns verwendeten Cookies sind für die Funktionsweise des
+              Dienstes unerlässlich
+            </li>
+            <li>
+              Es gibt keine optionalen/nicht-essentiellen Cookies zum
+              Deaktivieren
+            </li>
+          </ul>
+
+          <h3>Cookie-Hinweis</h3>
+          <p>
+            Wenn Sie EventLane zum ersten Mal besuchen, sehen Sie einen
+            Cookie-Hinweis, der Sie darüber informiert, dass wir nur essentielle
+            Cookies verwenden. Dies dient nur der Transparenz - für essentielle
+            Cookies ist rechtlich keine Einwilligung erforderlich.
+          </p>
+        </section>
+
+        <section>
+          <h2>7. Do Not Track-Signale</h2>
+          <p>
+            Einige Browser unterstützen "Do Not Track"-Signale. Derzeit gibt es
+            keinen Industriestandard für die Reaktion auf diese Signale. Wir
+            reagieren derzeit nicht auf Do Not Track-Signale.
+          </p>
+        </section>
+
+        <section>
+          <h2>8. Lokaler Speicher und andere Technologien</h2>
+          <p>
+            Zusätzlich zu Cookies verwenden wir andere
+            Browser-Speichertechnologien:
+          </p>
+          <ul>
+            <li>
+              <strong>Lokaler Speicher:</strong> Wird verwendet, um
+              Benutzerpräferenzen (wie Sprachauswahl) und den
+              Cookie-Einwilligungsstatus lokal in Ihrem Browser zu speichern.
+              Diese Daten verlassen niemals Ihr Gerät und werden nicht an unsere
+              Server übertragen, außer wenn Sie Ihre Präferenzen während Sie
+              angemeldet sind explizit aktualisieren.
+            </li>
+            <li>
+              <strong>Sitzungsspeicher:</strong> Kann verwendet werden, um
+              temporäre Sitzungsdaten zu speichern, die gelöscht werden, wenn
+              Sie Ihren Browser schließen.
+            </li>
+          </ul>
+          <p>
+            Diese Speichermechanismen werden für wesentliche Funktionen und zur
+            Verbesserung der Benutzererfahrung verwendet. Wie unsere Cookies
+            verfolgen sie Sie nicht über Websites hinweg und sammeln keine
+            persönlichen Informationen für Werbezwecke.
+          </p>
+        </section>
+
+        <section>
+          <h2>9. Aktualisierungen dieser Richtlinie</h2>
+          <p>
+            Wir können diese Cookie-Richtlinie von Zeit zu Zeit aktualisieren.
+            Alle Änderungen werden auf dieser Seite mit einem aktualisierten
+            Datum "Zuletzt aktualisiert" veröffentlicht.
+          </p>
+        </section>
+
+        <section>
+          <h2>10. Kontaktieren Sie uns</h2>
+          <p>
+            Wenn Sie Fragen zur Verwendung von Cookies haben, kontaktieren Sie
+            uns bitte unter:
+          </p>
+          <p>
+            E-Mail:
+            <a
+              href="mailto:privacy@eventlane.io"
+              class="text-primary hover:underline"
+              >privacy&#64;eventlane.io</a
+            >
+          </p>
+        </section>
+      </article>
+      }
     </div>
   </div>
 </div>

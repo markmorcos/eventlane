@@ -52,7 +52,7 @@
         >
           <path d="m15 18-6-6 6-6" />
         </svg>
-        Back
+        {{ "common.back" | translate }}
       </button>
       <h2 class="text-2xl font-bold text-foreground">{{ evt.title }}</h2>
     </div>
@@ -61,12 +61,14 @@
       <!-- Event Metadata Section -->
       <div hlmCard>
         <div hlmCardHeader>
-          <h3 hlmCardTitle>Event details</h3>
+          <h3 hlmCardTitle>{{ "adminEvent.metadata" | translate }}</h3>
         </div>
         <div hlmCardContent class="space-y-4">
           <!-- Date & Time -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Date & time</label>
+            <label class="text-sm font-medium">{{
+              "adminEvent.dateTime" | translate
+            }}</label>
             @if (!editingDateTime()) {
             <div class="flex items-center justify-between">
               <div>
@@ -82,7 +84,7 @@
                 size="sm"
                 (click)="startEditingDateTime()"
               >
-                Edit
+                {{ "adminEvent.edit" | translate }}
               </button>
             </div>
             } @else {
@@ -105,7 +107,7 @@
                   (click)="saveDateTime()"
                   [disabled]="loading()"
                 >
-                  Save
+                  {{ "adminEvent.save" | translate }}
                 </button>
                 <button
                   type="button"
@@ -114,7 +116,7 @@
                   size="sm"
                   (click)="cancelEditingDateTime()"
                 >
-                  Cancel
+                  {{ "adminEvent.cancel" | translate }}
                 </button>
               </div>
             </div>
@@ -123,7 +125,9 @@
 
           <!-- Location -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Location</label>
+            <label class="text-sm font-medium">{{
+              "adminEvent.location" | translate
+            }}</label>
             @if (!editingLocation()) {
             <div class="flex items-center justify-between">
               @if (evt.location) {
@@ -136,7 +140,9 @@
                 }
               </div>
               } @else {
-              <p class="text-sm text-muted-foreground">No location set</p>
+              <p class="text-sm text-muted-foreground">
+                {{ "adminEvent.noLocation" | translate }}
+              </p>
               }
               <button
                 type="button"
@@ -145,7 +151,7 @@
                 size="sm"
                 (click)="startEditingLocation()"
               >
-                Edit
+                {{ "adminEvent.edit" | translate }}
               </button>
             </div>
             } @else {
@@ -162,7 +168,7 @@
                   (click)="saveLocation()"
                   [disabled]="loading()"
                 >
-                  Save
+                  {{ "adminEvent.save" | translate }}
                 </button>
                 <button
                   type="button"
@@ -171,7 +177,7 @@
                   size="sm"
                   (click)="cancelEditingLocation()"
                 >
-                  Cancel
+                  {{ "adminEvent.cancel" | translate }}
                 </button>
               </div>
             </div>
@@ -180,7 +186,9 @@
 
           <!-- Description -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Description</label>
+            <label class="text-sm font-medium">{{
+              "adminEvent.description" | translate
+            }}</label>
             @if (!editingDescription()) {
             <div class="flex items-start justify-between gap-3">
               @if (evt.description) {
@@ -188,7 +196,9 @@
                 {{ evt.description }}
               </p>
               } @else {
-              <p class="text-sm text-muted-foreground">No description</p>
+              <p class="text-sm text-muted-foreground">
+                {{ "adminEvent.noDescription" | translate }}
+              </p>
               }
               <button
                 type="button"
@@ -197,7 +207,7 @@
                 size="sm"
                 (click)="startEditingDescription()"
               >
-                Edit
+                {{ "adminEvent.edit" | translate }}
               </button>
             </div>
             } @else {
@@ -208,11 +218,12 @@
                 name="description"
                 rows="4"
                 maxlength="700"
-                placeholder="Describe your event..."
+                [placeholder]="'adminEvent.descriptionPlaceholder' | translate"
                 class="resize-none"
               ></textarea>
               <p class="text-xs text-muted-foreground text-right">
-                {{ newDescription.length }}/700 characters
+                {{ newDescription.length }}/700
+                {{ "createEvent.characters" | translate }}
               </p>
               <div class="flex gap-2">
                 <button
@@ -222,7 +233,7 @@
                   (click)="saveDescription()"
                   [disabled]="loading() || newDescription.length > 700"
                 >
-                  Save
+                  {{ "adminEvent.save" | translate }}
                 </button>
                 <button
                   type="button"
@@ -231,7 +242,7 @@
                   size="sm"
                   (click)="cancelEditingDescription()"
                 >
-                  Cancel
+                  {{ "adminEvent.cancel" | translate }}
                 </button>
               </div>
             </div>
@@ -240,7 +251,9 @@
 
           <!-- Cover Image -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Cover image</label>
+            <label class="text-sm font-medium">{{
+              "adminEvent.coverImage" | translate
+            }}</label>
             @if (!editingCoverImage()) {
             <div class="flex items-start justify-between gap-3">
               <div class="flex-1">
@@ -257,7 +270,9 @@
                   />
                 </picture>
                 } @else {
-                <p class="text-sm text-muted-foreground">No cover image</p>
+                <p class="text-sm text-muted-foreground">
+                  {{ "adminEvent.noCoverImage" | translate }}
+                </p>
                 }
               </div>
               <button
@@ -267,7 +282,11 @@
                 size="sm"
                 (click)="startEditingCoverImage()"
               >
-                {{ evt.coverImages ? "Change" : "Add" }}
+                {{
+                  evt.coverImages
+                    ? ("adminEvent.changeCover" | translate)
+                    : ("adminEvent.addCover" | translate)
+                }}
               </button>
             </div>
             } @else {
@@ -284,7 +303,7 @@
                 size="sm"
                 (click)="cancelEditingCoverImage()"
               >
-                Cancel
+                {{ "adminEvent.cancel" | translate }}
               </button>
             </div>
             }
@@ -296,13 +315,13 @@
         <div hlmCardHeader>
           <div class="rounded-lg bg-primary/10 p-4 mb-4">
             <p class="text-sm text-foreground">
-              <strong>Note:</strong> Adjusting capacity will automatically
-              manage attendee status. Reducing capacity moves confirmed
-              attendees to the waitlist, while increasing capacity promotes
-              waitlisted attendees to confirmed status.
+              <strong>{{ "adminEvent.note" | translate }}:</strong>
+              {{ "adminEvent.capacityNote" | translate }}
             </p>
           </div>
-          <h3 hlmCardTitle>Capacity management</h3>
+          <h3 hlmCardTitle>
+            {{ "adminEvent.capacityManagement" | translate }}
+          </h3>
         </div>
         <div hlmCardContent>
           <form class="flex gap-3" (ngSubmit)="updateCapacity()">
@@ -312,11 +331,11 @@
               type="number"
               [(ngModel)]="newCapacity"
               min="0"
-              placeholder="Capacity"
+              [placeholder]="'adminEvent.capacity' | translate"
               class="flex-1"
             />
             <button hlmBtn type="submit" [disabled]="loading()">
-              Update capacity
+              {{ "adminEvent.updateCapacity" | translate }}
             </button>
           </form>
         </div>
@@ -324,7 +343,12 @@
 
       <div hlmCard>
         <div hlmCardHeader>
-          <h3 hlmCardTitle>Confirmed attendees ({{ confirmed().length }})</h3>
+          <h3 hlmCardTitle>
+            {{
+              "adminEvent.confirmedAttendees"
+                | translate : { count: confirmed().length }
+            }}
+          </h3>
         </div>
         <div hlmCardContent>
           @if (confirmed().length) {
@@ -334,10 +358,18 @@
                 <tr
                   class="border-b border-border text-left text-sm text-muted-foreground"
                 >
-                  <th class="pb-3 font-medium">Name</th>
-                  <th class="pb-3 font-medium">Email</th>
-                  <th class="pb-3 font-medium">Registered</th>
-                  <th class="pb-3 font-medium">Actions</th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.name" | translate }}
+                  </th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.email" | translate }}
+                  </th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.registered" | translate }}
+                  </th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.actions" | translate }}
+                  </th>
                 </tr>
               </thead>
               <tbody class="text-sm">
@@ -359,7 +391,7 @@
                       size="sm"
                       (click)="removeAttendee(attendee.email)"
                     >
-                      Remove
+                      {{ "adminEvent.remove" | translate }}
                     </button>
                   </td>
                 </tr>
@@ -368,14 +400,21 @@
             </table>
           </div>
           } @else {
-          <p class="text-sm text-muted-foreground">No confirmed attendees</p>
+          <p class="text-sm text-muted-foreground">
+            {{ "adminEvent.noConfirmed" | translate }}
+          </p>
           }
         </div>
       </div>
 
       <div hlmCard>
         <div hlmCardHeader>
-          <h3 hlmCardTitle>Waitlisted attendees ({{ waitlisted().length }})</h3>
+          <h3 hlmCardTitle>
+            {{
+              "adminEvent.waitlistedAttendees"
+                | translate : { count: waitlisted().length }
+            }}
+          </h3>
         </div>
         <div hlmCardContent>
           @if (waitlisted().length) {
@@ -385,10 +424,18 @@
                 <tr
                   class="border-b border-border text-left text-sm text-muted-foreground"
                 >
-                  <th class="pb-3 font-medium">Name</th>
-                  <th class="pb-3 font-medium">Email</th>
-                  <th class="pb-3 font-medium">Registered</th>
-                  <th class="pb-3 font-medium">Actions</th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.name" | translate }}
+                  </th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.email" | translate }}
+                  </th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.registered" | translate }}
+                  </th>
+                  <th class="pb-3 font-medium">
+                    {{ "adminEvent.actions" | translate }}
+                  </th>
                 </tr>
               </thead>
               <tbody class="text-sm">
@@ -410,7 +457,7 @@
                       size="sm"
                       (click)="removeAttendee(attendee.email)"
                     >
-                      Remove
+                      {{ "adminEvent.remove" | translate }}
                     </button>
                   </td>
                 </tr>
@@ -419,14 +466,16 @@
             </table>
           </div>
           } @else {
-          <p class="text-sm text-muted-foreground">No waitlisted attendees</p>
+          <p class="text-sm text-muted-foreground">
+            {{ "adminEvent.noWaitlisted" | translate }}
+          </p>
           }
         </div>
       </div>
 
       <div hlmCard>
         <div hlmCardHeader>
-          <h3 hlmCardTitle>Admin management</h3>
+          <h3 hlmCardTitle>{{ "adminEvent.adminManagement" | translate }}</h3>
         </div>
         <div hlmCardContent class="space-y-4">
           @if (admins().length) {
@@ -442,7 +491,7 @@
                 size="sm"
                 (click)="removeAdmin(admin)"
               >
-                Remove
+                {{ "adminEvent.remove" | translate }}
               </button>
             </div>
             }
@@ -454,7 +503,7 @@
               type="email"
               name="email"
               [(ngModel)]="newAdminEmail"
-              placeholder="Admin email"
+              [placeholder]="'adminEvent.adminEmail' | translate"
               class="flex-1"
             />
             <button
@@ -462,7 +511,7 @@
               type="submit"
               [disabled]="!newAdminEmail() || loading()"
             >
-              Add admin
+              {{ "adminEvent.addAdmin" | translate }}
             </button>
           </form>
         </div>
@@ -471,11 +520,13 @@
       @if (event()?.creatorEmail === email()) {
       <div hlmCard class="border-destructive/50">
         <div hlmCardHeader>
-          <h3 hlmCardTitle class="text-destructive">Danger zone</h3>
+          <h3 hlmCardTitle class="text-destructive">
+            {{ "adminEvent.dangerZone" | translate }}
+          </h3>
         </div>
         <div hlmCardContent>
           <button hlmBtn variant="destructive" (click)="deleteEvent()">
-            Delete event
+            {{ "adminEvent.deleteEvent" | translate }}
           </button>
         </div>
       </div>
@@ -487,10 +538,10 @@
 <!-- Alert Dialogs -->
 <hlm-alert-dialog
   [open]="showRemoveAttendeeDialog()"
-  title="Remove Attendee"
-  description="Are you sure you want to remove this attendee from the event?"
-  confirmText="Remove"
-  cancelText="Cancel"
+  [title]="'adminEvent.removeAttendeeTitle' | translate"
+  [description]="'adminEvent.removeAttendeeDesc' | translate"
+  [confirmText]="'adminEvent.remove' | translate"
+  [cancelText]="'adminEvent.cancel' | translate"
   [destructive]="true"
   (confirmed)="confirmRemoveAttendee()"
   (cancelled)="showRemoveAttendeeDialog.set(false)"
@@ -498,10 +549,13 @@
 
 <hlm-alert-dialog
   [open]="showRemoveAdminDialog()"
-  [title]="'Remove ' + (pendingAction()?.email || '') + ' as admin?'"
-  description="This person will no longer have admin access to this event."
-  confirmText="Remove"
-  cancelText="Cancel"
+  [title]="
+    'adminEvent.removeAdminTitle'
+      | translate : { email: pendingAction()?.email || '' }
+  "
+  [description]="'adminEvent.removeAdminDesc' | translate"
+  [confirmText]="'adminEvent.remove' | translate"
+  [cancelText]="'adminEvent.cancel' | translate"
   [destructive]="true"
   (confirmed)="confirmRemoveAdmin()"
   (cancelled)="showRemoveAdminDialog.set(false)"
@@ -509,10 +563,13 @@
 
 <hlm-alert-dialog
   [open]="showDeleteEventDialog()"
-  [title]="'Delete ' + (event()?.title || 'event') + '?'"
-  description="This action cannot be undone. All attendee data and event information will be permanently deleted."
-  confirmText="Delete Event"
-  cancelText="Cancel"
+  [title]="
+    'adminEvent.deleteEventTitle'
+      | translate : { title: event()?.title || 'event' }
+  "
+  [description]="'adminEvent.deleteEventDesc' | translate"
+  [confirmText]="'adminEvent.deleteEventConfirm' | translate"
+  [cancelText]="'adminEvent.cancel' | translate"
   [destructive]="true"
   (confirmed)="confirmDeleteEvent()"
   (cancelled)="showDeleteEventDialog.set(false)"

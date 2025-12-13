@@ -11,12 +11,14 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink, ActivatedRoute, Router } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+import { TranslateModule } from "@ngx-translate/core";
 
 import { EventDetailStore } from "../../stores/event-detail.store";
 import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
 import { EventApiService } from "../../services/event-api.service";
 import { ToastService } from "../../services/toast.service";
+import { UserPreferencesService } from "../../services/user-preferences.service";
 import { Meta } from "@angular/platform-browser";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
@@ -44,6 +46,7 @@ import { firstValueFrom } from "rxjs";
     CommonModule,
     RouterLink,
     FormsModule,
+    TranslateModule,
     HlmButtonDirective,
     HlmInputDirective,
     HlmCardDirective,
@@ -68,6 +71,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private eventApiService = inject(EventApiService);
   private toastService = inject(ToastService);
+  private preferencesService = inject(UserPreferencesService);
 
   email = this.authService.userEmail;
   event = this.store.event;
@@ -90,8 +94,11 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   newTimezone = "";
   newLocation: Location | null = null;
   newDescription = "";
+  language = this.preferencesService.language;
 
-  formatEventDate = formatEventDate;
+  formatEventDate(timestamp: number, timezone: string) {
+    return formatEventDate(timestamp, timezone, this.language());
+  }
 
   // Dialog state
   showRemoveAttendeeDialog = signal(false);

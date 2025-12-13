@@ -1,6 +1,7 @@
 <div class="min-h-screen bg-background py-16">
   <div class="mx-auto max-w-3xl px-4 sm:px-6">
     <div class="rounded-xl border border-border bg-card p-8 shadow-sm">
+      @if (language() === 'en') {
       <article class="prose prose-slate dark:prose-invert max-w-none">
         <h1>Terms of Service</h1>
         <p class="text-sm text-muted-foreground">
@@ -192,6 +193,213 @@
           </p>
         </section>
       </article>
+      } @else {
+      <article class="prose prose-slate dark:prose-invert max-w-none">
+        <h1>Nutzungsbedingungen</h1>
+        <p class="text-sm text-muted-foreground">
+          Zuletzt aktualisiert: 2. Dezember 2025
+        </p>
+
+        <section>
+          <h2>1. Zustimmung zu den Bedingungen</h2>
+          <p>
+            Durch den Zugriff auf oder die Nutzung von EventLane erklären Sie
+            sich mit diesen Nutzungsbedingungen und allen geltenden Gesetzen und
+            Vorschriften einverstanden. Wenn Sie mit einem dieser Bedingungen
+            nicht einverstanden sind, ist Ihnen die Nutzung unserer Dienste
+            untersagt.
+          </p>
+        </section>
+
+        <section>
+          <h2>2. Beschreibung des Dienstes</h2>
+          <p>
+            EventLane bietet eine Online-Plattform zum Erstellen, Verwalten und
+            Teilnehmen an Events. Unsere Dienste umfassen:
+          </p>
+          <ul>
+            <li>Event-Erstellungs- und Verwaltungstools</li>
+            <li>RSVP- und Teilnehmerverwaltung</li>
+            <li>Echtzeit-Event-Updates</li>
+            <li>Wartelistenverwaltung</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>3. Benutzerkonten</h2>
+          <p>
+            Um bestimmte Funktionen nutzen zu können, müssen Sie ein Konto
+            erstellen. Sie verpflichten sich:
+          </p>
+          <ul>
+            <li>Genaue und vollständige Informationen bereitzustellen</li>
+            <li>Die Sicherheit Ihres Kontos aufrechtzuerhalten</li>
+            <li>
+              Für alle Aktivitäten unter Ihrem Konto verantwortlich zu sein
+            </li>
+            <li>
+              Uns unverzüglich über jede unbefugte Nutzung zu benachrichtigen
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>4. Benutzerverhalten</h2>
+          <p>Sie verpflichten sich, Folgendes nicht zu tun:</p>
+          <ul>
+            <li>Den Dienst für illegale Zwecke zu nutzen</li>
+            <li>
+              Andere Benutzer zu belästigen, zu missbrauchen oder zu schädigen
+            </li>
+            <li>Schädlichen Code oder Viren hochzuladen</li>
+            <li>Inhalte ohne Erlaubnis zu scrapen oder zu kopieren</li>
+            <li>
+              Andere zu imitieren oder falsche Informationen bereitzustellen
+            </li>
+            <li>Die ordnungsgemäße Funktion des Dienstes zu beeinträchtigen</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>5. Event-Inhalte</h2>
+          <p>
+            Als Event-Organisator sind Sie für den Inhalt Ihrer Events
+            verantwortlich. Sie versichern und garantieren, dass:
+          </p>
+          <ul>
+            <li>
+              Sie das Recht haben, das Event zu erstellen und zu verwalten
+            </li>
+            <li>Ihr Event-Inhalt keine Gesetze oder Rechte Dritter verletzt</li>
+            <li>Ihre Event-Informationen korrekt und nicht irreführend sind</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6. Geistiges Eigentum</h2>
+          <p>
+            Die EventLane-Plattform, einschließlich ihres Designs, ihrer
+            Funktionen und Inhalte, ist Eigentum von EventLane und durch Gesetze
+            zum geistigen Eigentum geschützt. Sie dürfen unsere Inhalte ohne
+            Erlaubnis nicht kopieren, ändern oder verbreiten.
+          </p>
+        </section>
+
+        <section>
+          <h2>7. Benutzergenerierte Inhalte</h2>
+          <p>
+            Durch das Posten von Inhalten auf EventLane gewähren Sie uns eine
+            nicht-exklusive, weltweite, lizenzgebührenfreie Lizenz zur Nutzung,
+            Anzeige und Verbreitung Ihrer Inhalte im Zusammenhang mit dem
+            Dienst.
+          </p>
+        </section>
+
+        <section>
+          <h2>8. Datenschutz</h2>
+          <p>
+            Ihre Nutzung von EventLane unterliegt auch unserer
+            <a routerLink="/privacy-policy" class="text-primary hover:underline"
+              >Datenschutzerklärung</a
+            >. Bitte lesen Sie unsere Datenschutzerklärung, um unsere Praktiken
+            zu verstehen.
+          </p>
+        </section>
+
+        <section>
+          <h2>9. Haftungsausschlüsse</h2>
+          <p>
+            EventLane wird "wie besehen" ohne jegliche Garantien bereitgestellt.
+            Wir garantieren nicht, dass:
+          </p>
+          <ul>
+            <li>Der Dienst ununterbrochen oder fehlerfrei sein wird</li>
+            <li>Aufgelistete Events wie geplant stattfinden werden</li>
+            <li>Event-Organisatoren ihre Verpflichtungen erfüllen werden</li>
+            <li>Der Dienst Ihre spezifischen Anforderungen erfüllt</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>10. Haftungsbeschränkung</h2>
+          <p>
+            Im maximal gesetzlich zulässigen Umfang haftet EventLane nicht für
+            indirekte, zufällige, besondere oder Folgeschäden, die sich aus
+            Ihrer Nutzung des Dienstes ergeben.
+          </p>
+        </section>
+
+        <section>
+          <h2>11. Schadloshaltung</h2>
+          <p>
+            Sie verpflichten sich, EventLane von allen Ansprüchen, Schäden oder
+            Ausgaben freizustellen, die sich aus Ihrer Nutzung des Dienstes oder
+            der Verletzung dieser Bedingungen ergeben.
+          </p>
+        </section>
+
+        <section>
+          <h2>12. Kündigung</h2>
+          <p>
+            Wir behalten uns das Recht vor, Ihr Konto jederzeit bei Verstoß
+            gegen diese Bedingungen oder aus anderen Gründen zu sperren oder zu
+            kündigen. Sie können Ihr Konto auch jederzeit löschen.
+          </p>
+        </section>
+
+        <section>
+          <h2>13. Änderungen am Dienst</h2>
+          <p>
+            Wir behalten uns das Recht vor, den Dienst jederzeit ohne
+            Vorankündigung zu ändern oder einzustellen. Wir haften Ihnen oder
+            Dritten gegenüber nicht für Änderungen oder Einstellungen.
+          </p>
+        </section>
+
+        <section>
+          <h2>14. Anwendbares Recht</h2>
+          <p>
+            Diese Bedingungen unterliegen den geltenden Gesetzen und sind nach
+            diesen auszulegen, ohne Rücksicht auf Kollisionsnormen.
+          </p>
+        </section>
+
+        <section>
+          <h2>15. Streitbeilegung</h2>
+          <p>
+            Streitigkeiten, die sich aus diesen Bedingungen oder Ihrer Nutzung
+            von EventLane ergeben, werden durch verbindliche
+            Schiedsgerichtsbarkeit beigelegt, außer wo dies gesetzlich verboten
+            ist.
+          </p>
+        </section>
+
+        <section>
+          <h2>16. Änderungen der Bedingungen</h2>
+          <p>
+            Wir können diese Nutzungsbedingungen von Zeit zu Zeit aktualisieren.
+            Die fortgesetzte Nutzung des Dienstes nach Änderungen bedeutet die
+            Akzeptanz der neuen Bedingungen.
+          </p>
+        </section>
+
+        <section>
+          <h2>17. Kontaktinformationen</h2>
+          <p>
+            Bei Fragen zu diesen Nutzungsbedingungen kontaktieren Sie uns bitte
+            unter:
+          </p>
+          <p>
+            E-Mail:
+            <a
+              href="mailto:legal@eventlane.io"
+              class="text-primary hover:underline"
+              >legal&#64;eventlane.io</a
+            >
+          </p>
+        </section>
+      </article>
+      }
     </div>
   </div>
 </div>

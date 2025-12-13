@@ -63,13 +63,13 @@
     <h1
       class="mb-4 text-6xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 sm:text-7xl"
     >
-      EventLane
+      {{ "landing.title" | translate }}
     </h1>
 
     <p
       class="mb-12 text-xl font-normal opacity-95 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 sm:text-2xl"
     >
-      The fast lane for your events.
+      {{ "landing.subtitle" | translate }}
     </p>
 
     <div
@@ -81,7 +81,7 @@
         class="bg-white text-primary hover:bg-white/90 hover:-translate-y-0.5 hover:shadow-xl transition-all"
         routerLink="/events"
       >
-        Get started
+        {{ "landing.getStarted" | translate }}
       </button>
     </div>
 
@@ -90,15 +90,21 @@
     >
       <div class="text-center">
         <div class="mb-2 text-4xl font-extrabold">10k+</div>
-        <div class="text-sm font-medium opacity-90">Events created</div>
+        <div class="text-sm font-medium opacity-90">
+          {{ "landing.eventsCreated" | translate }}
+        </div>
       </div>
       <div class="text-center">
         <div class="mb-2 text-4xl font-extrabold">50k+</div>
-        <div class="text-sm font-medium opacity-90">RSVPs managed</div>
+        <div class="text-sm font-medium opacity-90">
+          {{ "landing.rsvpsManaged" | translate }}
+        </div>
       </div>
       <div class="text-center">
         <div class="mb-2 text-4xl font-extrabold">&lt;2s</div>
-        <div class="text-sm font-medium opacity-90">Avg. response time</div>
+        <div class="text-sm font-medium opacity-90">
+          {{ "landing.avgResponseTime" | translate }}
+        </div>
       </div>
     </div>
   </div>

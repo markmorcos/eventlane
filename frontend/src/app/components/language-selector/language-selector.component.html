@@ -1,0 +1,25 @@
+<div class="flex items-center gap-2">
+  <button
+    type="button"
+    (click)="setLanguage('de')"
+    class="rounded px-2 py-1 text-sm font-medium transition-colors"
+    [class.bg-primary]="language() === 'de'"
+    [class.text-primary-foreground]="language() === 'de'"
+    [class.text-muted-foreground]="language() !== 'de'"
+    [class.hover:bg-muted]="language() !== 'de'"
+  >
+    DE
+  </button>
+  <span class="text-muted-foreground">|</span>
+  <button
+    type="button"
+    (click)="setLanguage('en')"
+    class="rounded px-2 py-1 text-sm font-medium transition-colors"
+    [class.bg-primary]="language() === 'en'"
+    [class.text-primary-foreground]="language() === 'en'"
+    [class.text-muted-foreground]="language() !== 'en'"
+    [class.hover:bg-muted]="language() !== 'en'"
+  >
+    EN
+  </button>
+</div>

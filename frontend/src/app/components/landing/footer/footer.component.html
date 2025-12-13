@@ -66,7 +66,7 @@
         <div>
           <div class="text-lg font-bold text-foreground">EventLane</div>
           <p class="text-xs text-muted-foreground">
-            The fast lane for your events.
+            {{ "footer.tagline" | translate }}
           </p>
         </div>
       </div>
@@ -76,22 +76,17 @@
         <a
           routerLink="/privacy-policy"
           class="text-muted-foreground hover:text-primary transition-colors"
-          >Privacy Policy</a
+          >{{ "footer.privacyPolicy" | translate }}</a
         >
         <a
           routerLink="/terms-of-service"
           class="text-muted-foreground hover:text-primary transition-colors"
-          >Terms of Service</a
+          >{{ "footer.termsOfService" | translate }}</a
         >
         <a
           routerLink="/cookie-policy"
           class="text-muted-foreground hover:text-primary transition-colors"
-          >Cookie Policy</a
-        >
-        <a
-          routerLink="/gdpr"
-          class="text-muted-foreground hover:text-primary transition-colors"
-          >GDPR</a
+          >{{ "footer.cookiePolicy" | translate }}</a
         >
       </div>
     </div>
@@ -100,8 +95,8 @@
     <div
       class="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-muted-foreground"
     >
-      <div>© 2025 EventLane.io • All rights reserved</div>
-      <div>Made with ❤️ in Berlin</div>
+      <div>{{ "footer.copyright" | translate }}</div>
+      <div>{{ "footer.madeWith" | translate }}</div>
     </div>
   </div>
 </footer>
