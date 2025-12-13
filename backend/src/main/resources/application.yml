@@ -19,6 +19,14 @@ minio:
   secret-key: ${MINIO_SECRET_KEY:passwordforminio}
   bucket-name: ${MINIO_BUCKET_NAME:eventlane}
 
+app:
+  email:
+    from-name: ${EMAIL_FROM_NAME:EventLane}
+
+resend:
+  api-key: ${RESEND_API_KEY:re_f7uvLrhY_4MJCFcQW4btBWkTgvQPeXE2e}
+  from-email: ${RESEND_FROM_EMAIL:noreply@eventlane.io}
+
 logging:
   level:
     io.eventlane: DEBUG

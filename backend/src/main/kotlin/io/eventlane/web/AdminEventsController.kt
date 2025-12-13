@@ -1,7 +1,9 @@
 package io.eventlane.web
 
 import io.eventlane.application.ports.EventRepository
+import io.eventlane.application.ports.EventSeriesRepository
 import io.eventlane.application.service.EventCommandService
+import io.eventlane.application.service.EventSeriesCommandService
 import io.eventlane.application.service.ImageStorageService
 import io.eventlane.auth.SecurityUser
 import io.eventlane.domain.model.EventDelta
@@ -9,6 +11,7 @@ import io.eventlane.domain.model.ForbiddenException
 import io.eventlane.web.dto.DtoMapper
 import io.eventlane.web.dto.UpdateCapacityRequestDto
 import io.eventlane.web.dto.UpdateEventMetadataRequestDto
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,17 +24,21 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 @RestController
 @RequestMapping("/api/admin/events/{slug}")
 class AdminEventsController(
     private val repository: EventRepository,
+    private val seriesRepository: EventSeriesRepository,
     private val commands: EventCommandService,
+    private val seriesCommands: EventSeriesCommandService,
     private val imageStorage: ImageStorageService,
 ) {
     private fun ensureAdmin(slug: String, userEmail: String) {
         val event = repository.findBySlug(slug)
-        if (!event.isAdmin(userEmail.lowercase())) {
+        val series = seriesRepository.findById(event.seriesId)
+        if (!series.isAdmin(userEmail.lowercase())) {
             throw ForbiddenException("Only admins can perform this action.")
         }
     }
@@ -57,9 +64,11 @@ class AdminEventsController(
         @PathVariable slug: String,
         @PathVariable email: String,
         @AuthenticationPrincipal user: SecurityUser,
-    ): List<EventDelta> {
+    ) {
         ensureAdmin(slug, user.email)
-        return commands.addAdmin(slug, email)
+        val event = repository.findBySlug(slug)
+        val series = seriesRepository.findById(event.seriesId)
+        seriesCommands.addAdmin(series.slug, email)
     }
 
     @DeleteMapping("/admins/{email}")
@@ -67,9 +76,11 @@ class AdminEventsController(
         @PathVariable slug: String,
         @PathVariable email: String,
         @AuthenticationPrincipal user: SecurityUser,
-    ): List<EventDelta> {
+    ) {
         ensureAdmin(slug, user.email)
-        return commands.removeAdmin(slug, email)
+        val event = repository.findBySlug(slug)
+        val series = seriesRepository.findById(event.seriesId)
+        seriesCommands.removeAdmin(series.slug, email)
     }
 
     @PatchMapping("/metadata")
@@ -133,7 +144,7 @@ class AdminEventsController(
             throw IllegalArgumentException("File must be an image")
         }
 
-        val urls = imageStorage.processUploadedImage(slug, file)
+        imageStorage.processUploadedImage(slug, file)
 
         return commands.updateCoverImage(slug, "events/$slug/cover")
     }
@@ -143,5 +154,40 @@ class AdminEventsController(
         ensureAdmin(slug, user.email)
         imageStorage.deleteEventImages(slug)
         return commands.updateCoverImage(slug, null)
+    }
+
+    @GetMapping("/attendees.csv")
+    fun exportAttendeesCSV(
+        @PathVariable slug: String,
+        @AuthenticationPrincipal user: SecurityUser,
+        response: HttpServletResponse,
+    ) {
+        ensureAdmin(slug, user.email)
+
+        val event = repository.findBySlug(slug)
+
+        response.contentType = "text/csv"
+        response.setHeader("Content-Disposition", "attachment; filename=\"$slug-attendees.csv\"")
+
+        val writer = response.writer
+
+        // CSV Header
+        writer.write("name,email,status,joinedAt\n")
+
+        // Write all attendees
+        event.attendees.sortedBy { it.joinedAt }.forEach { attendee ->
+            val joinedAtFormatted = DateTimeFormatter.ISO_INSTANT.format(attendee.joinedAt)
+            writer.write(
+                "\"${escapeCsv(
+                    attendee.name,
+                )}\",\"${escapeCsv(attendee.email)}\",${attendee.status},$joinedAtFormatted\n",
+            )
+        }
+
+        writer.flush()
+    }
+
+    private fun escapeCsv(value: String): String {
+        return value.replace("\"", "\"\"")
     }
 }

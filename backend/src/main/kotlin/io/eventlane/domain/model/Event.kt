@@ -5,7 +5,6 @@ import java.time.Instant
 data class Event(
     val id: String? = null,
     val slug: String,
-    val title: String,
     val capacity: Int,
 
     val eventDate: Instant,
@@ -14,68 +13,61 @@ data class Event(
     val description: String? = null,
     val coverImageUrl: String? = null,
 
-    val confirmedList: List<Attendee>,
-    val waitingList: List<Attendee>,
+    val attendees: List<Attendee>,
 
-    val creatorEmail: String,
-    val admins: List<String>,
+    val seriesId: String, // Required - every event belongs to a series
+    val deletedAt: Instant? = null,
 
     val createdAt: Instant,
     val updatedAt: Instant,
 
     val version: Long? = null,
 ) {
-    fun isAdmin(email: String) = email == creatorEmail || admins.contains(email)
+
+    val confirmedList: List<Attendee>
+        get() = attendees.filter { it.status == AttendeeStatus.CONFIRMED }
+
+    val waitingList: List<Attendee>
+        get() = attendees.filter { it.status == AttendeeStatus.WAITLISTED }
 
     fun hasCapacity(): Boolean = confirmedList.size < capacity
 
-    fun findAttendeeByEmail(email: String): Attendee? = confirmedList.find { it.email == email }
-        ?: waitingList.find { it.email == email }
+    fun findAttendeeByEmail(email: String): Attendee? = attendees.find { it.email.equals(email, ignoreCase = true) }
 
     fun addAttendee(attendee: Attendee): Pair<Event, AttendeeStatus> {
-        return if (hasCapacity()) {
-            val updated = this.copy(
-                confirmedList = confirmedList + attendee,
-                updatedAt = Instant.now(),
-            )
-            updated to AttendeeStatus.CONFIRMED
-        } else {
-            val updated = this.copy(
-                waitingList = waitingList + attendee,
-                updatedAt = Instant.now(),
-            )
-            updated to AttendeeStatus.WAITLISTED
-        }
+        val status = if (hasCapacity()) AttendeeStatus.CONFIRMED else AttendeeStatus.WAITLISTED
+        val newAttendee = attendee.copy(status = status)
+        return this.copy(
+            attendees = attendees + newAttendee,
+            updatedAt = Instant.now(),
+        ) to status
     }
 
     fun removeAttendee(attendee: Attendee): Pair<Event, Attendee?> {
         val now = Instant.now()
+        val existing = findAttendeeByEmail(attendee.email) ?: return this to null
 
-        val wasConfirmed = confirmedList.any { it.email == attendee.email }
-        val wasWaitlisted = waitingList.any { it.email == attendee.email }
-
-        if (!wasConfirmed && !wasWaitlisted) {
-            return this to null
-        }
-
-        var updatedEvent = this.copy(
-            confirmedList = confirmedList.filter { it.email != attendee.email },
-            waitingList = waitingList.filter { it.email != attendee.email },
-            updatedAt = now,
-        )
+        val wasConfirmed = existing.status == AttendeeStatus.CONFIRMED
+        var updatedAttendees = attendees.filter { it.email != attendee.email }
 
         var promoted: Attendee? = null
 
-        if (wasConfirmed && updatedEvent.hasCapacity() && updatedEvent.waitingList.isNotEmpty()) {
-            promoted = updatedEvent.waitingList.first()
+        if (wasConfirmed) {
+            val nextWaitlisted = updatedAttendees
+                .filter { it.status == AttendeeStatus.WAITLISTED }
+                .minByOrNull { it.joinedAt }
 
-            updatedEvent = updatedEvent.copy(
-                confirmedList = updatedEvent.confirmedList + promoted,
-                waitingList = updatedEvent.waitingList.drop(1),
-                updatedAt = now,
-            )
+            if (nextWaitlisted != null && updatedAttendees.count { it.status == AttendeeStatus.CONFIRMED } < capacity) {
+                promoted = nextWaitlisted.copy(status = AttendeeStatus.CONFIRMED)
+                updatedAttendees = updatedAttendees.map {
+                    if (it.email == nextWaitlisted.email) promoted else it
+                }
+            }
         }
 
-        return updatedEvent to promoted
+        return this.copy(
+            attendees = updatedAttendees,
+            updatedAt = now,
+        ) to promoted
     }
 }

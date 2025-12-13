@@ -5,7 +5,8 @@ import java.time.Instant
 data class Attendee(
     val name: String,
     val email: String,
-    val createdAt: Instant = Instant.now(),
+    val status: AttendeeStatus,
+    val joinedAt: Instant = Instant.now(),
 )
 
 enum class AttendeeStatus {

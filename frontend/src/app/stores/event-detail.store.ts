@@ -49,7 +49,8 @@ export class EventDetailStore {
     this._error.set(null);
 
     try {
-      const data = await firstValueFrom(this.api.getEvent(slug));
+      const result = await firstValueFrom(this.api.getEvent(slug));
+      const data = result.nextEvent;
       this._event.set(data);
 
       const delta$ = this.socket.subscribeToEvent(slug);
@@ -72,7 +73,8 @@ export class EventDetailStore {
     this._error.set(null);
 
     try {
-      const data = await firstValueFrom(this.api.getEvent(this.currentSlug));
+      const result = await firstValueFrom(this.api.getEvent(this.currentSlug));
+      const data = result.nextEvent;
       this._event.set(data);
     } catch (err) {
       this._error.set("Failed to reload event");

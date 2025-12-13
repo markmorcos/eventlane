@@ -88,22 +88,98 @@
             [hint]="'createEvent.timezoneHint' | translate"
           />
 
+          <div class="space-y-4 rounded-lg border p-4">
+            <div class="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="recurring"
+                [checked]="isRecurring()"
+                (change)="isRecurring.set(!isRecurring())"
+                name="recurring"
+                class="h-4 w-4"
+              />
+              <label hlmLabel for="recurring" class="cursor-pointer">
+                {{ "createEvent.recurringEvent" | translate }}
+              </label>
+            </div>
+
+            @if (isRecurring()) {
+            <div class="space-y-4 pl-7">
+              <div class="space-y-2">
+                <label hlmLabel for="interval">{{
+                  "createEvent.interval" | translate
+                }}</label>
+                <select
+                  hlmInput
+                  id="interval"
+                  [(ngModel)]="intervalType"
+                  name="interval"
+                  class="w-full"
+                >
+                  <option value="weekly">
+                    {{ "createEvent.weekly" | translate }}
+                  </option>
+                  <option value="biweekly">
+                    {{ "createEvent.biweekly" | translate }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="space-y-2">
+                <label hlmLabel for="leadWeeks"
+                  >{{ "createEvent.leadWeeks" | translate }} *</label
+                >
+                <input
+                  hlmInput
+                  id="leadWeeks"
+                  type="number"
+                  [(ngModel)]="leadWeeks"
+                  name="leadWeeks"
+                  min="1"
+                  max="52"
+                  required
+                />
+                <small class="text-sm text-muted-foreground">{{
+                  "createEvent.leadWeeksHint" | translate
+                }}</small>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="hasEndDate"
+                    [checked]="hasEndDate()"
+                    (change)="hasEndDate.set(!hasEndDate())"
+                    name="hasEndDate"
+                    class="h-4 w-4"
+                  />
+                  <label hlmLabel for="hasEndDate" class="cursor-pointer">
+                    {{ "createEvent.setEndDate" | translate }}
+                  </label>
+                </div>
+
+                @if (hasEndDate()) {
+                <input
+                  hlmInput
+                  id="endDate"
+                  type="datetime-local"
+                  [(ngModel)]="endDate"
+                  name="endDate"
+                  class="mt-2"
+                />
+                }
+              </div>
+            </div>
+            }
+          </div>
+
           <div class="flex justify-end">
             <button hlmBtn type="submit" [disabled]="!isFormValid()">
               @if (loading()) { {{ "createEvent.creating" | translate }} } @else
               { {{ "createEvent.createButton" | translate }} }
             </button>
           </div>
-
-          @if (error()) {
-          <p
-            class="text-sm"
-            [class.text-destructive]="error()"
-            [class.text-success]="!error()"
-          >
-            {{ error() }}
-          </p>
-          }
         </form>
       </div>
     </div>

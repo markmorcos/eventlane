@@ -4,13 +4,14 @@ import io.eventlane.application.service.ImageStorageService
 import io.eventlane.domain.model.Attendee
 import io.eventlane.domain.model.AttendeeStatus
 import io.eventlane.domain.model.Event
+import io.eventlane.domain.model.EventSeries
 import io.eventlane.domain.model.Location
 
 object DtoMapper {
     fun toAttendeeDto(a: Attendee): AttendeeDto = AttendeeDto(
         email = a.email,
         name = a.name,
-        createdAt = a.createdAt.toString(),
+        createdAt = a.joinedAt.toString(),
     )
 
     fun toLocationDto(location: Location): LocationDto = LocationDto(
@@ -45,8 +46,8 @@ object DtoMapper {
         placeId = dto.placeId,
     )
 
-    fun toEventResponse(event: Event, requesterEmail: String, imageService: ImageStorageService): EventResponseDto {
-        val isAdmin = event.isAdmin(requesterEmail.lowercase())
+    fun toEventResponse(event: Event, series: EventSeries, requesterEmail: String, imageService: ImageStorageService): EventResponseDto {
+        val isAdmin = series.isAdmin(requesterEmail.lowercase())
         val status = when {
             event.confirmedList.any { it.email == requesterEmail.lowercase() } -> AttendeeStatus.CONFIRMED
             event.waitingList.any { it.email == requesterEmail.lowercase() } -> AttendeeStatus.WAITLISTED
@@ -64,7 +65,7 @@ object DtoMapper {
 
         return EventResponseDto(
             slug = event.slug,
-            title = event.title,
+            title = series.title,
             capacity = event.capacity,
             eventDate = event.eventDate.toEpochMilli(),
             timezone = event.timezone,
@@ -73,16 +74,32 @@ object DtoMapper {
             coverImages = coverImages,
             confirmedCount = event.confirmedList.size,
             waitlistedCount = event.waitingList.size,
-            creatorEmail = event.creatorEmail,
+            creatorEmail = series.creatorEmail,
             isAdmin = isAdmin,
             requesterStatus = status,
 
             confirmed = if (isAdmin) event.confirmedList.map { toAttendeeDto(it) } else null,
             waitlisted = if (isAdmin) event.waitingList.map { toAttendeeDto(it) } else null,
-            admins = if (isAdmin) event.admins else null,
+            admins = if (isAdmin) series.admins else null,
 
             createdAt = event.createdAt.toEpochMilli(),
             version = event.version ?: 0L,
         )
     }
+
+    fun toEventSeriesResponseDto(series: EventSeries): EventSeriesResponseDto = EventSeriesResponseDto(
+        slug = series.slug,
+        title = series.title,
+        interval = series.interval?.toString(),
+        leadWeeks = series.leadWeeks,
+        autoGenerate = series.autoGenerate,
+        endDate = series.endDate,
+        nextEventDate = null,
+        nextEventSlug = null,
+        upcomingEventsCount = 0,
+        creatorEmail = series.creatorEmail,
+        admins = series.admins,
+        createdAt = series.createdAt,
+        updatedAt = series.updatedAt,
+    )
 }

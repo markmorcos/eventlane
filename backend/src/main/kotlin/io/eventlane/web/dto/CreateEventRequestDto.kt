@@ -5,4 +5,7 @@ data class CreateEventRequestDto(
     val capacity: Int,
     val eventDate: String,
     val timezone: String,
+    val interval: String?, // ISO 8601 duration or null for one-off
+    val leadWeeks: Int?,
+    val endDate: String?,
 )

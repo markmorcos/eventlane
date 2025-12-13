@@ -33,6 +33,9 @@ dependencies {
     // Firebase Admin SDK
     implementation("com.google.firebase:firebase-admin:9.2.0")
 
+    // Email notifications (Resend)
+    implementation("com.resend:resend-java:3.0.0")
+
     // MinIO
     implementation("io.minio:minio:8.5.7")
 

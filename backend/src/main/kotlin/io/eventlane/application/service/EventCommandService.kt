@@ -3,7 +3,10 @@ package io.eventlane.application.service
 import io.eventlane.application.OptimisticRetry
 import io.eventlane.application.ports.EventDeltaPublisher
 import io.eventlane.application.ports.EventRepository
+import io.eventlane.application.ports.EventSeriesRepository
 import io.eventlane.domain.behavior.EventBehavior
+import io.eventlane.domain.model.AttendeeStatus
+import io.eventlane.domain.model.AttendeeStatusChanged
 import io.eventlane.domain.model.Event
 import io.eventlane.domain.model.EventCoverImageUpdated
 import io.eventlane.domain.model.EventCreated
@@ -21,34 +24,39 @@ import java.time.Instant
 class EventCommandService(
     private val retry: OptimisticRetry,
     private val repository: EventRepository,
+    private val seriesRepository: EventSeriesRepository,
     private val publisher: EventDeltaPublisher,
     private val imageService: ImageStorageService,
+    private val emailService: EmailNotificationService,
 ) {
 
     fun createEvent(
-        title: String,
         capacity: Int,
         eventDate: Instant,
         timezone: String,
-        creatorEmail: String,
+        seriesId: String,
     ): EventDelta {
-        val slug = SlugGenerator.generateUniqueSlug(title) { repository.existsBySlug(it) }
+        val series = seriesRepository.findById(seriesId)
+        
+        // Format: {seriesSlug}-YYYY-MM-DD
+        val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            .withZone(java.time.ZoneId.of(timezone))
+        val dateString = dateFormatter.format(eventDate)
+        val slug = "${series.slug}-$dateString"
 
         val now = Instant.now()
 
         val event = Event(
             slug = slug,
-            title = title,
             capacity = capacity,
             eventDate = eventDate,
             timezone = timezone,
             location = null,
             description = null,
             coverImageUrl = null,
-            confirmedList = emptyList(),
-            waitingList = emptyList(),
-            creatorEmail = creatorEmail.lowercase(),
-            admins = emptyList(),
+            attendees = emptyList(),
+            seriesId = seriesId,
+            deletedAt = null,
             createdAt = now,
             updatedAt = now,
         )
@@ -59,7 +67,7 @@ class EventCommandService(
             version = saved.version ?: 0L,
             timestamp = now,
             eventSlug = saved.slug,
-            title = saved.title,
+            title = "", // Title comes from series
             capacity = saved.capacity,
         )
 
@@ -74,6 +82,19 @@ class EventCommandService(
         }
 
         publisher.publish(saved, deltas)
+
+        // Send email notifications for status changes
+        val series = seriesRepository.findById(saved.seriesId)
+        deltas.filterIsInstance<AttendeeStatusChanged>().forEach { delta ->
+            val attendee = saved.findAttendeeByEmail(delta.attendeeEmail)
+            if (attendee != null) {
+                when (delta.newStatus) {
+                    AttendeeStatus.CONFIRMED -> emailService.sendPromotionEmail(attendee, saved, series.title)
+                    AttendeeStatus.WAITLISTED -> emailService.sendDowngradeEmail(attendee, saved, series.title)
+                    else -> {} // No email for other statuses
+                }
+            }
+        }
 
         return deltas
     }
@@ -91,29 +112,14 @@ class EventCommandService(
 
         publisher.publish(event, listOf(delta))
 
-        repository.deleteBySlug(slug)
+        // Soft-delete the event
+        val deletedEvent = event.copy(
+            deletedAt = now,
+            updatedAt = now,
+        )
+        repository.save(deletedEvent)
 
         return delta
-    }
-
-    fun addAdmin(slug: String, adminEmail: String): List<EventDelta> {
-        val (saved, deltas) = retry.run(slug) { event ->
-            EventBehavior.addAdmin(event, adminEmail)
-        }
-
-        publisher.publish(saved, deltas)
-
-        return deltas
-    }
-
-    fun removeAdmin(slug: String, adminEmail: String): List<EventDelta> {
-        val (saved, deltas) = retry.run(slug) { event ->
-            EventBehavior.removeAdmin(event, adminEmail)
-        }
-
-        publisher.publish(saved, deltas)
-
-        return deltas
     }
 
     fun updateDateTime(slug: String, eventDate: Instant, timezone: String): EventDelta {

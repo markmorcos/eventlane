@@ -2,6 +2,7 @@ package io.eventlane.websocket
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.eventlane.application.ports.EventDeltaPublisher
+import io.eventlane.application.ports.EventSeriesRepository
 import io.eventlane.domain.model.AdminRemoved
 import io.eventlane.domain.model.AttendeeRemoved
 import io.eventlane.domain.model.Event
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component
 class EventWebSocketPublisher(
     private val messageTemplate: SimpMessagingTemplate,
     private val objectMapper: ObjectMapper,
+    private val seriesRepository: EventSeriesRepository,
 ) : EventDeltaPublisher {
 
     override fun publish(event: Event, deltas: List<EventDelta>) {
@@ -35,8 +37,9 @@ class EventWebSocketPublisher(
     private fun getAffectedUsers(event: Event, deltas: List<EventDelta>): Set<String> {
         val users = mutableSetOf<String>()
 
-        users.add(event.creatorEmail)
-        users.addAll(event.admins)
+        val series = seriesRepository.findById(event.seriesId)
+        users.add(series.creatorEmail)
+        users.addAll(series.admins)
         users.addAll(event.confirmedList.map { it.email })
         users.addAll(event.waitingList.map { it.email })
 

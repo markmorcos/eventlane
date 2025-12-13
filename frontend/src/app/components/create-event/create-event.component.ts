@@ -1,13 +1,14 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
+import { firstValueFrom } from "rxjs";
 
 import { AuthService } from "../../services/auth.service";
+import { EventApiService } from "../../services/event-api.service";
 import { SeoService } from "../../services/seo.service";
 import { ToastService } from "../../services/toast.service";
-import { EventListStore } from "../../stores/event-list.store";
 import { convertLocalDateTimeToUTC } from "../../utils/date-format";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
@@ -38,20 +39,26 @@ import { TimezoneSelectorComponent } from "../timezone-selector/timezone-selecto
   templateUrl: "./create-event.component.html",
 })
 export class CreateEventComponent implements OnInit {
-  private store = inject(EventListStore);
   private authService = inject(AuthService);
+  private eventApiService = inject(EventApiService);
   private router = inject(Router);
   private seoService = inject(SeoService);
   private toastService = inject(ToastService);
 
   isAuthenticated = this.authService.isAuthenticated;
-  loading = this.store.loading;
-  error = this.store.error;
+  loading = signal(false);
 
   title = "";
   capacity = 8;
   eventDate = "";
   timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Recurrence options
+  isRecurring = signal(false);
+  intervalType = "weekly";
+  leadWeeks = 4;
+  hasEndDate = signal(false);
+  endDate = "";
 
   getDefaultDate() {
     const tomorrow = new Date();
@@ -75,13 +82,26 @@ export class CreateEventComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    return (
+    const basicValid =
       this.title.trim().length > 0 &&
       this.capacity >= 1 &&
       this.eventDate.length > 0 &&
       this.timezone.length > 0 &&
-      !this.loading()
-    );
+      !this.loading();
+
+    if (!basicValid) return false;
+
+    if (this.isRecurring()) {
+      if (this.leadWeeks < 1 || this.leadWeeks > 52) return false;
+      if (this.hasEndDate() && !this.endDate) return false;
+    }
+
+    return true;
+  }
+
+  getIntervalDuration(): string | null {
+    if (!this.isRecurring()) return null;
+    return this.intervalType === "weekly" ? "P7D" : "P14D";
   }
 
   async createEvent() {
@@ -93,24 +113,44 @@ export class CreateEventComponent implements OnInit {
       return;
     }
 
-    const event = await this.store.createEvent({
-      title: this.title,
-      capacity: this.capacity,
-      eventDate: convertLocalDateTimeToUTC(this.eventDate, this.timezone),
-      timezone: this.timezone,
-    });
+    this.loading.set(true);
 
-    if (event) {
-      this.toastService.success(
-        "Event created!",
-        `${event.title} is ready to accept RSVPs.`
+    try {
+      const eventDateUTC = convertLocalDateTimeToUTC(
+        this.eventDate,
+        this.timezone
       );
-      this.router.navigate(["/events", event.slug]);
-    } else {
+
+      const payload: any = {
+        title: this.title,
+        capacity: this.capacity,
+        eventDate: eventDateUTC,
+        timezone: this.timezone,
+        interval: this.getIntervalDuration(),
+        leadWeeks: this.isRecurring() ? this.leadWeeks : 1,
+        endDate:
+          this.hasEndDate() && this.endDate
+            ? convertLocalDateTimeToUTC(this.endDate, this.timezone)
+            : null,
+      };
+
+      const result = await firstValueFrom(
+        this.eventApiService.createEvent(payload)
+      );
+
+      this.toastService.success(
+        this.isRecurring() ? "Series created!" : "Event created!",
+        `${result.seriesTitle || this.title} is ready to accept RSVPs.`
+      );
+      this.router.navigate(["/events", result.nextEvent.slug]);
+    } catch (error: any) {
       this.toastService.error(
         "Failed to create event",
-        this.store.error() || "Please try again."
+        error?.error?.message || "Please try again."
       );
+      console.error(error);
+    } finally {
+      this.loading.set(false);
     }
   }
 }

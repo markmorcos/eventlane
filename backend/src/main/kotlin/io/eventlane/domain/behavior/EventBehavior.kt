@@ -21,26 +21,20 @@ object EventBehavior {
         val now = Instant.now()
 
         event.findAttendeeByEmail(normalized)?.let { existing ->
-            val status =
-                if (event.confirmedList.any { it.email.equals(normalized, ignoreCase = true) }) {
-                    AttendeeStatus.CONFIRMED
-                } else {
-                    AttendeeStatus.WAITLISTED
-                }
-
             return event to AttendeeAdded(
                 version = event.version ?: 0L,
                 timestamp = now,
                 eventSlug = event.slug,
                 attendee = existing,
-                status = status,
+                status = existing.status,
             )
         }
 
         val newAttendee = Attendee(
             name = name,
             email = normalized,
-            createdAt = now,
+            status = AttendeeStatus.CONFIRMED,
+            joinedAt = now,
         )
 
         val (updatedEvent, status) = event.addAttendee(newAttendee)
@@ -115,10 +109,10 @@ object EventBehavior {
 
         if (newCapacity > currentConfirmed) {
             val slotsToFill = newCapacity - currentConfirmed
-            val toPromoteCount = min(slotsToFill, event.waitingList.size)
+            val waitlisted = event.waitingList.sortedBy { it.joinedAt }
+            val toPromoteCount = min(slotsToFill, waitlisted.size)
 
-            val toPromote = event.waitingList.take(toPromoteCount)
-            val remainingWaitlist = event.waitingList.drop(toPromoteCount)
+            val toPromote = waitlisted.take(toPromoteCount)
 
             toPromote.forEach { attendee ->
                 deltas += AttendeeStatusChanged(
@@ -131,10 +125,17 @@ object EventBehavior {
                 )
             }
 
+            val updatedAttendees = event.attendees.map { attendee ->
+                if (toPromote.any { it.email == attendee.email }) {
+                    attendee.copy(status = AttendeeStatus.CONFIRMED)
+                } else {
+                    attendee
+                }
+            }
+
             val updatedEvent = event.copy(
                 capacity = newCapacity,
-                confirmedList = event.confirmedList + toPromote,
-                waitingList = remainingWaitlist,
+                attendees = updatedAttendees,
                 updatedAt = now,
             )
 
@@ -142,8 +143,8 @@ object EventBehavior {
         }
 
         val demotionsNeeded = currentConfirmed - newCapacity
-        val toDemote = event.confirmedList.takeLast(demotionsNeeded)
-        val remainingConfirmed = event.confirmedList.dropLast(demotionsNeeded)
+        val confirmed = event.confirmedList.sortedByDescending { it.joinedAt }
+        val toDemote = confirmed.take(demotionsNeeded)
 
         toDemote.forEach { attendee ->
             deltas += AttendeeStatusChanged(
@@ -156,67 +157,20 @@ object EventBehavior {
             )
         }
 
+        val updatedAttendees = event.attendees.map { attendee ->
+            if (toDemote.any { it.email == attendee.email }) {
+                attendee.copy(status = AttendeeStatus.WAITLISTED)
+            } else {
+                attendee
+            }
+        }
+
         val updatedEvent = event.copy(
             capacity = newCapacity,
-            confirmedList = remainingConfirmed,
-            waitingList = toDemote + event.waitingList,
+            attendees = updatedAttendees,
             updatedAt = now,
         )
 
         return updatedEvent to deltas
-    }
-
-    fun addAdmin(event: Event, email: String): Pair<Event, List<EventDelta>> {
-        val normalized = email.lowercase()
-        val now = Instant.now()
-
-        val alreadyAdmin =
-            event.creatorEmail.equals(normalized, ignoreCase = true) ||
-                event.admins.any { it.equals(normalized, ignoreCase = true) }
-
-        if (alreadyAdmin) {
-            return event to emptyList()
-        }
-
-        val updatedEvent = event.copy(
-            admins = event.admins + normalized,
-            updatedAt = now,
-        )
-
-        val delta = AdminAdded(
-            version = event.version ?: 0L,
-            timestamp = now,
-            eventSlug = event.slug,
-            adminEmail = normalized,
-        )
-
-        return updatedEvent to listOf(delta)
-    }
-
-    fun removeAdmin(event: Event, email: String): Pair<Event, List<EventDelta>> {
-        val normalized = email.lowercase()
-        val now = Instant.now()
-
-        if (event.creatorEmail.equals(normalized, ignoreCase = true)) {
-            throw BadRequestException("Cannot remove the event creator from admins")
-        }
-
-        if (event.admins.none { it.equals(normalized, ignoreCase = true) }) {
-            throw NotFoundException("Admin not found: $email")
-        }
-
-        val updatedEvent = event.copy(
-            admins = event.admins.filterNot { it.equals(normalized, ignoreCase = true) },
-            updatedAt = now,
-        )
-
-        val delta = AdminRemoved(
-            version = event.version ?: 0L,
-            timestamp = now,
-            eventSlug = event.slug,
-            adminEmail = normalized,
-        )
-
-        return updatedEvent to listOf(delta)
     }
 }

@@ -10,6 +10,7 @@ import { firstValueFrom, Subscription } from "rxjs";
 
 import { EventApiService } from "../services/event-api.service";
 import { EventSummary, Location } from "../models/event.model";
+import { EventOrSeriesGroup } from "../models/event-or-series-group.model";
 import { EventSocketService } from "../services/event-socket.service";
 import { ToastService } from "../services/toast.service";
 import { AuthService } from "../services/auth.service";
@@ -33,24 +34,25 @@ export class EventListStore {
 
   private userEmail = this.auth.userEmail;
 
-  private readonly _events = signal<EventSummary[]>([]);
+  private readonly _eventGroups = signal<EventOrSeriesGroup[]>([]);
   private readonly _loading = signal(false);
   private readonly _error = signal<string | null>(null);
 
   private userSubscription?: Subscription;
 
-  readonly events = computed(() => this._events());
+  readonly eventGroups = computed(() => this._eventGroups());
+  readonly events = computed(() => this._eventGroups().map((g) => g.nextEvent)); // For backward compatibility
   readonly loading = computed(() => this._loading());
   readonly error = computed(() => this._error());
 
   async loadManagedEvents() {
-    this._events.set([]);
+    this._eventGroups.set([]);
     this._loading.set(true);
     this._error.set(null);
 
     try {
       const data = await firstValueFrom(this.api.getManagedEvents());
-      this._events.set(data);
+      this._eventGroups.set(data);
 
       if (isPlatformBrowser(this.platformId)) {
         this.subscribeToUpdates();
@@ -58,28 +60,6 @@ export class EventListStore {
     } catch (error) {
       this._error.set("Failed to load events");
       console.error(error);
-    } finally {
-      this._loading.set(false);
-    }
-  }
-
-  async createEvent(eventData: {
-    title: string;
-    capacity: number;
-    eventDate: string;
-    timezone: string;
-  }) {
-    this._loading.set(true);
-    this._error.set(null);
-
-    try {
-      const newEvent = await firstValueFrom(this.api.createEvent(eventData));
-      this._events.update((events) => [newEvent, ...events]);
-      return newEvent;
-    } catch (error) {
-      this._error.set("Failed to create event");
-      console.error(error);
-      return null;
     } finally {
       this._loading.set(false);
     }
@@ -106,9 +86,15 @@ export class EventListStore {
 
     for (const eventSlug of Object.keys(deltasByEvent)) {
       const eventDeltas = deltasByEvent[eventSlug];
-      const event = this._events().find((e) => e.slug === eventSlug);
+      const eventGroup = this._eventGroups().find(
+        (g) => g.nextEvent.slug === eventSlug
+      );
 
-      if (eventDeltas[0] && event && eventDeltas[0].version < event.version) {
+      if (
+        eventDeltas[0] &&
+        eventGroup &&
+        eventDeltas[0].version < eventGroup.nextEvent.version
+      ) {
         continue;
       }
 
@@ -119,13 +105,15 @@ export class EventListStore {
   }
 
   private async applyDelta(delta: EventDelta): Promise<void> {
-    const events = this._events();
-    const index = events.findIndex((e) => e.slug === delta.eventSlug);
+    const groups = this._eventGroups();
+    const group = groups.find((g) => g.nextEvent.slug === delta.eventSlug);
 
-    let event = events[index];
-    if (!event) {
-      event = await firstValueFrom(this.api.getEvent(delta.eventSlug));
+    if (!group) {
+      // Event not in our list, ignore delta
+      return;
     }
+
+    let event = group.nextEvent;
 
     let updated: EventSummary | null = null;
 
@@ -140,9 +128,8 @@ export class EventListStore {
         const d = delta as AdminAddedDelta;
         if (d.adminEmail !== this.userEmail()) break;
 
-        this._events.update((events) =>
-          [...events, event].sort((a, b) => a.title.localeCompare(b.title))
-        );
+        // Reload the full list since we may have new access
+        await this.loadManagedEvents();
 
         this.toast.info(`You've been added as an admin to "${event.title}"`);
 
@@ -152,8 +139,8 @@ export class EventListStore {
       case "AdminRemoved": {
         const d = delta as AdminRemovedDelta;
         if (d.adminEmail === this.userEmail()) {
-          this._events.update((events) =>
-            events.filter((e) => e.slug !== delta.eventSlug)
+          this._eventGroups.update((groups) =>
+            groups.filter((g) => g.nextEvent.slug !== delta.eventSlug)
           );
           this.toast.info(
             `You've been removed as an admin from "${event.title}"`
@@ -235,18 +222,20 @@ export class EventListStore {
       }
 
       case "EventDeleted": {
-        this._events.update((events) =>
-          events.filter((e) => e.slug !== delta.eventSlug)
+        this._eventGroups.update((groups) =>
+          groups.filter((g) => g.nextEvent.slug !== delta.eventSlug)
         );
         return;
       }
     }
 
     if (updated) {
-      this._events.update((events) => {
-        const newEvents = [...events];
-        newEvents[index] = updated!;
-        return newEvents;
+      this._eventGroups.update((groups) => {
+        return groups.map((g) =>
+          g.nextEvent.slug === delta.eventSlug
+            ? { ...g, nextEvent: updated! }
+            : g
+        );
       });
     }
   }

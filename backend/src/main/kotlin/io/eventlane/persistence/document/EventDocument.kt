@@ -12,7 +12,6 @@ data class EventDocument(
 
     @Indexed(unique = true) val slug: String,
 
-    val title: String,
     val capacity: Int,
 
     val eventDate: Instant,
@@ -21,11 +20,10 @@ data class EventDocument(
     val description: String? = null,
     val coverImageUrl: String? = null,
 
-    val creatorEmail: String,
-    val admins: List<String>,
+    @Indexed val seriesId: String, // Required - every event belongs to a series
+    val deletedAt: Instant? = null,
 
-    val confirmedList: List<AttendeeDocument>,
-    val waitingList: List<AttendeeDocument>,
+    val attendees: List<AttendeeDocument>,
 
     val createdAt: Instant,
     val updatedAt: Instant,
@@ -36,5 +34,6 @@ data class EventDocument(
 data class AttendeeDocument(
     val name: String,
     val email: String,
-    val createdAt: Instant,
+    val status: String,
+    val joinedAt: Instant,
 )

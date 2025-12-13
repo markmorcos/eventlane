@@ -40,8 +40,13 @@ class MongoEventRepository(
 
     override fun existsBySlug(slug: String) = springDataRepository.existsBySlug(slug)
 
-    override fun findByAdmin(email: String) = springDataRepository.findByCreatorEmailOrAdminsContaining(email, email)
+    override fun deleteBySlug(slug: String) = springDataRepository.deleteBySlug(slug)
+
+    override fun findBySeriesId(seriesId: String) = springDataRepository.findBySeriesId(seriesId)
         .map(EventPersistenceMapper::toDomain)
 
-    override fun deleteBySlug(slug: String) = springDataRepository.deleteBySlug(slug)
+    override fun findActiveBySeriesId(seriesId: String) = springDataRepository.findBySeriesIdAndDeletedAtIsNull(
+        seriesId,
+    )
+        .map(EventPersistenceMapper::toDomain)
 }

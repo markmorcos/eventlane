@@ -27,7 +27,6 @@ export class UserPreferencesService {
   }
 
   private async init() {
-    console.log("Initializing user preferences service");
     if (this.initialized) return;
     this.initialized = true;
 

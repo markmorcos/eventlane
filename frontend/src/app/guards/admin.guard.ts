@@ -22,9 +22,9 @@ export const adminGuard: CanActivateFn = async (route) => {
   }
 
   try {
-    const event = await firstValueFrom(api.getEvent(slug));
+    const result = await firstValueFrom(api.getEvent(slug));
 
-    if (!event.isAdmin) {
+    if (!result.nextEvent.isAdmin) {
       router.navigate(["/events", slug]);
       return false;
     }

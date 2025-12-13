@@ -11,17 +11,15 @@ object EventPersistenceMapper {
     fun toDomain(doc: EventDocument): Event = Event(
         id = doc.id!!,
         slug = doc.slug,
-        title = doc.title,
         capacity = doc.capacity,
         eventDate = doc.eventDate,
         timezone = doc.timezone,
         location = doc.location?.let { toDomainLocation(it) },
         description = doc.description,
         coverImageUrl = doc.coverImageUrl,
-        confirmedList = doc.confirmedList.map { toDomainAttendee(it) },
-        waitingList = doc.waitingList.map { toDomainAttendee(it) },
-        creatorEmail = doc.creatorEmail,
-        admins = doc.admins,
+        attendees = doc.attendees.map { toDomainAttendee(it) },
+        seriesId = doc.seriesId,
+        deletedAt = doc.deletedAt,
         createdAt = doc.createdAt,
         updatedAt = doc.updatedAt,
         version = doc.version,
@@ -30,17 +28,15 @@ object EventPersistenceMapper {
     fun toDocument(domain: Event): EventDocument = EventDocument(
         id = domain.id,
         slug = domain.slug,
-        title = domain.title,
         capacity = domain.capacity,
         eventDate = domain.eventDate,
         timezone = domain.timezone,
         location = domain.location?.let { toDocumentLocation(it) },
         description = domain.description,
         coverImageUrl = domain.coverImageUrl,
-        creatorEmail = domain.creatorEmail,
-        admins = domain.admins,
-        confirmedList = domain.confirmedList.map { toDocumentAttendee(it) },
-        waitingList = domain.waitingList.map { toDocumentAttendee(it) },
+        seriesId = domain.seriesId,
+        deletedAt = domain.deletedAt,
+        attendees = domain.attendees.map { toDocumentAttendee(it) },
         createdAt = domain.createdAt,
         updatedAt = domain.updatedAt,
         version = domain.version,
@@ -49,13 +45,15 @@ object EventPersistenceMapper {
     fun toDomainAttendee(doc: AttendeeDocument): Attendee = Attendee(
         name = doc.name,
         email = doc.email,
-        createdAt = doc.createdAt,
+        status = io.eventlane.domain.model.AttendeeStatus.valueOf(doc.status),
+        joinedAt = doc.joinedAt,
     )
 
     fun toDocumentAttendee(attendee: Attendee): AttendeeDocument = AttendeeDocument(
         name = attendee.name,
         email = attendee.email,
-        createdAt = attendee.createdAt,
+        status = attendee.status.name,
+        joinedAt = attendee.joinedAt,
     )
 
     fun toDomainLocation(doc: LocationDocument): Location = Location(

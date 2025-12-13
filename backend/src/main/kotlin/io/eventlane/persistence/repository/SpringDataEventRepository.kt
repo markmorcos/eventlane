@@ -9,5 +9,6 @@ interface SpringDataEventRepository : MongoRepository<EventDocument, String> {
     fun findBySlug(slug: String): EventDocument?
     fun existsBySlug(slug: String): Boolean
     fun deleteBySlug(slug: String)
-    fun findByCreatorEmailOrAdminsContaining(creatorEmail: String, adminEmail: String): List<EventDocument>
+    fun findBySeriesId(seriesId: String): List<EventDocument>
+    fun findBySeriesIdAndDeletedAtIsNull(seriesId: String): List<EventDocument>
 }
