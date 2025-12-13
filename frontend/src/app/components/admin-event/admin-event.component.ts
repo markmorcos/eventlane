@@ -37,7 +37,7 @@ import { TimezoneSelectorComponent } from "../timezone-selector/timezone-selecto
 import { LocationInputComponent } from "../location-input/location-input.component";
 import { ImageUploadComponent } from "../image-upload/image-upload.component";
 import { Location } from "../../models/event.model";
-import { formatEventDate } from "../../utils/date-format";
+import { formatEventDateTime } from "../../utils/date-format";
 import { firstValueFrom } from "rxjs";
 
 @Component({
@@ -96,8 +96,8 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   newDescription = "";
   language = this.preferencesService.language;
 
-  formatEventDate(timestamp: number, timezone: string) {
-    return formatEventDate(timestamp, timezone, this.language());
+  formatEventDateTime(timestamp: number, timezone: string) {
+    return formatEventDateTime(timestamp, timezone, this.language());
   }
 
   // Dialog state

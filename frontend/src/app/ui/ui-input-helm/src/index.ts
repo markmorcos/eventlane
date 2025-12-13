@@ -21,17 +21,14 @@ export const inputVariants = cva(
       size: "default",
       error: false,
     },
-  },
+  }
 );
 
 export type InputVariants = VariantProps<typeof inputVariants>;
 
 @Directive({
   selector: "[hlmInput]",
-  standalone: true,
-  host: {
-    "[class]": "_computedClass()",
-  },
+  host: { "[class]": "_computedClass()" },
 })
 export class HlmInputDirective {
   public readonly userClass = input<ClassValue>("", { alias: "class" });
@@ -41,7 +38,7 @@ export class HlmInputDirective {
   protected _computedClass = computed(() =>
     hlm(
       inputVariants({ size: this.size(), error: this.error() }),
-      this.userClass(),
-    ),
+      this.userClass()
+    )
   );
 }

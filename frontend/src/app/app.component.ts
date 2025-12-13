@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import {
   Router,
   NavigationEnd,
@@ -13,6 +13,7 @@ import { CookieBannerComponent } from "./components/cookie-banner/cookie-banner.
 import { ToastContainerComponent } from "./components/toast-container/toast-container.component";
 import { FooterComponent } from "./components/landing/footer/footer.component";
 import { LanguageSelectorComponent } from "./components/language-selector/language-selector.component";
+import { UserPreferencesService } from "./services/user-preferences.service";
 
 @Component({
   selector: "app-root",
@@ -29,9 +30,13 @@ import { LanguageSelectorComponent } from "./components/language-selector/langua
 })
 export class AppComponent {
   private authService = inject(AuthService);
+  private userPreferencesService = inject(UserPreferencesService);
   private router = inject(Router);
 
-  authLoading = this.authService.authLoading;
+  isInitializing = computed(
+    () =>
+      this.authService.authLoading() || this.userPreferencesService.isLoading()
+  );
   isLandingPage = false;
 
   constructor() {

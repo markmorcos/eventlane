@@ -1,4 +1,10 @@
-import { Injectable, signal, PLATFORM_ID, inject } from "@angular/core";
+import {
+  Injectable,
+  signal,
+  PLATFORM_ID,
+  inject,
+  computed,
+} from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { TranslateService } from "@ngx-translate/core";
@@ -21,15 +27,17 @@ export class UserPreferencesService {
   private platformId = inject(PLATFORM_ID);
 
   readonly language = signal<"en" | "de">("de");
-  private initialized = false;
+  private initialized = signal(false);
+
+  isLoading = computed(() => !this.initialized());
 
   constructor() {
     this.initializeLanguage();
   }
 
   private initializeLanguage() {
-    if (this.initialized) return;
-    this.initialized = true;
+    if (this.initialized()) return;
+    this.initialized.set(true);
 
     // Priority: localStorage → browser language → default DE
     const savedLanguage = this.getStoredLanguage();

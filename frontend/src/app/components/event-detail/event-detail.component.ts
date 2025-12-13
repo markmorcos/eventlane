@@ -172,12 +172,8 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
     const url = `${window.location.origin}/events/${evt.slug}`;
     navigator.clipboard.writeText(url).then(
-      () => {
-        this.toastService.success("Link copied to clipboard!");
-      },
-      () => {
-        this.toastService.error("Failed to copy link");
-      }
+      () => this.toastService.success("Link copied to clipboard!"),
+      () => this.toastService.error("Failed to copy link")
     );
   }
 
@@ -190,7 +186,9 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     return formatEventTime(timestamp, timezone, this.language());
   }
 
-  getRelativeTime = getRelativeTime;
+  getRelativeTime(timestamp: number) {
+    return getRelativeTime(timestamp, this.language());
+  }
 
   // URL encoding for template
   encodeURIComponent = encodeURIComponent;

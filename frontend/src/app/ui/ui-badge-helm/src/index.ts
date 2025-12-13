@@ -24,23 +24,20 @@ export const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>;
 
 @Directive({
   selector: "[hlmBadge]",
-  standalone: true,
-  host: {
-    "[class]": "_computedClass()",
-  },
+  host: { "[class]": "_computedClass()" },
 })
 export class HlmBadgeDirective {
   public readonly userClass = input<ClassValue>("", { alias: "class" });
   public readonly variant = input<BadgeVariants["variant"]>("default");
 
   protected _computedClass = computed(() =>
-    hlm(badgeVariants({ variant: this.variant() }), this.userClass()),
+    hlm(badgeVariants({ variant: this.variant() }), this.userClass())
   );
 }

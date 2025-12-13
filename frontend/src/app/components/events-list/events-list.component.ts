@@ -34,18 +34,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
   error = this.store.error;
   language = this.preferencesService.language;
 
-  formatEventDateTime(
-    timestamp: number,
-    timezone: string,
-    options?: {
-      dateStyle?: "full" | "long" | "medium" | "short";
-      timeStyle?: "full" | "long" | "medium" | "short";
-    }
-  ) {
-    return formatEventDateTime(timestamp, timezone, {
-      ...options,
-      locale: this.language(),
-    });
+  formatEventDateTime(timestamp: number, timezone: string) {
+    return formatEventDateTime(timestamp, timezone, this.language());
   }
 
   ngOnInit() {

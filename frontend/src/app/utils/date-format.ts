@@ -1,20 +1,18 @@
 export function formatEventDateTime(
   timestamp: number,
   timezone: string,
-  options: {
-    dateStyle?: "full" | "long" | "medium" | "short";
-    timeStyle?: "full" | "long" | "medium" | "short";
-    locale?: string;
-  } = {}
-): string {
+  locale: string
+) {
   try {
     const date = new Date(timestamp);
-    const locale = options.locale || "en";
-    const localeCode = locale === "de" ? "de-DE" : "en-US";
-    const formatter = new Intl.DateTimeFormat(localeCode, {
+
+    const formatter = new Intl.DateTimeFormat(locale, {
       timeZone: timezone,
-      dateStyle: options.dateStyle || "long",
-      timeStyle: options.timeStyle || "short",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
       timeZoneName: "short",
     });
     return formatter.format(date);
@@ -27,12 +25,11 @@ export function formatEventDateTime(
 export function formatEventDate(
   timestamp: number,
   timezone: string,
-  locale: string = "en"
-): string {
+  locale: string
+) {
   try {
     const date = new Date(timestamp);
-    const localeCode = locale === "de" ? "de-DE" : "en-US";
-    const formatter = new Intl.DateTimeFormat(localeCode, {
+    const formatter = new Intl.DateTimeFormat(locale, {
       timeZone: timezone,
       weekday: "long",
       year: "numeric",
@@ -49,12 +46,11 @@ export function formatEventDate(
 export function formatEventTime(
   timestamp: number,
   timezone: string,
-  locale: string = "en"
-): string {
+  locale: string
+) {
   try {
     const date = new Date(timestamp);
-    const localeCode = locale === "de" ? "de-DE" : "en-US";
-    const formatter = new Intl.DateTimeFormat(localeCode, {
+    const formatter = new Intl.DateTimeFormat(locale, {
       timeZone: timezone,
       hour: "numeric",
       minute: "2-digit",
@@ -67,22 +63,21 @@ export function formatEventTime(
   }
 }
 
-export function getRelativeTime(timestamp: number): string {
-  const now = Date.now();
-  const diff = timestamp - now;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor(diff / (1000 * 60));
+export function getRelativeTime(timestamp: number, locale: string): string {
+  const diffMs = timestamp - Date.now();
+  const diffMinutes = Math.round(diffMs / 60000);
 
-  if (diff < 0) {
-    return "Past";
-  } else if (days > 0) {
-    return `In ${days} day${days !== 1 ? "s" : ""}`;
-  } else if (hours > 0) {
-    return `In ${hours} hour${hours !== 1 ? "s" : ""}`;
-  } else if (minutes > 0) {
-    return `In ${minutes} minute${minutes !== 1 ? "s" : ""}`;
-  } else {
-    return "Now";
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+
+  if (Math.abs(diffMinutes) < 60) {
+    return rtf.format(diffMinutes, "minute");
   }
+
+  const diffHours = Math.round(diffMinutes / 60);
+  if (Math.abs(diffHours) < 24) {
+    return rtf.format(diffHours, "hour");
+  }
+
+  const diffDays = Math.round(diffHours / 24);
+  return rtf.format(diffDays, "day");
 }
