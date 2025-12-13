@@ -46,7 +46,12 @@ object DtoMapper {
         placeId = dto.placeId,
     )
 
-    fun toEventResponse(event: Event, series: EventSeries, requesterEmail: String, imageService: ImageStorageService): EventResponseDto {
+    fun toEventResponse(
+        event: Event,
+        series: EventSeries,
+        requesterEmail: String,
+        imageService: ImageStorageService,
+    ): EventResponseDto {
         val isAdmin = series.isAdmin(requesterEmail.lowercase())
         val status = when {
             event.confirmedList.any { it.email == requesterEmail.lowercase() } -> AttendeeStatus.CONFIRMED
@@ -76,6 +81,7 @@ object DtoMapper {
             waitlistedCount = event.waitingList.size,
             creatorEmail = series.creatorEmail,
             isAdmin = isAdmin,
+            seriesSlug = series.slug,
             requesterStatus = status,
 
             confirmed = if (isAdmin) event.confirmedList.map { toAttendeeDto(it) } else null,
@@ -93,6 +99,7 @@ object DtoMapper {
         interval = series.interval?.toString(),
         leadWeeks = series.leadWeeks,
         autoGenerate = series.autoGenerate,
+        anchorDate = series.anchorDate,
         endDate = series.endDate,
         nextEventDate = null,
         nextEventSlug = null,

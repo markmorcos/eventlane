@@ -10,10 +10,27 @@ export const routes: Routes = [
       ),
   },
   {
-    path: "events",
+    path: "admin/events/:seriesSlug/:eventSlug",
+    canActivate: [adminGuard],
     loadComponent: () =>
-      import("./components/events-list/events-list.component").then(
-        (m) => m.EventsListComponent
+      import("./components/admin-event/admin-event.component").then(
+        (m) => m.AdminEventComponent
+      ),
+  },
+  {
+    path: "admin/events/:slug",
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import(
+        "./components/admin-series-detail/admin-series-detail.component"
+      ).then((m) => m.AdminSeriesDetailComponent),
+  },
+  {
+    path: "admin/events",
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import("./components/admin-series-list/admin-series-list.component").then(
+        (m) => m.AdminSeriesListComponent
       ),
   },
   {
@@ -31,11 +48,10 @@ export const routes: Routes = [
       ),
   },
   {
-    path: "admin/events/:slug",
-    canActivate: [adminGuard],
+    path: "events",
     loadComponent: () =>
-      import("./components/admin-event/admin-event.component").then(
-        (m) => m.AdminEventComponent
+      import("./components/events-list/events-list.component").then(
+        (m) => m.EventsListComponent
       ),
   },
   // Legal pages - lazy loaded as a group

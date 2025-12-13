@@ -1,0 +1,68 @@
+<div class="min-h-screen container mx-auto max-w-6xl px-4 py-8">
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold">My Events</h1>
+      <p class="mt-2 text-muted-foreground">Manage your event series</p>
+    </div>
+    <button hlmBtn (click)="navigateToCreate()">Create Event</button>
+  </div>
+
+  @if (loading()) {
+  <div class="flex justify-center py-12">
+    <div class="text-muted-foreground">Loading...</div>
+  </div>
+  } @else if (series().length === 0) {
+  <div class="rounded-lg border border-dashed p-12 text-center">
+    <h3 class="text-lg font-semibold">No active events</h3>
+    <p class="mt-2 text-muted-foreground">
+      Get started by creating your first event
+    </p>
+    <button hlmBtn class="mt-4" (click)="navigateToCreate()">
+      Create Event
+    </button>
+  </div>
+  } @else {
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    @for (item of series(); track item.slug) {
+    <div
+      hlmCard
+      class="cursor-pointer transition-shadow hover:shadow-md"
+      (click)="navigateToSeries(item.slug)"
+    >
+      <div hlmCardHeader>
+        <div class="flex items-start justify-between">
+          <h3 hlmCardTitle class="line-clamp-2">{{ item.title }}</h3>
+          <span
+            hlmBadge
+            [variant]="item.interval ? 'default' : 'secondary'"
+            class="ml-2 shrink-0"
+          >
+            {{ getRecurrenceLabel(item.interval) }}
+          </span>
+        </div>
+      </div>
+      <div hlmCardContent>
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Next event:</span>
+            <span class="font-medium">{{
+              formatDate(item.nextEventDate)
+            }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Upcoming:</span>
+            <span class="font-medium">{{ item.upcomingEventsCount }}</span>
+          </div>
+          @if (item.creatorEmail) {
+          <div class="flex items-center justify-between">
+            <span class="text-muted-foreground">Created by:</span>
+            <span class="truncate font-medium">{{ item.creatorEmail }}</span>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

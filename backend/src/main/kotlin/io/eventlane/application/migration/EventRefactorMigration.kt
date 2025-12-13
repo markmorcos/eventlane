@@ -53,11 +53,14 @@ class EventRefactorMigration(
                     logger.debug("Event $slug already has seriesId, removing old fields")
                     eventsCollection.updateOne(
                         Document("_id", eventDoc.getObjectId("_id")),
-                        Document("\$unset", Document().apply {
-                            put("title", "")
-                            put("creatorEmail", "")
-                            put("admins", "")
-                        }),
+                        Document(
+                            "\$unset",
+                            Document().apply {
+                                put("title", "")
+                                put("creatorEmail", "")
+                                put("admins", "")
+                            },
+                        ),
                     )
                     migratedCount++
                     return@forEach

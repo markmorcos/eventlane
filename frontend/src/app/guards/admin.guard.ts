@@ -4,35 +4,42 @@ import { Router, CanActivateFn } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 import { EventApiService } from "../services/event-api.service";
+import { EventSeriesApiService } from "../services/event-series-api.service";
 
 export const adminGuard: CanActivateFn = async (route) => {
   const router = inject(Router);
-  const api = inject(EventApiService);
+  const eventApi = inject(EventApiService);
+  const seriesApi = inject(EventSeriesApiService);
   const platformId = inject(PLATFORM_ID);
 
   if (!isPlatformBrowser(platformId)) {
     return true;
   }
 
-  const slug = route.paramMap.get("slug");
+  const seriesSlug = route.paramMap.get("seriesSlug");
+  const eventSlug = route.paramMap.get("eventSlug");
 
-  if (!slug) {
-    router.navigate(["/events"]);
-    return false;
+  if (!seriesSlug) {
+    return true;
   }
 
   try {
-    const result = await firstValueFrom(api.getEvent(slug));
-
-    if (!result.nextEvent.isAdmin) {
-      router.navigate(["/events", slug]);
-      return false;
-    }
+    await firstValueFrom(seriesApi.getSeries(seriesSlug));
 
     return true;
-  } catch (err) {
+  } catch (err: any) {
     console.error("Admin guard error:", err);
-    router.navigate(["/events"]);
+
+    if (err.status === 403 || err.status === 404) {
+      if (eventSlug) {
+        router.navigate(["/events", eventSlug]);
+      } else {
+        router.navigate(["/events"]);
+      }
+    } else {
+      router.navigate(["/events"]);
+    }
+
     return false;
   }
 };

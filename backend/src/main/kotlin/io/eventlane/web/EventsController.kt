@@ -27,17 +27,18 @@ class EventsController(
     private val imageService: ImageStorageService,
 ) {
     @GetMapping
-    fun listManagedSeries(@AuthenticationPrincipal user: SecurityUser?): List<EventOrSeriesGroupDto> {
+    fun listAttendingEvents(@AuthenticationPrincipal user: SecurityUser?): List<EventOrSeriesGroupDto> {
         val userEmail = user?.email ?: return emptyList()
 
-        // Find all series where user is creator or admin
         val allSeries = seriesRepository.findByCreatorOrAdmin(userEmail)
         val now = Instant.now()
 
         return allSeries.mapNotNull { series ->
-            val upcomingEvents = repository.findActiveBySeriesId(series.id!!)
-                .filter { it.eventDate >= now }
-                .sortedBy { it.eventDate }
+            val upcomingEvents = repository.findUpcomingEventsWhereUserAttends(
+                seriesId = series.id!!,
+                from = now,
+                email = userEmail,
+            ).sortedBy { it.eventDate }
 
             if (upcomingEvents.isEmpty()) {
                 null

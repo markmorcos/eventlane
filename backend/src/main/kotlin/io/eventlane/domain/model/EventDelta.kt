@@ -33,7 +33,6 @@ data class EventCreated(
     override val version: Long,
     override val timestamp: Instant,
     override val eventSlug: String,
-    val title: String,
     val capacity: Int,
 ) : EventDelta(version, timestamp, eventSlug)
 

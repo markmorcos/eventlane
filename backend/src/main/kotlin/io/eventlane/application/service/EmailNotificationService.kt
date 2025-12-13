@@ -19,7 +19,7 @@ import java.util.*
 class EmailNotificationService(
     @Value("\${resend.api-key:}") private val resendApiKey: String,
     @Value("\${resend.from-email:}") private val fromEmail: String,
-    @Value("\${app.email.from-name:EventLane}") private val fromName: String
+    @Value("\${app.email.from-name:EventLane}") private val fromName: String,
 ) {
 
     private val logger = LoggerFactory.getLogger(EmailNotificationService::class.java)

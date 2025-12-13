@@ -49,4 +49,15 @@ export class EventSeriesApiService {
       `${this.baseUrl}/${slug}/admins/${email}`
     );
   }
+
+  createEvent(
+    seriesSlug: string,
+    payload: { capacity: number; eventDate: string; timezone: string }
+  ): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${seriesSlug}/events`, payload);
+  }
+
+  getEvents(seriesSlug: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${seriesSlug}/events`);
+  }
 }

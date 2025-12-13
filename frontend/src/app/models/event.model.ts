@@ -39,6 +39,7 @@ export interface EventSummary {
   requesterStatus?: "CONFIRMED" | "WAITLISTED";
   creatorEmail: string;
   isAdmin: boolean;
+  seriesSlug: string;
   createdAt: string;
   version: number;
 }

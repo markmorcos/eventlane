@@ -48,7 +48,6 @@ import { firstValueFrom } from "rxjs";
   selector: "app-admin-event",
   imports: [
     CommonModule,
-    RouterLink,
     FormsModule,
     TranslateModule,
     HlmButtonDirective,
@@ -83,6 +82,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   waitlisted = computed(() => this.store.event()?.waitlisted || []);
   admins = computed(() => this.store.event()?.admins || []);
   loading = this.store.loading;
+  seriesSlug = signal<string | null>(null);
 
   eventCapacity = computed(() => this.store.event()?.capacity || 0);
 
@@ -121,13 +121,15 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    const slug = this.route.snapshot.params["slug"];
+    const eventSlug = this.route.snapshot.params["eventSlug"];
+    const seriesSlug = this.route.snapshot.params["seriesSlug"];
 
     // Set noindex for admin pages
     this.meta.updateTag({ name: "robots", content: "noindex, nofollow" });
     this.seoService.removeStructuredData();
 
-    await this.store.init(slug);
+    await this.store.init(eventSlug);
+    this.seriesSlug.set(seriesSlug);
 
     const evt = this.event();
     if (!evt) return;
@@ -137,6 +139,15 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.destroy();
+  }
+
+  navigateBack() {
+    const slug = this.seriesSlug();
+    if (slug) {
+      this.router.navigate(["/admin/events", slug]);
+    } else {
+      this.router.navigate(["/admin/events"]);
+    }
   }
 
   async updateCapacity() {

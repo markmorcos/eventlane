@@ -4,6 +4,7 @@ export interface EventSeries {
   interval: string | null;
   leadWeeks: number;
   autoGenerate: boolean;
+  anchorDate: number;
   endDate: number | null;
   nextEventDate: number | null;
   nextEventSlug: string | null;
@@ -23,6 +24,8 @@ export interface CreateEventSeriesRequest {
 }
 
 export interface UpdateEventSeriesRequest {
+  anchorDate?: number;
+  interval?: string | null;
   leadWeeks?: number;
   autoGenerate?: boolean;
   endDate?: number | null;

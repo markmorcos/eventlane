@@ -15,7 +15,7 @@ data class Event(
 
     val attendees: List<Attendee>,
 
-    val seriesId: String, // Required - every event belongs to a series
+    val seriesId: String,
     val deletedAt: Instant? = null,
 
     val createdAt: Instant,

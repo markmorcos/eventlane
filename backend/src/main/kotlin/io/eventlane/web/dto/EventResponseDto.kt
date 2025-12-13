@@ -21,6 +21,7 @@ data class EventResponseDto(
     val requesterStatus: AttendeeStatus?,
     val creatorEmail: String,
     val isAdmin: Boolean,
+    val seriesSlug: String,
     val confirmed: List<AttendeeDto>?,
     val waitlisted: List<AttendeeDto>?,
     val admins: List<String>?,

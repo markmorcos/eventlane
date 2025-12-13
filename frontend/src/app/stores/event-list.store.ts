@@ -9,7 +9,7 @@ import { isPlatformBrowser } from "@angular/common";
 import { firstValueFrom, Subscription } from "rxjs";
 
 import { EventApiService } from "../services/event-api.service";
-import { EventSummary, Location } from "../models/event.model";
+import { EventSummary } from "../models/event.model";
 import { EventOrSeriesGroup } from "../models/event-or-series-group.model";
 import { EventSocketService } from "../services/event-socket.service";
 import { ToastService } from "../services/toast.service";
@@ -45,13 +45,13 @@ export class EventListStore {
   readonly loading = computed(() => this._loading());
   readonly error = computed(() => this._error());
 
-  async loadManagedEvents() {
+  async loadAttendingEvents() {
     this._eventGroups.set([]);
     this._loading.set(true);
     this._error.set(null);
 
     try {
-      const data = await firstValueFrom(this.api.getManagedEvents());
+      const data = await firstValueFrom(this.api.getAttendingEvents());
       this._eventGroups.set(data);
 
       if (isPlatformBrowser(this.platformId)) {
@@ -129,7 +129,7 @@ export class EventListStore {
         if (d.adminEmail !== this.userEmail()) break;
 
         // Reload the full list since we may have new access
-        await this.loadManagedEvents();
+        await this.loadAttendingEvents();
 
         this.toast.info(`You've been added as an admin to "${event.title}"`);
 

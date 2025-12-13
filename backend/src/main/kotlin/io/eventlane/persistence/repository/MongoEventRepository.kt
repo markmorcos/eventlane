@@ -7,6 +7,7 @@ import io.eventlane.domain.model.NotFoundException
 import io.eventlane.persistence.mapper.EventPersistenceMapper
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class MongoEventRepository(
@@ -49,4 +50,12 @@ class MongoEventRepository(
         seriesId,
     )
         .map(EventPersistenceMapper::toDomain)
+
+    override fun findUpcomingActiveBySeriesId(seriesId: String, from: Instant) =
+        springDataRepository.findBySeriesIdAndDeletedAtIsNullAndEventDateGreaterThanEqual(seriesId, from)
+            .map(EventPersistenceMapper::toDomain)
+
+    override fun findUpcomingEventsWhereUserAttends(seriesId: String, from: Instant, email: String) =
+        springDataRepository.findUpcomingEventsWhereUserAttends(seriesId, from, email.lowercase())
+            .map(EventPersistenceMapper::toDomain)
 }

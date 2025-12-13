@@ -1,7 +1,5 @@
 package io.eventlane.domain.behavior
 
-import io.eventlane.domain.model.AdminAdded
-import io.eventlane.domain.model.AdminRemoved
 import io.eventlane.domain.model.Attendee
 import io.eventlane.domain.model.AttendeeAdded
 import io.eventlane.domain.model.AttendeeRemoved

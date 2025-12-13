@@ -139,10 +139,10 @@ export class CreateEventComponent implements OnInit {
       );
 
       this.toastService.success(
-        this.isRecurring() ? "Series created!" : "Event created!",
+        "Event created!",
         `${result.seriesTitle || this.title} is ready to accept RSVPs.`
       );
-      this.router.navigate(["/events", result.nextEvent.slug]);
+      this.router.navigate(["/admin/events", result.seriesSlug]);
     } catch (error: any) {
       this.toastService.error(
         "Failed to create event",

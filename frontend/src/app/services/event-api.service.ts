@@ -17,7 +17,7 @@ export class EventApiService {
   private eventsBaseUrl = `${environment.apiBaseUrl}/events`;
   private attendancesBaseUrl = `${environment.apiBaseUrl}/attendances`;
 
-  getManagedEvents() {
+  getAttendingEvents() {
     return this.http.get<EventOrSeriesGroup[]>(this.eventsBaseUrl);
   }
 

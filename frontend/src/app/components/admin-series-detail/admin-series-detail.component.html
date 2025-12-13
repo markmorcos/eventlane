@@ -1,0 +1,177 @@
+<div class="min-h-screen container mx-auto max-w-6xl px-4 py-8">
+  @if (loading()) {
+  <div class="flex justify-center py-12">
+    <div class="text-muted-foreground">Loading...</div>
+  </div>
+  } @else if (series()) {
+  <!-- Back Button -->
+  <button hlmBtn variant="ghost" class="mb-6" (click)="navigateBack()">
+    ← Back to My Events
+  </button>
+
+  <!-- Series Header -->
+  <div class="mb-8">
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-3xl font-bold">{{ series()!.title }}</h1>
+        <p class="mt-2 text-muted-foreground">
+          {{ getRecurrenceLabel(series()!.interval) }}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <button hlmBtn variant="outline">Edit Series</button>
+        <button hlmBtn variant="destructive" (click)="deleteSeries()">
+          Delete Series
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Series Info Card -->
+  <div hlmCard class="mb-8">
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Series Information</h3>
+    </div>
+    <div hlmCardContent>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
+          <span class="text-sm text-muted-foreground">Recurrence:</span>
+          <p class="font-medium">
+            {{ getRecurrenceLabel(series()!.interval) }}
+          </p>
+        </div>
+        <div>
+          <span class="text-sm text-muted-foreground">Anchor Date:</span>
+          <p class="font-medium">{{ formatDate(series()!.anchorDate) }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-muted-foreground">Lead Weeks:</span>
+          <p class="font-medium">{{ series()!.leadWeeks }}</p>
+        </div>
+        @if (series()!.endDate) {
+        <div>
+          <span class="text-sm text-muted-foreground">End Date:</span>
+          <p class="font-medium">{{ formatDate(series()!.endDate!) }}</p>
+        </div>
+        }
+        <div>
+          <span class="text-sm text-muted-foreground">Creator:</span>
+          <p class="font-medium">{{ series()!.creatorEmail }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-muted-foreground">Auto-generate:</span>
+          <p class="font-medium">
+            {{ series()!.autoGenerate ? "Yes" : "No" }}
+          </p>
+        </div>
+      </div>
+
+      @if (series()!.admins.length > 0) {
+      <div class="mt-4">
+        <span class="text-sm text-muted-foreground">Admins:</span>
+        <div class="mt-2 flex flex-wrap gap-2">
+          @for (admin of series()!.admins; track admin) {
+          <span hlmBadge variant="secondary">{{ admin }}</span>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Events List -->
+  <div class="space-y-8">
+    <!-- Upcoming Events -->
+    @if (futureEvents.length > 0) {
+    <div>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-2xl font-semibold">Upcoming Events</h2>
+        <button hlmBtn variant="outline">Create Event</button>
+      </div>
+      <div class="space-y-3">
+        @for (event of futureEvents; track event.slug) {
+        <div
+          hlmCard
+          class="cursor-pointer transition-shadow hover:shadow-md"
+          (click)="navigateToEvent(event.slug)"
+        >
+          <div hlmCardContent class="p-4">
+            <div class="flex items-center justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-3">
+                  <div class="font-semibold">
+                    {{ formatDate(event.eventDate) }}
+                  </div>
+                  <span
+                    hlmBadge
+                    [variant]="
+                      event.confirmedCount >= event.capacity
+                        ? 'destructive'
+                        : 'default'
+                    "
+                  >
+                    {{ event.confirmedCount }} / {{ event.capacity }}
+                  </span>
+                </div>
+                @if (event.location) {
+                <div class="mt-1 text-sm text-muted-foreground">
+                  {{ event.location.formatted }}
+                </div>
+                }
+              </div>
+              <div class="text-sm text-muted-foreground">→</div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    } @else {
+    <div class="rounded-lg border border-dashed p-8 text-center">
+      <h3 class="text-lg font-semibold">No upcoming events</h3>
+      <p class="mt-2 text-muted-foreground">
+        Create a new event occurrence for this series
+      </p>
+      <button hlmBtn class="mt-4">Create Event</button>
+    </div>
+    }
+
+    <!-- Past Events -->
+    @if (pastEvents.length > 0) {
+    <div>
+      <h2 class="mb-4 text-2xl font-semibold">Past Events</h2>
+      <div class="space-y-3">
+        @for (event of pastEvents; track event.slug) {
+        <div
+          hlmCard
+          class="cursor-pointer opacity-60 transition-all hover:opacity-100 hover:shadow-md"
+          (click)="navigateToEvent(event.slug)"
+        >
+          <div hlmCardContent class="p-4">
+            <div class="flex items-center justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-3">
+                  <div class="font-semibold">
+                    {{ formatDate(event.eventDate) }}
+                  </div>
+                  <span hlmBadge variant="secondary">
+                    {{ event.confirmedCount }} attendees
+                  </span>
+                </div>
+                @if (event.location) {
+                <div class="mt-1 text-sm text-muted-foreground">
+                  {{ event.location.formatted }}
+                </div>
+                }
+              </div>
+              <div class="text-sm text-muted-foreground">→</div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

@@ -48,7 +48,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       type: "website",
     });
     this.seoService.removeStructuredData();
-    this.store.loadManagedEvents();
+    this.store.loadAttendingEvents();
   }
 
   ngOnDestroy() {

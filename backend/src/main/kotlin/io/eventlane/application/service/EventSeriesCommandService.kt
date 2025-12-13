@@ -36,6 +36,7 @@ class EventSeriesCommandService(
             interval = interval,
             leadWeeks = leadWeeks,
             autoGenerate = autoGenerate,
+            anchorDate = firstEventDate,
             endDate = endDate,
             creatorEmail = creatorEmail.lowercase(),
             admins = emptyList(),
@@ -58,20 +59,52 @@ class EventSeriesCommandService(
 
     fun updateSeries(
         slug: String,
+        anchorDate: Instant? = null,
+        interval: Duration? = null,
         leadWeeks: Int? = null,
         autoGenerate: Boolean? = null,
         endDate: Instant? = null,
     ): EventSeries {
         val series = seriesRepository.findBySlug(slug)
 
+        val newAnchorDate = anchorDate ?: series.anchorDate
+        val newInterval = interval ?: series.interval
+        val newEndDate = endDate ?: series.endDate
+
         val updated = series.copy(
+            anchorDate = newAnchorDate,
+            interval = newInterval,
             leadWeeks = leadWeeks ?: series.leadWeeks,
             autoGenerate = autoGenerate ?: series.autoGenerate,
-            endDate = endDate,
+            endDate = newEndDate,
             updatedAt = Instant.now(),
         )
 
-        return seriesRepository.save(updated)
+        val savedSeries = seriesRepository.save(updated)
+
+        // If anchorDate, interval, or endDate changed, regenerate future events
+        if (anchorDate != null || interval != null || endDate != null) {
+            regenerateFutureEvents(savedSeries)
+        }
+
+        return savedSeries
+    }
+
+    private fun regenerateFutureEvents(series: EventSeries) {
+        val now = Instant.now()
+        val events = eventRepository.findActiveBySeriesId(series.id!!)
+
+        events.forEach { event ->
+            if (event.eventDate >= now && event.deletedAt == null) {
+                eventCommandService.deleteEvent(event.slug)
+            }
+        }
+
+        // If series has interval and autoGenerate, generate new events
+        if (series.interval != null && series.autoGenerate) {
+            // The RecurrenceGenerationJob will handle creating new events
+            // based on the updated anchorDate and interval
+        }
     }
 
     fun deleteSeries(slug: String) {
@@ -80,13 +113,10 @@ class EventSeriesCommandService(
         val events = eventRepository.findActiveBySeriesId(series.id!!)
         val now = Instant.now()
 
+        // Delete future events and emit deltas
         events.forEach { event ->
             if (event.eventDate >= now && event.deletedAt == null) {
-                val deletedEvent = event.copy(
-                    deletedAt = now,
-                    updatedAt = now,
-                )
-                eventRepository.save(deletedEvent)
+                eventCommandService.deleteEvent(event.slug)
             }
         }
 

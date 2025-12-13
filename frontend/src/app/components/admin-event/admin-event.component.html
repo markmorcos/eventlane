@@ -35,7 +35,7 @@
         hlmBtn
         variant="ghost"
         size="sm"
-        [routerLink]="['/events', evt.slug]"
+        (click)="navigateBack()"
         class="-ml-2"
       >
         <svg

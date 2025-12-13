@@ -16,7 +16,6 @@ import io.eventlane.domain.model.EventDelta
 import io.eventlane.domain.model.EventDescriptionUpdated
 import io.eventlane.domain.model.EventLocationUpdated
 import io.eventlane.domain.model.Location
-import io.eventlane.domain.util.SlugGenerator
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -30,14 +29,9 @@ class EventCommandService(
     private val emailService: EmailNotificationService,
 ) {
 
-    fun createEvent(
-        capacity: Int,
-        eventDate: Instant,
-        timezone: String,
-        seriesId: String,
-    ): EventDelta {
+    fun createEvent(capacity: Int, eventDate: Instant, timezone: String, seriesId: String): EventDelta {
         val series = seriesRepository.findById(seriesId)
-        
+
         // Format: {seriesSlug}-YYYY-MM-DD
         val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .withZone(java.time.ZoneId.of(timezone))
@@ -67,7 +61,6 @@ class EventCommandService(
             version = saved.version ?: 0L,
             timestamp = now,
             eventSlug = saved.slug,
-            title = "", // Title comes from series
             capacity = saved.capacity,
         )
 

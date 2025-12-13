@@ -15,9 +15,17 @@ data class CreateEventSeriesRequestDto(
 )
 
 data class UpdateEventSeriesRequestDto(
-    val leadWeeks: Int?,
-    val autoGenerate: Boolean?,
-    val endDate: Instant?,
+    val anchorDate: Instant? = null,
+    val interval: Duration? = null,
+    val leadWeeks: Int? = null,
+    val autoGenerate: Boolean? = null,
+    val endDate: Instant? = null,
+)
+
+data class CreateEventForSeriesRequestDto(
+    val capacity: Int,
+    val eventDate: Instant,
+    val timezone: String,
 )
 
 data class EventSeriesResponseDto(
@@ -26,6 +34,7 @@ data class EventSeriesResponseDto(
     val interval: String?,
     val leadWeeks: Int,
     val autoGenerate: Boolean,
+    val anchorDate: Instant,
     val endDate: Instant?,
     val nextEventDate: Instant?,
     val nextEventSlug: String?,
