@@ -8,6 +8,7 @@ import { AuthService } from "../../services/auth.service";
 import { SeoService } from "../../services/seo.service";
 import { ToastService } from "../../services/toast.service";
 import { EventListStore } from "../../stores/event-list.store";
+import { convertLocalDateTimeToUTC } from "../../utils/date-format";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmInputDirective } from "../../ui/ui-input-helm/src";
 import { HlmLabelDirective } from "../../ui/ui-label-helm/src";
@@ -95,7 +96,7 @@ export class CreateEventComponent implements OnInit {
     const event = await this.store.createEvent({
       title: this.title,
       capacity: this.capacity,
-      eventDate: new Date(this.eventDate).toISOString(),
+      eventDate: convertLocalDateTimeToUTC(this.eventDate, this.timezone),
       timezone: this.timezone,
     });
 

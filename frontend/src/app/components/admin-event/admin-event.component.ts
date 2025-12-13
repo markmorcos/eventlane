@@ -37,7 +37,11 @@ import { TimezoneSelectorComponent } from "../timezone-selector/timezone-selecto
 import { LocationInputComponent } from "../location-input/location-input.component";
 import { ImageUploadComponent } from "../image-upload/image-upload.component";
 import { Location } from "../../models/event.model";
-import { formatEventDateTime } from "../../utils/date-format";
+import {
+  formatEventDateTime,
+  convertLocalDateTimeToUTC,
+  convertUTCToLocalDateTime,
+} from "../../utils/date-format";
 import { firstValueFrom } from "rxjs";
 
 @Component({
@@ -201,7 +205,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   startEditingDateTime() {
     const evt = this.event();
     if (!evt) return;
-    this.newEventDate = new Date(evt.eventDate).toISOString().slice(0, 16);
+    this.newEventDate = convertUTCToLocalDateTime(evt.eventDate, evt.timezone);
     this.newTimezone = evt.timezone;
     this.editingDateTime.set(true);
   }
@@ -217,7 +221,10 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     try {
       await firstValueFrom(
         this.eventApiService.updateMetadata(evt.slug, {
-          eventDate: new Date(this.newEventDate).toISOString(),
+          eventDate: convertLocalDateTimeToUTC(
+            this.newEventDate,
+            this.newTimezone
+          ),
           timezone: this.newTimezone,
         })
       );
