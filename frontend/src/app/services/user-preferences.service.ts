@@ -1,55 +1,56 @@
-import {
-  Injectable,
-  signal,
-  PLATFORM_ID,
-  inject,
-  computed,
-} from "@angular/core";
+import { Injectable, signal, PLATFORM_ID, inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { TranslateService } from "@ngx-translate/core";
-import { catchError, of, tap } from "rxjs";
+import { firstValueFrom } from "rxjs";
 
 import { environment } from "../../environments/environment";
-import {
-  UserPreferences,
-  UpdateUserPreferencesRequest,
-} from "../models/user-preferences.model";
+import { UserPreferences } from "../models/user-preferences.model";
+
 import { AuthService } from "./auth.service";
 
-const STORAGE_KEY = "eventlane_language";
+const STORAGE_KEY = "eventlaneLanguage";
 
 @Injectable({ providedIn: "root" })
 export class UserPreferencesService {
+  private authService = inject(AuthService);
   private http = inject(HttpClient);
   private translate = inject(TranslateService);
-  private authService = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
   private initialized = false;
 
-  readonly language = signal<"en" | "de">("de");
+  readonly language = signal<string>("de");
   readonly userPreferencesLoading = signal(true);
 
   constructor() {
-    this.initializeLanguage();
+    this.init();
   }
 
-  private async initializeLanguage() {
+  private async init() {
+    console.log("Initializing user preferences service");
     if (this.initialized) return;
     this.initialized = true;
 
-    // Priority: localStorage → browser language → default DE
-    const savedLanguage = this.getStoredLanguage();
-    const browserLanguage = this.getBrowserLanguage();
-    const initialLanguage = savedLanguage || browserLanguage || "de";
+    if (isPlatformBrowser(this.platformId)) {
+      await this.authService.waitForAuthentication();
 
-    this.language.set(initialLanguage as "en" | "de");
-    this.translate.use(initialLanguage);
+      const preferences = await firstValueFrom(
+        this.loadPreferencesFromBackend()
+      );
+      if (preferences?.language) {
+        const userLang = preferences.language;
+        this.language.set(userLang);
+        this.translate.use(userLang);
+        this.storeLanguage(userLang);
+      }
+    } else {
+      const savedLanguage = this.getStoredLanguage();
+      const browserLanguage = this.getBrowserLanguage();
+      const initialLanguage = savedLanguage || browserLanguage || "de";
 
-    // Load from backend after auth
-    (await this.authService.isAuthenticated())
-      ? this.loadPreferencesFromBackend()
-      : null;
+      this.language.set(initialLanguage);
+      this.translate.use(initialLanguage);
+    }
 
     this.userPreferencesLoading.set(false);
   }
@@ -57,24 +58,16 @@ export class UserPreferencesService {
   private getStoredLanguage(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
 
-    try {
-      return localStorage.getItem(STORAGE_KEY);
-    } catch {
-      return null;
-    }
+    return localStorage.getItem(STORAGE_KEY);
   }
 
-  private getBrowserLanguage(): string {
-    if (!isPlatformBrowser(this.platformId)) {
-      // On server: could parse Accept-Language header if available
-      // For now, return default
-      return "de";
-    }
+  private getBrowserLanguage(): string | null {
+    if (!isPlatformBrowser(this.platformId)) return null;
 
     const browserLang = navigator.language.toLowerCase();
     if (browserLang.startsWith("en")) return "en";
     if (browserLang.startsWith("de")) return "de";
-    return "de";
+    return null;
   }
 
   private storeLanguage(lang: string) {
@@ -87,49 +80,24 @@ export class UserPreferencesService {
     }
   }
 
-  setLanguage(lang: "en" | "de") {
-    this.language.set(lang);
-    this.translate.use(lang);
-    this.storeLanguage(lang);
+  setLanguage(language: "en" | "de") {
+    this.language.set(language);
+    this.translate.use(language);
+    this.storeLanguage(language);
 
-    // Sync to backend if authenticated
-    if (this.authService.isAuthenticated()) {
-      this.updateBackendPreferences(lang);
-    }
+    firstValueFrom(this.updateBackendPreferences(language));
   }
 
   private loadPreferencesFromBackend() {
-    this.http
-      .get<UserPreferences>(`${environment.apiBaseUrl}/user/preferences`)
-      .pipe(
-        tap((prefs) => {
-          const lang = prefs.language as "en" | "de";
-          this.language.set(lang);
-          this.translate.use(lang);
-          this.storeLanguage(lang);
-        }),
-        catchError((error) => {
-          console.error("Failed to load user preferences:", error);
-          return of(null);
-        })
-      )
-      .subscribe();
+    return this.http.get<UserPreferences>(
+      `${environment.apiBaseUrl}/user/preferences`
+    );
   }
 
-  private updateBackendPreferences(lang: string) {
-    const request: UpdateUserPreferencesRequest = { language: lang };
-
-    this.http
-      .patch<UserPreferences>(
-        `${environment.apiBaseUrl}/user/preferences`,
-        request
-      )
-      .pipe(
-        catchError((error) => {
-          console.error("Failed to update user preferences:", error);
-          return of(null);
-        })
-      )
-      .subscribe();
+  private updateBackendPreferences(language: string) {
+    return this.http.patch<UserPreferences>(
+      `${environment.apiBaseUrl}/user/preferences`,
+      { language }
+    );
   }
 }

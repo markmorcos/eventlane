@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from "@angular/core";
+import { Injectable, signal, computed, inject } from "@angular/core";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -23,8 +23,12 @@ export class AuthService {
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
   readonly userEmail = computed(() => this.currentUser()?.email ?? null);
   readonly userDisplayName = computed(
-    () => this.currentUser()?.displayName ?? "",
+    () => this.currentUser()?.displayName ?? ""
   );
+
+  waitForAuthentication() {
+    return this.authInitPromise;
+  }
 
   constructor() {
     const app = initializeApp(environment.firebase);
