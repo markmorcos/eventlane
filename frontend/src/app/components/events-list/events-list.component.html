@@ -43,9 +43,14 @@
       </p>
     </div>
     } @else {
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div
+      class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      data-testid="events-list"
+      data-testid="series-group"
+    >
       @for (event of events(); track event.slug) {
       <div
+        data-testid="event-card"
         class="cursor-pointer rounded-xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
         [routerLink]="['/events', event.slug]"
       >
@@ -71,7 +76,7 @@
             <line x1="8" y1="2" x2="8" y2="6" />
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
-          <span>{{
+          <span data-testid="event-date">{{
             formatEventDateTime(event.eventDate, event.timezone)
           }}</span>
         </div>

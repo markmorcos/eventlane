@@ -33,14 +33,16 @@ export class UserPreferencesService {
     if (isPlatformBrowser(this.platformId)) {
       await this.authService.waitForAuthentication();
 
-      const preferences = await firstValueFrom(
-        this.loadPreferencesFromBackend()
-      );
-      if (preferences?.language) {
-        const userLang = preferences.language;
-        this.language.set(userLang);
-        this.translate.use(userLang);
-        this.storeLanguage(userLang);
+      if (this.authService.isAuthenticated()) {
+        const preferences = await firstValueFrom(
+          this.loadPreferencesFromBackend()
+        );
+        if (preferences?.language) {
+          const userLang = preferences.language;
+          this.language.set(userLang);
+          this.translate.use(userLang);
+          this.storeLanguage(userLang);
+        }
       }
     } else {
       const savedLanguage = this.getStoredLanguage();
