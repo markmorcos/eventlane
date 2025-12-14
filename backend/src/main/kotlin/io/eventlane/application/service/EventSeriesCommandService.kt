@@ -2,6 +2,7 @@ package io.eventlane.application.service
 
 import io.eventlane.application.ports.EventRepository
 import io.eventlane.application.ports.EventSeriesRepository
+import io.eventlane.application.scheduler.RecurrenceGenerationJob
 import io.eventlane.domain.model.EventSeries
 import io.eventlane.domain.util.SlugGenerator
 import org.springframework.stereotype.Service
@@ -12,6 +13,7 @@ class EventSeriesCommandService(
     private val seriesRepository: EventSeriesRepository,
     private val eventRepository: EventRepository,
     private val eventCommandService: EventCommandService,
+    private val recurrenceGenerationJob: RecurrenceGenerationJob,
 ) {
 
     fun createSeries(
@@ -52,6 +54,11 @@ class EventSeriesCommandService(
             timezone = timezone,
             seriesId = savedSeries.id!!,
         )
+
+        // Immediately generate future events if autoGenerate is enabled
+        if (autoGenerate && interval != null) {
+            recurrenceGenerationJob.generateEventsForSeries(savedSeries)
+        }
 
         return savedSeries
     }

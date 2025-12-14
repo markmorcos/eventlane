@@ -36,71 +36,10 @@ class RecurrenceGenerationJob(
 
         activeSeries.forEach { series ->
             try {
-                if (series.interval == null) {
-                    logger.debug("Series ${series.slug} has no interval (one-off), skipping")
+                val count = generateEventsForSeries(series)
+                generatedCount += count
+                if (count == 0) {
                     skippedCount++
-                    return@forEach
-                }
-
-                val now = Instant.now()
-                val coverageEnd = now.plus(series.leadWeeks.toLong() * 7, ChronoUnit.DAYS)
-
-                // Check if series has ended
-                if (series.endDate != null && series.endDate < now) {
-                    logger.debug("Series ${series.slug} has ended, skipping")
-                    skippedCount++
-                    return@forEach
-                }
-
-                // Find all events in this series (including deleted ones)
-                val existingEvents = eventRepository.findBySeriesId(series.id!!)
-
-                // Find the latest event by eventDate
-                val latestEvent = existingEvents.maxByOrNull { it.eventDate }
-
-                val startFrom = latestEvent?.eventDate ?: now
-
-                // Get any existing event to copy capacity and timezone from
-                val templateEvent = existingEvents.firstOrNull()
-
-                if (templateEvent == null) {
-                    logger.warn("Series ${series.slug} has no events to use as template, skipping")
-                    skippedCount++
-                    return@forEach
-                }
-
-                // Generate events until coverage is satisfied
-                var nextEventDate = startFrom.plus(Duration.parse(series.interval))
-                var eventsCreatedForSeries = 0
-
-                while (nextEventDate <= coverageEnd) {
-                    // Stop at series endDate if specified
-                    if (series.endDate != null && nextEventDate > series.endDate) {
-                        break
-                    }
-
-                    // Check if an event already exists at this date
-                    val eventExistsAtDate = existingEvents.any { event ->
-                        event.eventDate == nextEventDate
-                    }
-
-                    if (!eventExistsAtDate) {
-                        // Create new event
-                        eventCommandService.createEvent(
-                            capacity = templateEvent.capacity,
-                            eventDate = nextEventDate,
-                            timezone = templateEvent.timezone,
-                            seriesId = series.id,
-                        )
-                        eventsCreatedForSeries++
-                        generatedCount++
-                    }
-
-                    nextEventDate = nextEventDate.plus(Duration.parse(series.interval))
-                }
-
-                if (eventsCreatedForSeries > 0) {
-                    logger.info("Generated $eventsCreatedForSeries events for series ${series.slug}")
                 }
             } catch (e: Exception) {
                 logger.error("Error generating events for series ${series.slug}: ${e.message}", e)
@@ -111,5 +50,74 @@ class RecurrenceGenerationJob(
         logger.info(
             "Recurrence generation complete: generated=$generatedCount, skipped=$skippedCount, errors=$errorCount",
         )
+    }
+
+    fun generateEventsForSeries(series: io.eventlane.domain.model.EventSeries): Int {
+        logger.debug("Processing series: ${series.slug} with interval=${series.interval}")
+
+        if (series.interval == null) {
+            logger.debug("Series ${series.slug} has no interval (one-off), skipping")
+            return 0
+        }
+
+        val now = Instant.now()
+        val coverageEnd = now.plus(series.leadWeeks.toLong() * 7, ChronoUnit.DAYS)
+
+        // Check if series has ended
+        if (series.endDate != null && series.endDate < now) {
+            logger.debug("Series ${series.slug} has ended, skipping")
+            return 0
+        }
+
+        // Find all events in this series (including deleted ones)
+        val existingEvents = eventRepository.findBySeriesId(series.id!!)
+
+        // Find the latest event by eventDate
+        val latestEvent = existingEvents.maxByOrNull { it.eventDate }
+
+        val startFrom = latestEvent?.eventDate ?: now
+
+        // Get any existing event to copy capacity and timezone from
+        val templateEvent = existingEvents.firstOrNull()
+
+        if (templateEvent == null) {
+            logger.warn("Series ${series.slug} has no events to use as template, skipping")
+            return 0
+        }
+
+        // Generate events until coverage is satisfied
+        var nextEventDate = startFrom.plus(Duration.parse(series.interval))
+        var eventsCreatedForSeries = 0
+
+        while (nextEventDate <= coverageEnd) {
+            // Stop at series endDate if specified
+            if (series.endDate != null && nextEventDate > series.endDate) {
+                break
+            }
+
+            // Check if an event already exists at this date
+            val eventExistsAtDate = existingEvents.any { event ->
+                event.eventDate == nextEventDate
+            }
+
+            if (!eventExistsAtDate) {
+                // Create new event
+                eventCommandService.createEvent(
+                    capacity = templateEvent.capacity,
+                    eventDate = nextEventDate,
+                    timezone = templateEvent.timezone,
+                    seriesId = series.id,
+                )
+                eventsCreatedForSeries++
+            }
+
+            nextEventDate = nextEventDate.plus(Duration.parse(series.interval))
+        }
+
+        if (eventsCreatedForSeries > 0) {
+            logger.info("Generated $eventsCreatedForSeries events for series ${series.slug}")
+        }
+
+        return eventsCreatedForSeries
     }
 }
