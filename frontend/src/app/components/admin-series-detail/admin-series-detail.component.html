@@ -164,19 +164,12 @@
     <div hlmCardContent>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium mb-2">Event Date</label>
+          <label class="block text-sm font-medium mb-2"
+            >Event Date & Time</label
+          >
           <input
-            type="date"
-            [(ngModel)]="newEventDate"
-            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Event Time</label>
-          <input
-            type="time"
-            [(ngModel)]="newEventTime"
+            type="datetime-local"
+            [(ngModel)]="newEventDateTime"
             class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
           />
         </div>

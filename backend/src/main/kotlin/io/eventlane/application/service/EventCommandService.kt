@@ -61,6 +61,8 @@ class EventCommandService(
             timestamp = now,
             eventSlug = saved.slug,
             capacity = saved.capacity,
+            eventDate = saved.eventDate,
+            timezone = saved.timezone,
         )
 
         publisher.publish(saved, listOf(delta))

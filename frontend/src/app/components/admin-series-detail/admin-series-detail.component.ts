@@ -14,6 +14,7 @@ import {
 import { EventDetail } from "../../models/event.model";
 import {
   EventDelta,
+  EventCreatedDelta,
   EventCapacityUpdatedDelta,
   EventDateTimeUpdatedDelta,
   AttendeeAddedDelta,
@@ -64,8 +65,7 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   editAutoGenerate = false;
   editEndDate = "";
 
-  newEventDate = "";
-  newEventTime = "";
+  newEventDateTime = "";
   newEventCapacity = 50;
   newEventTimezone = "";
 
@@ -141,15 +141,14 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
           break;
         }
 
-        const datePart = delta.eventSlug.split("-").slice(-3).join("-");
-        const eventDate = new Date(datePart).getTime();
+        const d = delta as EventCreatedDelta;
 
         const newEvent: EventDetail = {
           slug: delta.eventSlug,
           title: series.title,
-          capacity: delta.capacity,
-          eventDate: eventDate,
-          timezone: lastEvent.timezone,
+          capacity: d.capacity,
+          eventDate: new Date(d.eventDate).getTime(),
+          timezone: d.timezone,
           location: undefined,
           description: undefined,
           coverImages: undefined,
@@ -363,25 +362,23 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   openCreateEvent() {
     const lastEvent = this.events()[this.events().length - 1];
     this.newEventTimezone = lastEvent?.timezone || "UTC";
-    this.newEventDate = "";
-    this.newEventTime = "";
+    this.newEventDateTime = "";
     this.newEventCapacity = lastEvent?.capacity || 50;
     this.creatingEvent.set(true);
   }
 
   createEvent() {
-    if (!this.newEventDate || !this.newEventTime) {
+    if (!this.newEventDateTime) {
       this.toastService.error("Please provide date and time");
       return;
     }
 
-    const dateTimeStr = `${this.newEventDate}T${this.newEventTime}:00`;
-    const eventDate = new Date(dateTimeStr).getTime();
+    const eventDate = new Date(this.newEventDateTime).toISOString();
 
     this.seriesApi
       .createEvent(this.slug, {
         capacity: this.newEventCapacity,
-        eventDate: new Date(eventDate).toISOString(),
+        eventDate: eventDate,
         timezone: this.newEventTimezone,
       })
       .subscribe({

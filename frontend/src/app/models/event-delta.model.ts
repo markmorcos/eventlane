@@ -13,6 +13,8 @@ export interface EventCreatedDelta extends BaseDelta {
   type: "EventCreated";
   title: string;
   capacity: number;
+  eventDate: string;
+  timezone: string;
 }
 
 export interface EventCapacityUpdatedDelta extends BaseDelta {

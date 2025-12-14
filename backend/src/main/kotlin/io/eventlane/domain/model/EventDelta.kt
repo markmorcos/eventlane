@@ -34,6 +34,8 @@ data class EventCreated(
     override val timestamp: Instant,
     override val eventSlug: String,
     val capacity: Int,
+    val eventDate: Instant,
+    val timezone: String,
 ) : EventDelta(version, timestamp, eventSlug)
 
 data class EventCapacityUpdated(
