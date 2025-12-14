@@ -106,10 +106,8 @@ class EventSeriesCommandService(
             }
         }
 
-        // If series has interval and autoGenerate, generate new events
         if (series.interval != null && series.autoGenerate) {
-            // The RecurrenceGenerationJob will handle creating new events
-            // based on the updated anchorDate and interval
+            recurrenceGenerationJob.generateEventsForSeries(series)
         }
     }
 
