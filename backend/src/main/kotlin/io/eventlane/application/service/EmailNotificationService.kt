@@ -20,7 +20,7 @@ class EmailNotificationService(
     @Value("\${resend.api-key:}") private val resendApiKey: String,
     @Value("\${resend.from-email:}") private val fromEmail: String,
     @Value("\${app.email.from-name:}") private val fromName: String,
-    @Value("\${app.email.enabled:}") private val emailEnabled: Boolean
+    @Value("\${app.email.enabled:}") private val emailEnabled: Boolean,
 ) {
 
     private val logger = LoggerFactory.getLogger(EmailNotificationService::class.java)
@@ -161,7 +161,9 @@ class EmailNotificationService(
 
     private fun sendEmail(toEmail: String, subject: String, htmlContent: String) {
         if (!emailEnabled || resend == null || fromEmail.isBlank()) {
-            logger.debug("Email sending is either disabled or not configured, skipping email to $toEmail with subject: $subject")
+            logger.debug(
+                "Email sending is either disabled or not configured, skipping email to $toEmail with subject: $subject",
+            )
             return
         }
 
