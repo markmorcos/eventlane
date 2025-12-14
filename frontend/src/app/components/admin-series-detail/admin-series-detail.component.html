@@ -155,6 +155,63 @@
   </div>
   }
 
+  <!-- Create Event Form -->
+  @if (creatingEvent()) {
+  <div hlmCard class="mb-8">
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Create Event</h3>
+    </div>
+    <div hlmCardContent>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-2">Event Date</label>
+          <input
+            type="date"
+            [(ngModel)]="newEventDate"
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Event Time</label>
+          <input
+            type="time"
+            [(ngModel)]="newEventTime"
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Capacity</label>
+          <input
+            type="number"
+            [(ngModel)]="newEventCapacity"
+            min="1"
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Timezone</label>
+          <input
+            type="text"
+            [(ngModel)]="newEventTimezone"
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            placeholder="e.g., America/New_York"
+          />
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button hlmBtn (click)="createEvent()">Create Event</button>
+          <button hlmBtn variant="outline" (click)="cancelCreateEvent()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
   <!-- Events List -->
   <div class="space-y-8">
     <!-- Upcoming Events -->
@@ -162,7 +219,9 @@
     <div>
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-2xl font-semibold">Upcoming Events</h2>
-        <button hlmBtn variant="outline">Create Event</button>
+        <button hlmBtn variant="outline" (click)="openCreateEvent()">
+          Create Event
+        </button>
       </div>
       <div class="space-y-3">
         @for (event of futureEvents; track event.slug) {
@@ -208,7 +267,9 @@
       <p class="mt-2 text-muted-foreground">
         Create a new event occurrence for this series
       </p>
-      <button hlmBtn class="mt-4">Create Event</button>
+      <button hlmBtn class="mt-4" (click)="openCreateEvent()">
+        Create Event
+      </button>
     </div>
     }
 

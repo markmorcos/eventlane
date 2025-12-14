@@ -240,7 +240,9 @@
     "noUpcomingEvents": "No upcoming events",
     "createOccurrenceMessage": "Create a new event occurrence for this series",
     "attendees": "attendees",
-    "deleteConfirm": "Delete this event series and {{count}} future event(s)?"
+    "deleteConfirm": "Delete this event series and {{count}} future event(s)?",
+    "eventCreated": "Event created",
+    "eventCreationFailed": "Failed to create event"
   },
   "cookie": {
     "message": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",

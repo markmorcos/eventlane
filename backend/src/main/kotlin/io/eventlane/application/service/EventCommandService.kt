@@ -32,8 +32,7 @@ class EventCommandService(
     fun createEvent(capacity: Int, eventDate: Instant, timezone: String, seriesId: String): EventDelta {
         val series = seriesRepository.findById(seriesId)
 
-        // Format: {seriesSlug}-YYYY-MM-DD
-        val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd-HHmm")
             .withZone(java.time.ZoneId.of(timezone))
         val dateString = dateFormatter.format(eventDate)
         val slug = "${series.slug}-$dateString"

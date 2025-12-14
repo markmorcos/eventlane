@@ -57,11 +57,17 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   events = signal<EventDetail[]>([]);
   loading = signal(true);
   editingSettings = signal(false);
+  creatingEvent = signal(false);
   slug = "";
 
   editLeadWeeks = 0;
   editAutoGenerate = false;
   editEndDate = "";
+
+  newEventDate = "";
+  newEventTime = "";
+  newEventCapacity = 50;
+  newEventTimezone = "";
 
   private eventSubscriptions = new Map<string, Subscription>();
   private seriesSubscription?: Subscription;
@@ -352,5 +358,48 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
 
   get pastEvents() {
     return this.events().filter((e) => this.isPast(e.eventDate));
+  }
+
+  openCreateEvent() {
+    const lastEvent = this.events()[this.events().length - 1];
+    this.newEventTimezone = lastEvent?.timezone || "UTC";
+    this.newEventDate = "";
+    this.newEventTime = "";
+    this.newEventCapacity = lastEvent?.capacity || 50;
+    this.creatingEvent.set(true);
+  }
+
+  createEvent() {
+    if (!this.newEventDate || !this.newEventTime) {
+      this.toastService.error("Please provide date and time");
+      return;
+    }
+
+    const dateTimeStr = `${this.newEventDate}T${this.newEventTime}:00`;
+    const eventDate = new Date(dateTimeStr).getTime();
+
+    this.seriesApi
+      .createEvent(this.slug, {
+        capacity: this.newEventCapacity,
+        eventDate: new Date(eventDate).toISOString(),
+        timezone: this.newEventTimezone,
+      })
+      .subscribe({
+        next: () => {
+          this.creatingEvent.set(false);
+          this.toastService.success(
+            this.translate.instant("adminSeries.eventCreated")
+          );
+        },
+        error: () => {
+          this.toastService.error(
+            this.translate.instant("adminSeries.eventCreationFailed")
+          );
+        },
+      });
+  }
+
+  cancelCreateEvent() {
+    this.creatingEvent.set(false);
   }
 }
