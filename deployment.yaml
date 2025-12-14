@@ -19,10 +19,7 @@ services:
       - name: FIREBASE_CREDENTIALS_PATH
         value: /secrets/firebase-service-account.json
       - name: MINIO_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: minio-credentials
-            key: MINIO_ENDPOINT
+        value: https://cdn.morcos.tech
       - name: MINIO_ACCESS_KEY
         valueFrom:
           secretKeyRef:
