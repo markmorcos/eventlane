@@ -3,6 +3,11 @@ FROM gradle:8-jdk21-alpine AS build
 WORKDIR /app
 
 COPY build.gradle.kts settings.gradle.kts ./
+COPY gradle ./gradle
+
+RUN gradle dependencies --no-daemon || true
+
+# Copy source code
 COPY src ./src
 
 RUN gradle bootJar --no-daemon
