@@ -8,7 +8,7 @@ import java.time.Instant
 
 @Repository
 interface SpringDataEventRepository : MongoRepository<EventDocument, String> {
-    fun findBySlug(slug: String): EventDocument?
+    fun findBySlugAndDeletedAtIsNull(slug: String): EventDocument?
     fun existsBySlug(slug: String): Boolean
     fun deleteBySlug(slug: String)
     fun findBySeriesId(seriesId: String): List<EventDocument>

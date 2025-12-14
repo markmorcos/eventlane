@@ -69,16 +69,16 @@ class RecurrenceGenerationJob(
             return 0
         }
 
-        // Find all events in this series (including deleted ones)
-        val existingEvents = eventRepository.findBySeriesId(series.id!!)
+        // Find active events in this series
+        val activeEvents = eventRepository.findActiveBySeriesId(series.id!!)
 
-        // Find the latest event by eventDate
-        val latestEvent = existingEvents.maxByOrNull { it.eventDate }
+        // Find the latest active event by eventDate
+        val latestEvent = activeEvents.maxByOrNull { it.eventDate }
 
         val startFrom = latestEvent?.eventDate ?: now
 
-        // Get any existing event to copy capacity and timezone from
-        val templateEvent = existingEvents.firstOrNull()
+        // Get any existing active event to copy capacity and timezone from
+        val templateEvent = activeEvents.firstOrNull()
 
         if (templateEvent == null) {
             logger.warn("Series ${series.slug} has no events to use as template, skipping")
@@ -95,8 +95,8 @@ class RecurrenceGenerationJob(
                 break
             }
 
-            // Check if an event already exists at this date
-            val eventExistsAtDate = existingEvents.any { event ->
+            // Check if an active event already exists at this date (ignore deleted ones)
+            val eventExistsAtDate = activeEvents.any { event ->
                 event.eventDate == nextEventDate
             }
 

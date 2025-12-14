@@ -89,7 +89,7 @@ class EventSeriesCommandService(
         val savedSeries = seriesRepository.save(updated)
 
         // If anchorDate, interval, or endDate changed, regenerate future events
-        if (anchorDate != null || interval != null || endDate != null) {
+        if (anchorDate != null || interval != null || leadWeeks != null || endDate != null) {
             regenerateFutureEvents(savedSeries)
         }
 
@@ -100,14 +100,24 @@ class EventSeriesCommandService(
         val now = Instant.now()
         val events = eventRepository.findActiveBySeriesId(series.id!!)
 
-        events.forEach { event ->
-            if (event.eventDate >= now && event.deletedAt == null) {
-                eventCommandService.deleteEvent(event.slug)
-            }
+        val templateEvent = events.firstOrNull()
+
+        if (templateEvent == null) {
+            return
+        }
+
+        val eventsForDeletion = if (series.leadWeeks < events.size) {
+            events.drop(series.leadWeeks).filter { it.eventDate >= now && it.deletedAt == null }
+        } else {
+            emptyList()
         }
 
         if (series.interval != null && series.autoGenerate) {
             recurrenceGenerationJob.generateEventsForSeries(series)
+        }
+
+        eventsForDeletion.forEach { event ->
+            eventCommandService.deleteEvent(event.slug)
         }
     }
 

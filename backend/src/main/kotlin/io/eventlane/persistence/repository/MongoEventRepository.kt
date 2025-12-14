@@ -17,7 +17,7 @@ class MongoEventRepository(
     private val logger = org.slf4j.LoggerFactory.getLogger(MongoEventRepository::class.java)
 
     override fun findBySlug(slug: String): Event {
-        val document = springDataRepository.findBySlug(slug)
+        val document = springDataRepository.findBySlugAndDeletedAtIsNull(slug)
             ?: throw NotFoundException("Event not found: $slug")
         return EventPersistenceMapper.toDomain(document)
     }
