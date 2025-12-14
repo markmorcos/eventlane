@@ -1,7 +1,7 @@
 export interface Attendee {
   name: string;
   email: string;
-  createdAt: string;
+  joinedAt: string;
 }
 
 export interface Location {

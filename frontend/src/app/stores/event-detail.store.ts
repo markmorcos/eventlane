@@ -200,10 +200,10 @@ export class EventDetailStore {
         }
 
         confirmed = confirmed.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.joinedAt.localeCompare(b.joinedAt)
         );
         waitlisted = waitlisted.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.joinedAt.localeCompare(b.joinedAt)
         );
 
         return {
@@ -252,10 +252,10 @@ export class EventDetailStore {
         );
 
         confirmed = confirmed.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.joinedAt.localeCompare(b.joinedAt)
         );
         waitlisted = waitlisted.sort((a, b) =>
-          a.createdAt.localeCompare(b.createdAt)
+          a.joinedAt.localeCompare(b.joinedAt)
         );
 
         return {
@@ -310,12 +310,12 @@ export class EventDetailStore {
         if (fromConfirmed) {
           confirmed = removeFrom;
           waitlisted = addTo.sort((a, b) =>
-            a.createdAt.localeCompare(b.createdAt)
+            a.joinedAt.localeCompare(b.joinedAt)
           );
         } else {
           waitlisted = removeFrom;
           confirmed = addTo.sort((a, b) =>
-            a.createdAt.localeCompare(b.createdAt)
+            a.joinedAt.localeCompare(b.joinedAt)
           );
         }
 
