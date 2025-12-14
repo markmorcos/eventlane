@@ -3,6 +3,8 @@ package io.eventlane.application.scheduler
 import io.eventlane.application.ports.EventRepository
 import io.eventlane.application.ports.EventSeriesRepository
 import io.eventlane.application.service.EventCommandService
+import io.eventlane.application.service.ImageStorageService
+import io.eventlane.domain.model.EventSeries
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -19,6 +21,7 @@ class RecurrenceGenerationJob(
     private val seriesRepository: EventSeriesRepository,
     private val eventRepository: EventRepository,
     private val eventCommandService: EventCommandService,
+    private val imageStorageService: ImageStorageService,
 ) {
 
     private val logger = LoggerFactory.getLogger(RecurrenceGenerationJob::class.java)
@@ -101,12 +104,25 @@ class RecurrenceGenerationJob(
             }
 
             if (!eventExistsAtDate) {
-                // Create new event
+                val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd-HHmm")
+                    .withZone(java.time.ZoneId.of(templateEvent.timezone))
+                val dateString = dateFormatter.format(nextEventDate)
+                val newEventSlug = "${series.slug}-$dateString"
+
+                val coverImageUrl = if (templateEvent.coverImageUrl != null) {
+                    imageStorageService.duplicateEventImages(templateEvent.slug, newEventSlug)
+                } else {
+                    null
+                }
+
                 eventCommandService.createEvent(
                     capacity = templateEvent.capacity,
                     eventDate = nextEventDate,
                     timezone = templateEvent.timezone,
                     seriesId = series.id,
+                    location = templateEvent.location,
+                    description = templateEvent.description,
+                    coverImageUrl = coverImageUrl,
                 )
                 eventsCreatedForSeries++
             }

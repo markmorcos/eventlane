@@ -16,6 +16,7 @@ import io.eventlane.domain.model.EventDelta
 import io.eventlane.domain.model.EventDescriptionUpdated
 import io.eventlane.domain.model.EventLocationUpdated
 import io.eventlane.domain.model.Location
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -28,8 +29,17 @@ class EventCommandService(
     private val imageService: ImageStorageService,
     private val emailService: EmailNotificationService,
 ) {
+    private val logger = LoggerFactory.getLogger(EventCommandService::class.java)
 
-    fun createEvent(capacity: Int, eventDate: Instant, timezone: String, seriesId: String): EventDelta {
+    fun createEvent(
+        capacity: Int,
+        eventDate: Instant,
+        timezone: String,
+        seriesId: String,
+        location: Location? = null,
+        description: String? = null,
+        coverImageUrl: String? = null,
+    ): EventDelta {
         val series = seriesRepository.findById(seriesId)
 
         val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd-HHmm")
@@ -44,9 +54,9 @@ class EventCommandService(
             capacity = capacity,
             eventDate = eventDate,
             timezone = timezone,
-            location = null,
-            description = null,
-            coverImageUrl = null,
+            location = location,
+            description = description,
+            coverImageUrl = coverImageUrl,
             attendees = emptyList(),
             seriesId = seriesId,
             deletedAt = null,
@@ -106,7 +116,15 @@ class EventCommandService(
 
         publisher.publish(event, listOf(delta))
 
-        // Soft-delete the event
+        // Delete associated cover images from MinIO
+        if (event.coverImageUrl != null) {
+            try {
+                imageService.deleteEventImages(slug)
+            } catch (e: Exception) {
+                logger.error("Failed to delete images for event $slug during event deletion", e)
+            }
+        }
+
         val deletedEvent = event.copy(
             deletedAt = now,
             updatedAt = now,

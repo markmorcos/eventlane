@@ -114,6 +114,38 @@ class ImageStorageService(
     }
 
     /**
+     * Duplicate cover images from one event to another
+     * Used when creating recurring events to copy the template event's cover image
+     */
+    fun duplicateEventImages(sourceSlug: String, targetSlug: String): String? {
+        try {
+            listOf("original", "desktop", "mobile").forEach { size ->
+                val sourceObjectName = "events/$sourceSlug/cover-$size.webp"
+                val targetObjectName = "events/$targetSlug/cover-$size.webp"
+
+                minioClient.copyObject(
+                    io.minio.CopyObjectArgs.builder()
+                        .bucket(bucketName)
+                        .`object`(targetObjectName)
+                        .source(
+                            io.minio.CopySource.builder()
+                                .bucket(bucketName)
+                                .`object`(sourceObjectName)
+                                .build(),
+                        )
+                        .build(),
+                )
+            }
+
+            logger.info("Duplicated cover images from $sourceSlug to $targetSlug")
+            return getPublicImageUrl(targetSlug, "desktop")
+        } catch (e: Exception) {
+            logger.warn("Failed to duplicate images from $sourceSlug to $targetSlug - source image may not exist", e)
+            return null
+        }
+    }
+
+    /**
      * Process uploaded image and generate optimized thumbnails
      * This is called after the client uploads the original via presigned URL
      */
