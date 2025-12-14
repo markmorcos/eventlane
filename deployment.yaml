@@ -45,7 +45,7 @@ services:
       - name: EMAIL_FROM_NAME
         value: EventLane
       - name: EMAIL_ENABLED
-        value: true
+        value: "true"
     volumes:
       - name: firebase-credentials
         secret:
