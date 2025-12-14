@@ -1,5 +1,7 @@
 @if (isInitializing()) {
-<div class="min-h-screen bg-background flex items-center justify-center">
+<div
+  class="fixed inset-0 z-[100] bg-background/100 backdrop-blur-sm flex items-center justify-center"
+>
   <div class="flex flex-col items-center gap-4">
     <svg
       width="48"
@@ -58,7 +60,8 @@
     <span class="text-sm text-muted-foreground">Loading...</span>
   </div>
 </div>
-} @else {
+}
+
 <div
   class="min-h-screen"
   [class.bg-transparent]="isLandingPage"
@@ -143,7 +146,6 @@
     <app-footer></app-footer>
   </main>
 </div>
-}
 
 <app-cookie-banner></app-cookie-banner>
 <app-toast-container></app-toast-container>

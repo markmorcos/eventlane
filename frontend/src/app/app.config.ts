@@ -14,6 +14,7 @@ import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 
 import { routes } from "./app.routes";
 import { authInterceptor } from "./interceptors/auth.interceptor";
+import { provideInitialLocale } from "./providers/locale.provider";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,5 +36,6 @@ export const appConfig: ApplicationConfig = {
       prefix: "./assets/i18n/",
       suffix: ".json",
     }),
+    provideInitialLocale(),
   ],
 };

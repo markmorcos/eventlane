@@ -41,21 +41,15 @@ export class AppComponent {
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
 
-  private isBrowser = signal(false);
-
   isInitializing = computed(
     () =>
-      !this.isBrowser() ||
+      !isPlatformBrowser(this.platformId) ||
       this.authService.authLoading() ||
       this.userPreferencesService.userPreferencesLoading()
   );
   isLandingPage = false;
 
   constructor() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.isBrowser.set(true);
-    }
-
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {

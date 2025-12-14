@@ -1,4 +1,13 @@
-import { Injectable, signal, computed, inject } from "@angular/core";
+import {
+  Injectable,
+  signal,
+  computed,
+  inject,
+  PLATFORM_ID,
+  TransferState,
+  makeStateKey,
+} from "@angular/core";
+import { isPlatformBrowser, isPlatformServer } from "@angular/common";
 import { Router } from "@angular/router";
 import { firstValueFrom, Subscription } from "rxjs";
 
@@ -28,6 +37,8 @@ export class EventDetailStore {
   private auth = inject(AuthService);
   private route = inject(Router);
   private toast = inject(ToastService);
+  private transferState = inject(TransferState);
+  private platformId = inject(PLATFORM_ID);
 
   private userEmail = this.auth.userEmail;
   private readonly _event = signal<EventDetail | null>(null);
@@ -44,6 +55,32 @@ export class EventDetailStore {
   async init(slug: string): Promise<void> {
     this.currentSlug = slug;
 
+    // Create a unique key for this specific event
+    const STATE_KEY = makeStateKey<EventDetail>(`event-${slug}`);
+
+    // Check if we have transferred state from SSR
+    const transferredEvent = this.transferState.get(STATE_KEY, null);
+
+    if (transferredEvent) {
+      // We have data from SSR, use it immediately
+      this._event.set(transferredEvent);
+      this._loading.set(false);
+
+      // Remove the transferred state to free memory
+      this.transferState.remove(STATE_KEY);
+
+      // Subscribe to WebSocket for real-time updates (browser only)
+      if (isPlatformBrowser(this.platformId)) {
+        const delta$ = this.socket.subscribeToEvent(slug);
+        this.deltaSub = delta$.subscribe((deltas) => {
+          this.applyDeltas(deltas);
+        });
+      }
+
+      return;
+    }
+
+    // No transferred state, fetch from API
     this._event.set(null);
     this._loading.set(true);
     this._error.set(null);
@@ -53,10 +90,18 @@ export class EventDetailStore {
       const data = result.nextEvent;
       this._event.set(data);
 
-      const delta$ = this.socket.subscribeToEvent(slug);
-      this.deltaSub = delta$.subscribe((deltas) => {
-        this.applyDeltas(deltas);
-      });
+      // On server, store the data for transfer to client
+      if (isPlatformServer(this.platformId)) {
+        this.transferState.set(STATE_KEY, data);
+      }
+
+      // Subscribe to WebSocket (browser only)
+      if (isPlatformBrowser(this.platformId)) {
+        const delta$ = this.socket.subscribeToEvent(slug);
+        this.deltaSub = delta$.subscribe((deltas) => {
+          this.applyDeltas(deltas);
+        });
+      }
     } catch (err) {
       this._error.set("Failed to load event");
       console.error(err);
