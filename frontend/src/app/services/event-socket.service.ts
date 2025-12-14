@@ -20,6 +20,10 @@ export class EventSocketService implements OnDestroy {
   private subscriptions = new Map<string, () => void>();
   private activeSlugs = new Set<string>();
 
+  private seriesSubjects = new Map<string, Subject<EventDelta[]>>();
+  private seriesSubscriptions = new Map<string, () => void>();
+  private activeSeriesSlugs = new Set<string>();
+
   private userSubject?: Subject<EventDelta[]>;
   private userSubscription?: () => void;
   private activeUserEmail?: string;
@@ -49,6 +53,12 @@ export class EventSocketService implements OnDestroy {
         }
       });
 
+      this.activeSeriesSlugs.forEach((slug) => {
+        if (!this.seriesSubscriptions.has(slug)) {
+          this.internalSubscribeToSeries(slug);
+        }
+      });
+
       if (this.activeUserEmail && !this.userSubscription) {
         this.internalSubscribeToUser(this.activeUserEmail);
       }
@@ -58,6 +68,7 @@ export class EventSocketService implements OnDestroy {
       this.ready = false;
 
       this.subscriptions.clear();
+      this.seriesSubscriptions.clear();
       this.userSubscription = undefined;
     };
 
@@ -100,6 +111,44 @@ export class EventSocketService implements OnDestroy {
     this.subscriptions.delete(slug);
     this.subjects.delete(slug);
     this.activeSlugs.delete(slug);
+  }
+
+  subscribeToSeries(seriesSlug: string): Subject<EventDelta[]> {
+    if (this.seriesSubjects.has(seriesSlug)) {
+      return this.seriesSubjects.get(seriesSlug)!;
+    }
+
+    const subject = new Subject<EventDelta[]>();
+    this.seriesSubjects.set(seriesSlug, subject);
+    this.activeSeriesSlugs.add(seriesSlug);
+
+    if (this.ready) {
+      this.internalSubscribeToSeries(seriesSlug);
+    }
+
+    return subject;
+  }
+
+  private internalSubscribeToSeries(seriesSlug: string) {
+    const subject = this.seriesSubjects.get(seriesSlug);
+    if (!subject) return;
+
+    const dest = `/topic/series/${seriesSlug}`;
+
+    const sub = this.client.subscribe(dest, (msg: IMessage) => {
+      subject.next(JSON.parse(msg.body));
+    });
+
+    this.seriesSubscriptions.set(seriesSlug, () => sub.unsubscribe());
+  }
+
+  unsubscribeFromSeries(seriesSlug: string) {
+    const unsub = this.seriesSubscriptions.get(seriesSlug);
+    unsub?.();
+
+    this.seriesSubscriptions.delete(seriesSlug);
+    this.seriesSubjects.delete(seriesSlug);
+    this.activeSeriesSlugs.delete(seriesSlug);
   }
 
   subscribeToUserNotifications(email: string): Subject<EventDelta[]> {

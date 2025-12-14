@@ -1,13 +1,12 @@
 package io.eventlane.domain.model
 
-import java.time.Duration
 import java.time.Instant
 
 data class EventSeries(
     val id: String? = null,
     val slug: String,
     val title: String,
-    val interval: Duration? = null,
+    val interval: String? = null,
     val leadWeeks: Int = 0,
     val autoGenerate: Boolean = false,
     val anchorDate: Instant,

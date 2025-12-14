@@ -6,6 +6,7 @@ import io.eventlane.application.service.EventCommandService
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -69,7 +70,7 @@ class RecurrenceGenerationJob(
                 }
 
                 // Generate events until coverage is satisfied
-                var nextEventDate = startFrom.plus(series.interval)
+                var nextEventDate = startFrom.plus(Duration.parse(series.interval))
                 var eventsCreatedForSeries = 0
 
                 while (nextEventDate <= coverageEnd) {
@@ -95,7 +96,7 @@ class RecurrenceGenerationJob(
                         generatedCount++
                     }
 
-                    nextEventDate = nextEventDate.plus(series.interval)
+                    nextEventDate = nextEventDate.plus(Duration.parse(series.interval))
                 }
 
                 if (eventsCreatedForSeries > 0) {

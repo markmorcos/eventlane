@@ -5,7 +5,6 @@ import io.eventlane.application.ports.EventSeriesRepository
 import io.eventlane.domain.model.EventSeries
 import io.eventlane.domain.util.SlugGenerator
 import org.springframework.stereotype.Service
-import java.time.Duration
 import java.time.Instant
 
 @Service
@@ -20,7 +19,7 @@ class EventSeriesCommandService(
         capacity: Int,
         firstEventDate: Instant,
         timezone: String,
-        interval: Duration?,
+        interval: String?,
         leadWeeks: Int,
         autoGenerate: Boolean,
         endDate: Instant?,
@@ -60,7 +59,7 @@ class EventSeriesCommandService(
     fun updateSeries(
         slug: String,
         anchorDate: Instant? = null,
-        interval: Duration? = null,
+        interval: String? = null,
         leadWeeks: Int? = null,
         autoGenerate: Boolean? = null,
         endDate: Instant? = null,

@@ -28,6 +28,9 @@ class EventWebSocketPublisher(
 
         messageTemplate.convertAndSend("/topic/events/${event.slug}", json)
 
+        val series = seriesRepository.findById(event.seriesId)
+        messageTemplate.convertAndSend("/topic/series/${series.slug}", json)
+
         val affectedUsers = getAffectedUsers(event, deltas)
         affectedUsers.forEach { userEmail ->
             messageTemplate.convertAndSend("/topic/users/$userEmail", json)

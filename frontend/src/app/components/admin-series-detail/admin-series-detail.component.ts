@@ -64,10 +64,17 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   editEndDate = "";
 
   private eventSubscriptions = new Map<string, Subscription>();
+  private seriesSubscription?: Subscription;
 
   ngOnInit() {
     this.slug = this.route.snapshot.paramMap.get("slug") || "";
     this.loadSeriesAndEvents();
+
+    this.seriesSubscription = this.socket
+      .subscribeToSeries(this.slug)
+      .subscribe({
+        next: (deltas) => this.handleDeltas(deltas),
+      });
   }
 
   loadSeriesAndEvents() {
@@ -210,6 +217,8 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.eventSubscriptions.forEach((sub) => sub.unsubscribe());
     this.eventSubscriptions.clear();
+    this.seriesSubscription?.unsubscribe();
+    this.socket.unsubscribeFromSeries(this.slug);
   }
 
   navigateToEvent(eventSlug: string) {

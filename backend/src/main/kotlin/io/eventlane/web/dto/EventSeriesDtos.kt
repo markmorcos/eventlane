@@ -1,6 +1,5 @@
 package io.eventlane.web.dto
 
-import java.time.Duration
 import java.time.Instant
 
 data class CreateEventSeriesRequestDto(
@@ -8,7 +7,7 @@ data class CreateEventSeriesRequestDto(
     val capacity: Int,
     val firstEventDate: Instant,
     val timezone: String,
-    val interval: Duration?,
+    val interval: String?,
     val leadWeeks: Int,
     val autoGenerate: Boolean,
     val endDate: Instant?,
@@ -16,7 +15,7 @@ data class CreateEventSeriesRequestDto(
 
 data class UpdateEventSeriesRequestDto(
     val anchorDate: Instant? = null,
-    val interval: Duration? = null,
+    val interval: String? = null,
     val leadWeeks: Int? = null,
     val autoGenerate: Boolean? = null,
     val endDate: Instant? = null,

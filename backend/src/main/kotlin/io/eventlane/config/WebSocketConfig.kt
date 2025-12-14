@@ -1,5 +1,6 @@
 package io.eventlane.config
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
@@ -8,15 +9,17 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-class WebSocketConfig : WebSocketMessageBrokerConfigurer {
-
+@EnableConfigurationProperties(CorsProperties::class)
+class WebSocketConfig(
+    private val corsProperties: CorsProperties,
+) : WebSocketMessageBrokerConfigurer {
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
-        registry.enableSimpleBroker("/topic/events", "/topic/users")
+        registry.enableSimpleBroker("/topic/events", "/topic/series", "/topic/users")
         registry.setApplicationDestinationPrefixes("/app")
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint("/ws")
-            .setAllowedOriginPatterns("http://localhost:4200", "https://eventlane.io")
+            .setAllowedOriginPatterns(*corsProperties.allowedOrigins.toTypedArray())
     }
 }

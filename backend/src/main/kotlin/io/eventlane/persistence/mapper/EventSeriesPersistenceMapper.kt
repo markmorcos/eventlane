@@ -2,14 +2,13 @@ package io.eventlane.persistence.mapper
 
 import io.eventlane.domain.model.EventSeries
 import io.eventlane.persistence.document.EventSeriesDocument
-import java.time.Duration
 
 object EventSeriesPersistenceMapper {
     fun toDomain(doc: EventSeriesDocument): EventSeries = EventSeries(
         id = doc.id!!,
         slug = doc.slug,
         title = doc.title,
-        interval = doc.interval?.let { Duration.parse(it) },
+        interval = doc.interval,
         leadWeeks = doc.leadWeeks,
         autoGenerate = doc.autoGenerate,
         anchorDate = doc.anchorDate,
@@ -25,7 +24,7 @@ object EventSeriesPersistenceMapper {
         id = domain.id,
         slug = domain.slug,
         title = domain.title,
-        interval = domain.interval?.toString(),
+        interval = domain.interval,
         leadWeeks = domain.leadWeeks,
         autoGenerate = domain.autoGenerate,
         anchorDate = domain.anchorDate,

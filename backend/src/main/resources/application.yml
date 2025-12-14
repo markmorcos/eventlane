@@ -20,6 +20,9 @@ minio:
   bucket-name: ${MINIO_BUCKET_NAME}
 
 app:
+  cors:
+    allowed-origins:
+      - https://eventlane.io
   email:
     from-name: ${EMAIL_FROM_NAME}
     enabled: ${EMAIL_ENABLED}

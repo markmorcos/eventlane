@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.time.Duration
 import java.time.Instant
 
 @RestController
@@ -65,7 +64,7 @@ class EventsController(
             capacity = request.capacity,
             firstEventDate = Instant.parse(request.eventDate),
             timezone = request.timezone,
-            interval = request.interval?.let { Duration.parse(it) },
+            interval = request.interval,
             leadWeeks = request.leadWeeks ?: 1,
             autoGenerate = request.interval != null,
             endDate = request.endDate?.let { Instant.parse(it) },
