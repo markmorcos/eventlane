@@ -10,6 +10,7 @@ data class EventSeries(
     val leadWeeks: Int = 0,
     val autoGenerate: Boolean = false,
     val anchorDate: Instant,
+    val timezone: String,
     val endDate: Instant? = null,
     val creatorEmail: String,
     val admins: List<String> = emptyList(),

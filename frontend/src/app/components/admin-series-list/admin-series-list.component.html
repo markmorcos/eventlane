@@ -1,10 +1,16 @@
 <div class="min-h-screen container mx-auto max-w-6xl px-4 py-8">
   <div class="mb-8 flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold">My Events</h1>
-      <p class="mt-2 text-muted-foreground">Manage your event series</p>
+      <h1 class="text-3xl font-bold">
+        {{ "adminSeries.title" | translate }}
+      </h1>
+      <p class="mt-2 text-muted-foreground">
+        {{ "adminSeries.subtitle" | translate }}
+      </p>
     </div>
-    <button hlmBtn (click)="navigateToCreate()">Create Event</button>
+    <button hlmBtn (click)="navigateToCreate()">
+      {{ "adminSeries.createEvent" | translate }}
+    </button>
   </div>
 
   @if (loading()) {
@@ -13,12 +19,14 @@
   </div>
   } @else if (series().length === 0) {
   <div class="rounded-lg border border-dashed p-12 text-center">
-    <h3 class="text-lg font-semibold">No active events</h3>
+    <h3 class="text-lg font-semibold">
+      {{ "adminSeries.noActiveEvents" | translate }}
+    </h3>
     <p class="mt-2 text-muted-foreground">
-      Get started by creating your first event
+      {{ "adminSeries.getStartedMessage" | translate }}
     </p>
     <button hlmBtn class="mt-4" (click)="navigateToCreate()">
-      Create Event
+      {{ "adminSeries.createEvent" | translate }}
     </button>
   </div>
   } @else {
@@ -44,18 +52,24 @@
       <div hlmCardContent>
         <div class="space-y-2 text-sm">
           <div class="flex items-center justify-between">
-            <span class="text-muted-foreground">Next event:</span>
+            <span class="text-muted-foreground">{{
+              "adminSeries.nextEvent" | translate
+            }}</span>
             <span class="font-medium">{{
               formatDate(item.nextEventDate)
             }}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-muted-foreground">Upcoming:</span>
+            <span class="text-muted-foreground">{{
+              "adminSeries.upcoming" | translate
+            }}</span>
             <span class="font-medium">{{ item.upcomingEventsCount }}</span>
           </div>
           @if (item.creatorEmail) {
           <div class="flex items-center justify-between">
-            <span class="text-muted-foreground">Created by:</span>
+            <span class="text-muted-foreground">{{
+              "adminSeries.createdBy" | translate
+            }}</span>
             <span class="truncate font-medium">{{ item.creatorEmail }}</span>
           </div>
           }

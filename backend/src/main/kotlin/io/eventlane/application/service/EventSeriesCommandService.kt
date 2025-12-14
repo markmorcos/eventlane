@@ -38,6 +38,7 @@ class EventSeriesCommandService(
             leadWeeks = leadWeeks,
             autoGenerate = autoGenerate,
             anchorDate = firstEventDate,
+            timezone = timezone,
             endDate = endDate,
             creatorEmail = creatorEmail.lowercase(),
             admins = emptyList(),
@@ -66,6 +67,7 @@ class EventSeriesCommandService(
     fun updateSeries(
         slug: String,
         anchorDate: Instant? = null,
+        timezone: String? = null,
         interval: String? = null,
         leadWeeks: Int? = null,
         autoGenerate: Boolean? = null,
@@ -79,6 +81,7 @@ class EventSeriesCommandService(
 
         val updated = series.copy(
             anchorDate = newAnchorDate,
+            timezone = timezone ?: series.timezone,
             interval = newInterval,
             leadWeeks = leadWeeks ?: series.leadWeeks,
             autoGenerate = autoGenerate ?: series.autoGenerate,

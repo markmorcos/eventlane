@@ -52,6 +52,7 @@ class EventSeriesController(
                 leadWeeks = s.leadWeeks,
                 autoGenerate = s.autoGenerate,
                 anchorDate = s.anchorDate,
+                timezone = s.timezone,
                 endDate = s.endDate,
                 nextEventDate = nextEvent?.eventDate,
                 nextEventSlug = nextEvent?.slug,
@@ -85,6 +86,7 @@ class EventSeriesController(
             leadWeeks = series.leadWeeks,
             autoGenerate = series.autoGenerate,
             anchorDate = series.anchorDate,
+            timezone = series.timezone,
             endDate = series.endDate,
             nextEventDate = nextEvent?.eventDate,
             nextEventSlug = nextEvent?.slug,
@@ -131,6 +133,7 @@ class EventSeriesController(
         val updated = commands.updateSeries(
             slug = slug,
             anchorDate = request.anchorDate,
+            timezone = request.timezone,
             interval = request.interval,
             leadWeeks = request.leadWeeks,
             autoGenerate = request.autoGenerate,

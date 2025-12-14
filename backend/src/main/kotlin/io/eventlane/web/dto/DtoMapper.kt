@@ -100,6 +100,7 @@ object DtoMapper {
         leadWeeks = series.leadWeeks,
         autoGenerate = series.autoGenerate,
         anchorDate = series.anchorDate,
+        timezone = series.timezone,
         endDate = series.endDate,
         nextEventDate = null,
         nextEventSlug = null,

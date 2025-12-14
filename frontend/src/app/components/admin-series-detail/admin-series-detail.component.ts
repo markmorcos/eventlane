@@ -28,6 +28,9 @@ import {
 } from "../../ui/ui-card-helm/src";
 import { HlmButtonDirective } from "../../ui/ui-button-helm/src";
 import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
+import { TimezoneSelectorComponent } from "../timezone-selector/timezone-selector.component";
+import { formatEventDateTime } from "../../utils/date-format";
+import { UserPreferencesService } from "../../services/user-preferences.service";
 
 @Component({
   selector: "app-admin-series-detail",
@@ -43,6 +46,7 @@ import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
     HlmCardTitleDirective,
     HlmButtonDirective,
     HlmBadgeDirective,
+    TimezoneSelectorComponent,
   ],
   templateUrl: "./admin-series-detail.component.html",
 })
@@ -53,6 +57,9 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private translate = inject(TranslateService);
+  private preferencesService = inject(UserPreferencesService);
+
+  language = this.preferencesService.language;
 
   series = signal<EventSeries | null>(null);
   events = signal<EventDetail[]>([]);
@@ -66,8 +73,8 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   editEndDate = "";
 
   newEventDateTime = "";
-  newEventCapacity = 50;
-  newEventTimezone = "";
+  newEventCapacity = 8;
+  newEventTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   private eventSubscriptions = new Map<string, Subscription>();
   private seriesSubscription?: Subscription;
@@ -340,11 +347,20 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   }
 
   getRecurrenceLabel(interval: string | null): string {
-    if (!interval) return "One-time event";
-    if (interval === "P7D") return "Weekly";
-    if (interval === "P14D") return "Bi-weekly";
-    if (interval === "P1M") return "Monthly";
-    return `Every ${interval}`;
+    if (!interval) return this.translate.instant("adminSeries.oneTime");
+    if (interval === "P7D") return this.translate.instant("adminSeries.weekly");
+    if (interval === "P14D")
+      return this.translate.instant("adminSeries.biweekly");
+    if (interval === "P1M")
+      return this.translate.instant("adminSeries.monthly");
+
+    const customDays = interval.match(/^P(\d+)D$/);
+    if (!customDays) return this.translate.instant("adminSeries.recurring");
+
+    const customInterval = customDays[1];
+    return this.translate.instant("adminSeries.customInterval {{interval}}", {
+      interval: customInterval,
+    });
   }
 
   isPast(eventDate: number): boolean {
@@ -360,8 +376,13 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   }
 
   openCreateEvent() {
+    const currentSeries = this.series();
     const lastEvent = this.events()[this.events().length - 1];
-    this.newEventTimezone = lastEvent?.timezone || "UTC";
+
+    this.newEventTimezone =
+      lastEvent?.timezone ||
+      currentSeries?.timezone ||
+      Intl.DateTimeFormat().resolvedOptions().timeZone;
     this.newEventDateTime = "";
     this.newEventCapacity = lastEvent?.capacity || 50;
     this.creatingEvent.set(true);
@@ -398,5 +419,9 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
 
   cancelCreateEvent() {
     this.creatingEvent.set(false);
+  }
+
+  formatEventDateTime(timestamp: number, timezone: string) {
+    return formatEventDateTime(timestamp, timezone, this.language());
   }
 }

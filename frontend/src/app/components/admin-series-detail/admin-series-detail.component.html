@@ -6,7 +6,7 @@
   } @else if (series()) {
   <!-- Back Button -->
   <button hlmBtn variant="ghost" class="mb-6" (click)="navigateBack()">
-    ← Back to My Events
+    ← {{ "adminSeries.backToMyEvents" | translate }}
   </button>
 
   <!-- Series Header -->
@@ -25,7 +25,7 @@
           (click)="editSeries()"
           *ngIf="!editingSettings()"
         >
-          Edit Series
+          {{ "adminSeries.editSeries" | translate }}
         </button>
         <button
           hlmBtn
@@ -33,7 +33,7 @@
           (click)="deleteSeries()"
           *ngIf="!editingSettings()"
         >
-          Delete Series
+          {{ "adminSeries.deleteSeries" | translate }}
         </button>
       </div>
     </div>
@@ -42,45 +42,65 @@
   <!-- Series Info Card -->
   <div hlmCard class="mb-8">
     <div hlmCardHeader>
-      <h3 hlmCardTitle>Series Information</h3>
+      <h3 hlmCardTitle>{{ "adminSeries.seriesInformation" | translate }}</h3>
     </div>
     <div hlmCardContent>
       <div class="grid gap-4 md:grid-cols-2">
         <div>
-          <span class="text-sm text-muted-foreground">Recurrence:</span>
+          <span class="text-sm text-muted-foreground">{{
+            "adminSeries.recurrence" | translate
+          }}</span>
           <p class="font-medium">
             {{ getRecurrenceLabel(series()!.interval) }}
           </p>
         </div>
         <div>
-          <span class="text-sm text-muted-foreground">Anchor Date:</span>
-          <p class="font-medium">{{ formatDate(series()!.anchorDate) }}</p>
+          <span class="text-sm text-muted-foreground">{{
+            "adminSeries.anchorDate" | translate
+          }}</span>
+          <p class="font-medium">
+            {{ formatEventDateTime(series()!.anchorDate, series()!.timezone) }}
+          </p>
         </div>
         <div>
-          <span class="text-sm text-muted-foreground">Lead Weeks:</span>
+          <span class="text-sm text-muted-foreground">{{
+            "adminSeries.leadWeeks" | translate
+          }}</span>
           <p class="font-medium">{{ series()!.leadWeeks }}</p>
         </div>
         @if (series()!.endDate) {
         <div>
-          <span class="text-sm text-muted-foreground">End Date:</span>
+          <span class="text-sm text-muted-foreground">{{
+            "adminSeries.endDate" | translate
+          }}</span>
           <p class="font-medium">{{ formatDate(series()!.endDate!) }}</p>
         </div>
         }
         <div>
-          <span class="text-sm text-muted-foreground">Creator:</span>
+          <span class="text-sm text-muted-foreground">{{
+            "adminSeries.creator" | translate
+          }}</span>
           <p class="font-medium">{{ series()!.creatorEmail }}</p>
         </div>
         <div>
-          <span class="text-sm text-muted-foreground">Auto-generate:</span>
+          <span class="text-sm text-muted-foreground">{{
+            "adminSeries.autoGenerate" | translate
+          }}</span>
           <p class="font-medium">
-            {{ series()!.autoGenerate ? "Yes" : "No" }}
+            {{
+              series()!.autoGenerate
+                ? ("common.yes" | translate)
+                : ("common.no" | translate)
+            }}
           </p>
         </div>
       </div>
 
       @if (series()!.admins.length > 0) {
       <div class="mt-4">
-        <span class="text-sm text-muted-foreground">Admins:</span>
+        <span class="text-sm text-muted-foreground">{{
+          "adminSeries.admins" | translate
+        }}</span>
         <div class="mt-2 flex flex-wrap gap-2">
           @for (admin of series()!.admins; track admin) {
           <span hlmBadge variant="secondary">{{ admin }}</span>
@@ -91,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Edit Settings Form -->
   @if (editingSettings()) {
   <div hlmCard class="mb-8">
     <div hlmCardHeader>
@@ -153,10 +172,7 @@
       </div>
     </div>
   </div>
-  }
-
-  <!-- Create Event Form -->
-  @if (creatingEvent()) {
+  } @if (creatingEvent()) {
   <div hlmCard class="mb-8">
     <div hlmCardHeader>
       <h3 hlmCardTitle>Create Event</h3>
@@ -175,7 +191,9 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-2">Capacity</label>
+          <label class="block text-sm font-medium mb-2">{{
+            "createEvent.capacity" | translate
+          }}</label>
           <input
             type="number"
             [(ngModel)]="newEventCapacity"
@@ -184,20 +202,19 @@
           />
         </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-2">Timezone</label>
-          <input
-            type="text"
-            [(ngModel)]="newEventTimezone"
-            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            placeholder="e.g., America/New_York"
-          />
-        </div>
+        <app-timezone-selector
+          [timezone]="newEventTimezone"
+          (timezoneChange)="newEventTimezone = $event"
+          [label]="'createEvent.timezone' | translate"
+          [hint]="'createEvent.timezoneHint' | translate"
+        />
 
         <div class="flex gap-3 pt-4">
-          <button hlmBtn (click)="createEvent()">Create Event</button>
+          <button hlmBtn (click)="createEvent()">
+            {{ "adminSeries.createEvent" | translate }}
+          </button>
           <button hlmBtn variant="outline" (click)="cancelCreateEvent()">
-            Cancel
+            {{ "common.cancel" | translate }}
           </button>
         </div>
       </div>
@@ -205,15 +222,15 @@
   </div>
   }
 
-  <!-- Events List -->
   <div class="space-y-8">
-    <!-- Upcoming Events -->
     @if (futureEvents.length > 0) {
     <div>
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-2xl font-semibold">Upcoming Events</h2>
+        <h2 class="text-2xl font-semibold">
+          {{ "adminSeries.upcomingEvents" | translate }}
+        </h2>
         <button hlmBtn variant="outline" (click)="openCreateEvent()">
-          Create Event
+          {{ "adminSeries.createEvent" | translate }}
         </button>
       </div>
       <div class="space-y-3">
@@ -256,12 +273,14 @@
     </div>
     } @else {
     <div class="rounded-lg border border-dashed p-8 text-center">
-      <h3 class="text-lg font-semibold">No upcoming events</h3>
+      <h3 class="text-lg font-semibold">
+        {{ "adminSeries.noUpcomingEvents" | translate }}
+      </h3>
       <p class="mt-2 text-muted-foreground">
-        Create a new event occurrence for this series
+        {{ "adminSeries.createNewEventOccurrence" | translate }}
       </p>
       <button hlmBtn class="mt-4" (click)="openCreateEvent()">
-        Create Event
+        {{ "adminSeries.createEvent" | translate }}
       </button>
     </div>
     }

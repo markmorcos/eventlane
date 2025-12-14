@@ -6,7 +6,9 @@
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "loading": "Lädt...",
-    "error": "Ein Fehler ist aufgetreten"
+    "error": "Ein Fehler ist aufgetreten",
+    "yes": "Ja",
+    "no": "Nein"
   },
   "nav": {
     "events": "Veranstaltungen",
@@ -76,6 +78,8 @@
     "interval": "Wiederhole alle",
     "weekly": "Wöchentlich",
     "biweekly": "Alle zwei Wochen",
+    "monthly": "Monatlich",
+    "customInterval": "Alle {{count}} Tage",
     "leadWeeks": "Vorlaufwochen",
     "leadWeeksHint": "Anzahl der Wochen vor dem Event, in denen die Wiederholung endet",
     "setEndDate": "Enddatum festlegen",
@@ -211,7 +215,7 @@
     "biweekly": "Alle zwei Wochen",
     "monthly": "Monatlich",
     "recurring": "Wiederkehrend",
-    "backToMyEvents": "Zurück zu Meine Veranstaltungen",
+    "backToMyEvents": "Zurück zu meine Veranstaltungen",
     "editSeries": "Serie bearbeiten",
     "deleteSeries": "Serie löschen",
     "editSeriesSettings": "Serieneinstellungen bearbeiten",
