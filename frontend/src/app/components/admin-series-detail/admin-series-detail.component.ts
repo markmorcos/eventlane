@@ -127,7 +127,46 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
 
     switch (delta.type) {
       case "EventCreated": {
-        this.loadEvents();
+        const series = this.series();
+        const lastEvent = currentEvents[currentEvents.length - 1];
+
+        if (!series || !lastEvent) {
+          this.loadEvents();
+          break;
+        }
+
+        const datePart = delta.eventSlug.split("-").slice(-3).join("-");
+        const eventDate = new Date(datePart).getTime();
+
+        const newEvent: EventDetail = {
+          slug: delta.eventSlug,
+          title: series.title,
+          capacity: delta.capacity,
+          eventDate: eventDate,
+          timezone: lastEvent.timezone,
+          location: undefined,
+          description: undefined,
+          coverImages: undefined,
+          confirmedCount: 0,
+          waitlistedCount: 0,
+          creatorEmail: series.creatorEmail,
+          isAdmin: true,
+          seriesSlug: series.slug,
+          createdAt: new Date().toISOString(),
+          version: 0,
+        };
+
+        const updated = [...currentEvents, newEvent].sort(
+          (a, b) => a.eventDate - b.eventDate
+        );
+        this.events.set(updated);
+
+        const subscription = this.socket
+          .subscribeToEvent(newEvent.slug)
+          .subscribe({
+            next: (deltas) => this.handleDeltas(deltas),
+          });
+        this.eventSubscriptions.set(newEvent.slug, subscription);
         break;
       }
 
