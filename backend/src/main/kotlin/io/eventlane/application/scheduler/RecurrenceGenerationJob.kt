@@ -22,7 +22,7 @@ class RecurrenceGenerationJob(
 
     private val logger = LoggerFactory.getLogger(RecurrenceGenerationJob::class.java)
 
-    @Scheduled(fixedRate = 3600000) // Run every hour (3600000 ms)
+    @Scheduled(fixedRate = 60000) // Run every minute (60000 ms)
     fun generateRecurringEvents() {
         logger.info("Starting recurrence generation job")
 

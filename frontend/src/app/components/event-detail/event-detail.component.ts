@@ -5,11 +5,12 @@ import {
   signal,
   inject,
   effect,
+  PLATFORM_ID,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { RouterLink, ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { TranslateModule } from "@ngx-translate/core";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 
 import { AuthService } from "../../services/auth.service";
 import { EventDetailStore } from "../../stores/event-detail.store";
@@ -60,6 +61,9 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   private seoService = inject(SeoService);
   private toastService = inject(ToastService);
   private preferencesService = inject(UserPreferencesService);
+  private translate = inject(TranslateService);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
   event = this.store.event;
   loading = this.store.loading;
@@ -81,7 +85,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      if (this.displayName()) {
+      if (this.isBrowser && this.displayName()) {
         this.userName.set(this.displayName());
         this.store.reload();
       }
@@ -172,8 +176,14 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
     const url = `${window.location.origin}/events/${evt.slug}`;
     navigator.clipboard.writeText(url).then(
-      () => this.toastService.success("Link copied to clipboard!"),
-      () => this.toastService.error("Failed to copy link")
+      () =>
+        this.toastService.success(
+          this.translate.instant("eventDetail.linkCopied")
+        ),
+      () =>
+        this.toastService.error(
+          this.translate.instant("eventDetail.linkCopyFailed")
+        )
     );
   }
 

@@ -1,17 +1,22 @@
 import { Component, inject, OnInit, OnDestroy, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
 import { EventSeriesApiService } from "../../services/event-series-api.service";
 import { EventSocketService } from "../../services/event-socket.service";
-import { EventSeries } from "../../models/event-series.model";
+import { ToastService } from "../../services/toast.service";
+import {
+  EventSeries,
+  UpdateEventSeriesRequest,
+} from "../../models/event-series.model";
 import { EventDetail } from "../../models/event.model";
 import {
   EventDelta,
   EventCapacityUpdatedDelta,
   EventDateTimeUpdatedDelta,
   AttendeeAddedDelta,
-  AttendeeRemovedDelta,
   AttendeeStatusChangedDelta,
 } from "../../models/event-delta.model";
 import {
@@ -28,7 +33,9 @@ import { HlmBadgeDirective } from "../../ui/ui-badge-helm/src";
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
+    TranslateModule,
     HlmCardDirective,
     HlmCardContentDirective,
     HlmCardHeaderDirective,
@@ -43,11 +50,18 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   private socket = inject(EventSocketService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private toastService = inject(ToastService);
+  private translate = inject(TranslateService);
 
   series = signal<EventSeries | null>(null);
   events = signal<EventDetail[]>([]);
   loading = signal(true);
+  editingSettings = signal(false);
   slug = "";
+
+  editLeadWeeks = 0;
+  editAutoGenerate = false;
+  editEndDate = "";
 
   private eventSubscriptions = new Map<string, Subscription>();
 
@@ -204,6 +218,45 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
 
   navigateBack() {
     this.router.navigate(["/admin/events"]);
+  }
+
+  editSeries() {
+    const s = this.series();
+    if (!s) return;
+
+    this.editLeadWeeks = s.leadWeeks;
+    this.editAutoGenerate = s.autoGenerate;
+    this.editEndDate = s.endDate
+      ? new Date(s.endDate).toISOString().split("T")[0]
+      : "";
+    this.editingSettings.set(true);
+  }
+
+  saveSettings() {
+    const payload: UpdateEventSeriesRequest = {
+      leadWeeks: this.editLeadWeeks,
+      autoGenerate: this.editAutoGenerate,
+      endDate: this.editEndDate ? new Date(this.editEndDate).getTime() : null,
+    };
+
+    this.seriesApi.updateSeries(this.slug, payload).subscribe({
+      next: (updated) => {
+        this.series.set(updated);
+        this.editingSettings.set(false);
+        this.toastService.success(
+          this.translate.instant("adminSeries.settingsUpdated")
+        );
+      },
+      error: () => {
+        this.toastService.error(
+          this.translate.instant("adminSeries.settingsUpdateFailed")
+        );
+      },
+    });
+  }
+
+  cancelEdit() {
+    this.editingSettings.set(false);
   }
 
   deleteSeries() {

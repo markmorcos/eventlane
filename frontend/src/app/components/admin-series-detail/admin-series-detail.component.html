@@ -19,8 +19,20 @@
         </p>
       </div>
       <div class="flex gap-2">
-        <button hlmBtn variant="outline">Edit Series</button>
-        <button hlmBtn variant="destructive" (click)="deleteSeries()">
+        <button
+          hlmBtn
+          variant="outline"
+          (click)="editSeries()"
+          *ngIf="!editingSettings()"
+        >
+          Edit Series
+        </button>
+        <button
+          hlmBtn
+          variant="destructive"
+          (click)="deleteSeries()"
+          *ngIf="!editingSettings()"
+        >
           Delete Series
         </button>
       </div>
@@ -78,6 +90,70 @@
       }
     </div>
   </div>
+
+  <!-- Edit Settings Form -->
+  @if (editingSettings()) {
+  <div hlmCard class="mb-8">
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>{{ "adminSeries.editSeriesSettings" | translate }}</h3>
+    </div>
+    <div hlmCardContent>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-2">{{
+            "adminSeries.leadWeeksLabel" | translate
+          }}</label>
+          <input
+            type="number"
+            [(ngModel)]="editLeadWeeks"
+            min="0"
+            max="52"
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            [placeholder]="'adminSeries.leadWeeksPlaceholder' | translate"
+          />
+          <p class="mt-1 text-xs text-muted-foreground">
+            {{ "adminSeries.leadWeeksHelp" | translate }}
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="editAutoGenerate"
+            [(ngModel)]="editAutoGenerate"
+            class="rounded border-input"
+          />
+          <label for="editAutoGenerate" class="text-sm font-medium">
+            {{ "adminSeries.autoGenerateLabel" | translate }}
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">{{
+            "adminSeries.endDateLabel" | translate
+          }}</label>
+          <input
+            type="date"
+            [(ngModel)]="editEndDate"
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+          <p class="mt-1 text-xs text-muted-foreground">
+            {{ "adminSeries.endDateHelp" | translate }}
+          </p>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button hlmBtn (click)="saveSettings()">
+            {{ "adminSeries.saveChanges" | translate }}
+          </button>
+          <button hlmBtn variant="outline" (click)="cancelEdit()">
+            {{ "adminSeries.cancel" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
 
   <!-- Events List -->
   <div class="space-y-8">

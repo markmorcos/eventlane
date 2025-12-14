@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { TranslateModule } from "@ngx-translate/core";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 
 import { AuthService } from "../../services/auth.service";
@@ -44,6 +44,7 @@ export class CreateEventComponent implements OnInit {
   private router = inject(Router);
   private seoService = inject(SeoService);
   private toastService = inject(ToastService);
+  private translate = inject(TranslateService);
 
   isAuthenticated = this.authService.isAuthenticated;
   loading = signal(false);
@@ -107,8 +108,8 @@ export class CreateEventComponent implements OnInit {
   async createEvent() {
     if (!this.isFormValid()) {
       this.toastService.error(
-        "Invalid form",
-        "Please check all fields and try again."
+        this.translate.instant("createEvent.invalidForm"),
+        this.translate.instant("createEvent.invalidFormDesc")
       );
       return;
     }
@@ -139,14 +140,17 @@ export class CreateEventComponent implements OnInit {
       );
 
       this.toastService.success(
-        "Event created!",
-        `${result.seriesTitle || this.title} is ready to accept RSVPs.`
+        this.translate.instant("createEvent.eventCreated"),
+        this.translate.instant("createEvent.eventCreatedDesc", {
+          title: result.seriesTitle || this.title,
+        })
       );
       this.router.navigate(["/admin/events", result.seriesSlug]);
     } catch (error: any) {
       this.toastService.error(
-        "Failed to create event",
-        error?.error?.message || "Please try again."
+        this.translate.instant("createEvent.createFailed"),
+        error?.error?.message ||
+          this.translate.instant("createEvent.createFailedDesc")
       );
       console.error(error);
     } finally {

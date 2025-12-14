@@ -11,7 +11,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink, ActivatedRoute, Router } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { TranslateModule } from "@ngx-translate/core";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 
 import { EventDetailStore } from "../../stores/event-detail.store";
 import { AuthService } from "../../services/auth.service";
@@ -75,6 +75,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   private eventApiService = inject(EventApiService);
   private toastService = inject(ToastService);
   private preferencesService = inject(UserPreferencesService);
+  private translate = inject(TranslateService);
 
   email = this.authService.userEmail;
   event = this.store.event;
@@ -239,10 +240,14 @@ export class AdminEventComponent implements OnInit, OnDestroy {
           timezone: this.newTimezone,
         })
       );
-      this.toastService.success("Date & time updated", "");
+      this.toastService.success(
+        this.translate.instant("adminEvent.dateTimeUpdated")
+      );
       this.editingDateTime.set(false);
     } catch (err) {
-      this.toastService.error("Failed to update date & time", "");
+      this.toastService.error(
+        this.translate.instant("adminEvent.dateTimeUpdateFailed")
+      );
       console.error(err);
     }
   }
@@ -271,10 +276,14 @@ export class AdminEventComponent implements OnInit, OnDestroy {
             : { clearLocation: true }
         )
       );
-      this.toastService.success("Location updated", "");
+      this.toastService.success(
+        this.translate.instant("adminEvent.locationUpdated")
+      );
       this.editingLocation.set(false);
     } catch (err) {
-      this.toastService.error("Failed to update location", "");
+      this.toastService.error(
+        this.translate.instant("adminEvent.locationUpdateFailed")
+      );
       console.error(err);
     }
   }
@@ -300,10 +309,14 @@ export class AdminEventComponent implements OnInit, OnDestroy {
           description: this.newDescription.trim() || "",
         })
       );
-      this.toastService.success("Description updated", "");
+      this.toastService.success(
+        this.translate.instant("adminEvent.descriptionUpdated")
+      );
       this.editingDescription.set(false);
     } catch (err) {
-      this.toastService.error("Failed to update description", "");
+      this.toastService.error(
+        this.translate.instant("adminEvent.descriptionUpdateFailed")
+      );
       console.error(err);
     }
   }
@@ -322,10 +335,14 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
     try {
       await this.eventApiService.uploadCoverImage(evt.slug, blob);
-      this.toastService.success("Cover image uploaded", "");
+      this.toastService.success(
+        this.translate.instant("adminEvent.coverImageUploaded")
+      );
       this.editingCoverImage.set(false);
     } catch (err) {
-      this.toastService.error("Failed to upload cover image", "");
+      this.toastService.error(
+        this.translate.instant("adminEvent.coverImageUploadFailed")
+      );
       console.error(err);
     }
   }
@@ -336,10 +353,14 @@ export class AdminEventComponent implements OnInit, OnDestroy {
 
     try {
       await firstValueFrom(this.eventApiService.deleteCoverImage(evt.slug));
-      this.toastService.success("Cover image removed", "");
+      this.toastService.success(
+        this.translate.instant("adminEvent.coverImageRemoved")
+      );
       this.editingCoverImage.set(false);
     } catch (err) {
-      this.toastService.error("Failed to remove cover image", "");
+      this.toastService.error(
+        this.translate.instant("adminEvent.coverImageRemoveFailed")
+      );
       console.error(err);
     }
   }
