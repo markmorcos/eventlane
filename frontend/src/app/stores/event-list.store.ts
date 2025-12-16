@@ -10,7 +10,6 @@ import { firstValueFrom, Subscription } from "rxjs";
 
 import { EventApiService } from "../services/event-api.service";
 import { EventSummary } from "../models/event.model";
-import { EventOrSeriesGroup } from "../models/event-or-series-group.model";
 import { EventSocketService } from "../services/event-socket.service";
 import { ToastService } from "../services/toast.service";
 import { AuthService } from "../services/auth.service";
@@ -34,25 +33,24 @@ export class EventListStore {
 
   private userEmail = this.auth.userEmail;
 
-  private readonly _eventGroups = signal<EventOrSeriesGroup[]>([]);
+  private readonly _events = signal<EventSummary[]>([]);
   private readonly _loading = signal(false);
   private readonly _error = signal<string | null>(null);
 
   private userSubscription?: Subscription;
 
-  readonly eventGroups = computed(() => this._eventGroups());
-  readonly events = computed(() => this._eventGroups().map((g) => g.nextEvent)); // For backward compatibility
+  readonly events = computed(() => this._events());
   readonly loading = computed(() => this._loading());
   readonly error = computed(() => this._error());
 
   async loadAttendingEvents() {
-    this._eventGroups.set([]);
+    this._events.set([]);
     this._loading.set(true);
     this._error.set(null);
 
     try {
       const data = await firstValueFrom(this.api.getAttendingEvents());
-      this._eventGroups.set(data);
+      this._events.set(data);
 
       if (isPlatformBrowser(this.platformId)) {
         this.subscribeToUpdates();
@@ -86,15 +84,9 @@ export class EventListStore {
 
     for (const eventSlug of Object.keys(deltasByEvent)) {
       const eventDeltas = deltasByEvent[eventSlug];
-      const eventGroup = this._eventGroups().find(
-        (g) => g.nextEvent.slug === eventSlug
-      );
+      const event = this._events().find((e) => e.slug === eventSlug);
 
-      if (
-        eventDeltas[0] &&
-        eventGroup &&
-        eventDeltas[0].version < eventGroup.nextEvent.version
-      ) {
+      if (eventDeltas[0] && event && eventDeltas[0].version < event.version) {
         continue;
       }
 
@@ -105,15 +97,13 @@ export class EventListStore {
   }
 
   private async applyDelta(delta: EventDelta): Promise<void> {
-    const groups = this._eventGroups();
-    const group = groups.find((g) => g.nextEvent.slug === delta.eventSlug);
+    const events = this._events();
+    const event = events.find((e) => e.slug === delta.eventSlug);
 
-    if (!group) {
+    if (!event) {
       // Event not in our list, ignore delta
       return;
     }
-
-    let event = group.nextEvent;
 
     let updated: EventSummary | null = null;
 
@@ -139,8 +129,8 @@ export class EventListStore {
       case "AdminRemoved": {
         const d = delta as AdminRemovedDelta;
         if (d.adminEmail === this.userEmail()) {
-          this._eventGroups.update((groups) =>
-            groups.filter((g) => g.nextEvent.slug !== delta.eventSlug)
+          this._events.update((events) =>
+            events.filter((e) => e.slug !== delta.eventSlug)
           );
           this.toast.info(
             `You've been removed as an admin from "${event.title}"`
@@ -222,20 +212,16 @@ export class EventListStore {
       }
 
       case "EventDeleted": {
-        this._eventGroups.update((groups) =>
-          groups.filter((g) => g.nextEvent.slug !== delta.eventSlug)
+        this._events.update((events) =>
+          events.filter((e) => e.slug !== delta.eventSlug)
         );
         return;
       }
     }
 
     if (updated) {
-      this._eventGroups.update((groups) => {
-        return groups.map((g) =>
-          g.nextEvent.slug === delta.eventSlug
-            ? { ...g, nextEvent: updated! }
-            : g
-        );
+      this._events.update((events) => {
+        return events.map((e) => (e.slug === delta.eventSlug ? updated! : e));
       });
     }
   }

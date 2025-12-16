@@ -7,7 +7,7 @@ import io.eventlane.application.service.ImageStorageService
 import io.eventlane.auth.SecurityUser
 import io.eventlane.web.dto.CreateEventRequestDto
 import io.eventlane.web.dto.DtoMapper
-import io.eventlane.web.dto.EventOrSeriesGroupDto
+import io.eventlane.web.dto.EventResponseDto
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -26,7 +26,7 @@ class EventsController(
     private val imageService: ImageStorageService,
 ) {
     @GetMapping
-    fun listAttendingEvents(@AuthenticationPrincipal user: SecurityUser?): List<EventOrSeriesGroupDto> {
+    fun listAttendingEvents(@AuthenticationPrincipal user: SecurityUser?): List<EventResponseDto> {
         val userEmail = user?.email ?: return emptyList()
 
         val allSeries = seriesRepository.findByCreatorOrAdmin(userEmail)
@@ -43,22 +43,16 @@ class EventsController(
                 null
             } else {
                 val nextEvent = upcomingEvents.first()
-                EventOrSeriesGroupDto(
-                    type = if (series.isOneOff()) "standalone" else "series",
-                    seriesSlug = series.slug,
-                    seriesTitle = series.title,
-                    upcomingEventsCount = upcomingEvents.size,
-                    nextEvent = DtoMapper.toEventResponse(nextEvent, series, userEmail, imageService),
-                )
+                DtoMapper.toEventResponse(nextEvent, series, userEmail, imageService)
             }
-        }.sortedBy { it.nextEvent.eventDate }
+        }.sortedBy { it.eventDate }
     }
 
     @PostMapping
     fun createEventOrSeries(
         @RequestBody request: CreateEventRequestDto,
         @AuthenticationPrincipal user: SecurityUser,
-    ): EventOrSeriesGroupDto {
+    ): EventResponseDto {
         val series = seriesCommands.createSeries(
             title = request.title,
             capacity = request.capacity,
@@ -73,30 +67,15 @@ class EventsController(
 
         val event = repository.findActiveBySeriesId(series.id!!).first()
 
-        return EventOrSeriesGroupDto(
-            type = if (series.isOneOff()) "standalone" else "series",
-            seriesSlug = series.slug,
-            seriesTitle = series.title,
-            upcomingEventsCount = 1,
-            nextEvent = DtoMapper.toEventResponse(event, series, user.email, imageService),
-        )
+        return DtoMapper.toEventResponse(event, series, user.email, imageService)
     }
 
     @GetMapping("/{slug}")
-    fun getEvent(@PathVariable slug: String, @AuthenticationPrincipal user: SecurityUser?): EventOrSeriesGroupDto {
+    fun getEvent(@PathVariable slug: String, @AuthenticationPrincipal user: SecurityUser?): EventResponseDto {
         val event = repository.findBySlug(slug)
         val series = seriesRepository.findById(event.seriesId)
         val userEmail = user?.email ?: ""
 
-        val upcomingCount = repository.findActiveBySeriesId(series.id!!)
-            .count { it.eventDate >= Instant.now() }
-
-        return EventOrSeriesGroupDto(
-            type = if (series.isOneOff()) "standalone" else "series",
-            seriesSlug = series.slug,
-            seriesTitle = series.title,
-            upcomingEventsCount = upcomingCount,
-            nextEvent = DtoMapper.toEventResponse(event, series, userEmail, imageService),
-        )
+        return DtoMapper.toEventResponse(event, series, userEmail, imageService)
     }
 }

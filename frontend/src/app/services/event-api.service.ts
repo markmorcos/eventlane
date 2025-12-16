@@ -7,7 +7,6 @@ import {
   Attendee,
   Location,
 } from "../models/event.model";
-import { EventOrSeriesGroup } from "../models/event-or-series-group.model";
 import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
@@ -18,11 +17,11 @@ export class EventApiService {
   private attendancesBaseUrl = `${environment.apiBaseUrl}/attendances`;
 
   getAttendingEvents() {
-    return this.http.get<EventOrSeriesGroup[]>(this.eventsBaseUrl);
+    return this.http.get<EventDetail[]>(this.eventsBaseUrl);
   }
 
   getEvent(slug: string) {
-    return this.http.get<EventOrSeriesGroup>(`${this.eventsBaseUrl}/${slug}`);
+    return this.http.get<EventDetail>(`${this.eventsBaseUrl}/${slug}`);
   }
 
   createEvent(payload: {
@@ -34,7 +33,7 @@ export class EventApiService {
     leadWeeks?: number;
     endDate?: string | null;
   }) {
-    return this.http.post<EventOrSeriesGroup>(this.eventsBaseUrl, payload);
+    return this.http.post<EventDetail>(this.eventsBaseUrl, payload);
   }
 
   attend(slug: string, name: string) {

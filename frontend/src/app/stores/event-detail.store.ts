@@ -86,8 +86,7 @@ export class EventDetailStore {
     this._error.set(null);
 
     try {
-      const result = await firstValueFrom(this.api.getEvent(slug));
-      const data = result.nextEvent;
+      const data = await firstValueFrom(this.api.getEvent(slug));
       this._event.set(data);
 
       // On server, store the data for transfer to client
@@ -118,8 +117,7 @@ export class EventDetailStore {
     this._error.set(null);
 
     try {
-      const result = await firstValueFrom(this.api.getEvent(this.currentSlug));
-      const data = result.nextEvent;
+      const data = await firstValueFrom(this.api.getEvent(this.currentSlug));
       this._event.set(data);
     } catch (err) {
       this._error.set("Failed to reload event");

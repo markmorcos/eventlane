@@ -142,7 +142,7 @@ export class CreateEventComponent implements OnInit {
       this.toastService.success(
         this.translate.instant("createEvent.eventCreated"),
         this.translate.instant("createEvent.eventCreatedDesc", {
-          title: result.seriesTitle || this.title,
+          title: result.title,
         })
       );
       this.router.navigate(["/admin/events", result.seriesSlug]);
