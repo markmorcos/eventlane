@@ -1,0 +1,14 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- EL Monogram -->
+  <g id="monogram">
+    <rect x="10" y="15" width="35" height="35" rx="6" fill="#2D5BFF"/>
+    <text x="18" y="40" font-family="Inter, sans-serif" font-size="20" font-weight="800" fill="white">
+      EL
+    </text>
+  </g>
+  
+  <!-- Text -->
+  <text x="60" y="38" font-family="Inter, sans-serif" font-size="24" font-weight="800" fill="#1A1D23">
+    EventLane
+  </text>
+</svg>

@@ -1,0 +1,11 @@
+{
+  "name": "@eventlane/user",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve user",
+    "build": "ng build user",
+    "serve:ssr": "node ../../dist/apps/user/server/server.mjs"
+  }
+}

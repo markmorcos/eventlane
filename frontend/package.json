@@ -1,13 +1,17 @@
 {
-  "name": "web",
+  "name": "@eventlane/workspace",
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "pnpm run start:user",
+    "start:admin": "ng serve admin",
+    "start:user": "ng serve user",
+    "build": "pnpm run build:admin && pnpm run build:user",
+    "build:admin": "ng build admin",
+    "build:user": "ng build user",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:web": "node dist/web/server/server.mjs"
+    "serve:ssr:user": "node dist/user/server/server.mjs"
   },
   "private": true,
   "dependencies": {

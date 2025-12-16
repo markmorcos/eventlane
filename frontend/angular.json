@@ -1,45 +1,136 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "newProjectRoot": "projects",
+  "newProjectRoot": "apps",
   "projects": {
-    "web": {
+    "admin": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "",
-      "sourceRoot": "src",
+      "root": "apps/admin",
+      "sourceRoot": "apps/admin/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
             "outputPath": {
-              "base": "dist/web"
+              "base": "dist/admin"
             },
-            "index": "src/index.html",
+            "index": "apps/admin/src/index.html",
             "polyfills": ["zone.js"],
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "apps/admin/tsconfig.app.json",
             "assets": [
-              "src/favicon.ico",
-              "src/apple-touch-icon.png",
-              "src/android-chrome-192x192.png",
-              "src/android-chrome-512x512.png",
-              "src/og-image.png",
-              "src/manifest.json",
-              "src/robots.txt",
-              "src/sitemap.xml",
-              "src/assets"
+              "apps/admin/src/favicon.ico",
+              "apps/admin/src/apple-touch-icon.png",
+              "apps/admin/src/android-chrome-192x192.png",
+              "apps/admin/src/android-chrome-512x512.png",
+              "apps/admin/src/og-image.png",
+              "apps/admin/src/manifest.json",
+              "apps/admin/src/robots.txt",
+              "apps/admin/src/sitemap.xml",
+              "apps/admin/src/assets"
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["apps/admin/src/styles.scss"],
             "scripts": [],
-            "browser": "src/main.ts",
-            "server": "src/main.server.ts",
+            "browser": "apps/admin/src/main.ts"
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "700kb",
+                  "maximumError": "800kb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": {
+                "scripts": false,
+                "styles": false,
+                "vendor": false
+              },
+              "namedChunks": false,
+              "extractLicenses": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/admin/src/environments/environment.ts",
+                  "with": "apps/admin/src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "admin:build:production"
+            },
+            "development": {
+              "buildTarget": "admin:build:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4201
+          }
+        }
+      }
+    },
+    "user": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/user",
+      "sourceRoot": "apps/user/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": {
+              "base": "dist/user"
+            },
+            "index": "apps/user/src/index.html",
+            "polyfills": ["zone.js"],
+            "tsConfig": "apps/user/tsconfig.app.json",
+            "assets": [
+              "apps/user/src/favicon.ico",
+              "apps/user/src/apple-touch-icon.png",
+              "apps/user/src/android-chrome-192x192.png",
+              "apps/user/src/android-chrome-512x512.png",
+              "apps/user/src/og-image.png",
+              "apps/user/src/manifest.json",
+              "apps/user/src/robots.txt",
+              "apps/user/src/sitemap.xml",
+              "apps/user/src/assets"
+            ],
+            "styles": ["apps/user/src/styles.scss"],
+            "scripts": [],
+            "browser": "apps/user/src/main.ts",
+            "server": "apps/user/src/main.server.ts",
             "outputMode": "server",
-            "ssr": { "entry": "src/server.ts" }
+            "ssr": { "entry": "apps/user/src/server.ts" }
           },
           "configurations": {
             "production": {
@@ -66,8 +157,8 @@
               "extractLicenses": true,
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "apps/user/src/environments/environment.ts",
+                  "with": "apps/user/src/environments/environment.prod.ts"
                 }
               ]
             },
@@ -84,13 +175,16 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "web:build:production"
+              "buildTarget": "user:build:production"
             },
             "development": {
-              "buildTarget": "web:build:development"
+              "buildTarget": "user:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4200
+          }
         }
       }
     }

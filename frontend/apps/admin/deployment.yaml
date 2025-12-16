@@ -1,0 +1,15 @@
+version: 0.4.7
+
+namespace: eventlane
+project: frontend-admin
+
+services:
+  - name: admin-web
+    image: ghcr.io/markmorcos/eventlane-admin-web
+    context: frontend
+    dockerfile: apps/admin/Dockerfile
+    port: 80
+    ingress:
+      host: admin.eventlane.io
+      path: /?(.*)
+      pathType: ImplementationSpecific

@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@layer base {
+  :root {
+    /* EventLane Brand Colors - Light Theme */
+    --background: 220 14% 96%; /* #f7f8fa - soft grey bg */
+    --foreground: 222 21% 12%; /* #1a1d23 - dark text */
+
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 222 21% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 21% 12%;
+
+    --primary: 227 100% 59%; /* #2d5bff - primary blue */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 10% 40%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 14% 90%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 220 14% 92%;
+    --accent-foreground: 222 21% 12%;
+
+    --destructive: 0 69% 65%; /* #ff4f4f - red */
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 153 52% 49%; /* #2ecb70 - signal green */
+    --success-foreground: 0 0% 100%;
+
+    --warning: 37 100% 56%; /* #ffb020 - amber */
+    --warning-foreground: 222 21% 12%;
+
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    --ring: 227 100% 59%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222 21% 12%;
+    --foreground: 220 14% 96%;
+
+    --card: 222 21% 16%;
+    --card-foreground: 220 14% 96%;
+
+    --popover: 222 21% 16%;
+    --popover-foreground: 220 14% 96%;
+
+    --primary: 227 100% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 30%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 222 21% 20%;
+    --muted-foreground: 220 14% 60%;
+
+    --accent: 222 21% 20%;
+    --accent-foreground: 220 14% 96%;
+
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 153 52% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 37 90% 50%;
+    --warning-foreground: 222 21% 12%;
+
+    --border: 222 21% 25%;
+    --input: 222 21% 25%;
+    --ring: 227 100% 65%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  margin-left: -1rem;
+  filter: invert(1);
+}

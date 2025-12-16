@@ -1,0 +1,54 @@
+version: 0.4.7
+
+namespace: eventlane
+project: backend
+
+services:
+  - name: api
+    image: ghcr.io/markmorcos/eventlane-backend-api
+    context: backend
+    port: 8080
+    env:
+      - name: MONGODB_URI
+        valueFrom:
+          secretKeyRef:
+            name: mongodb-credentials
+            key: MONGODB_URI
+      - name: FIREBASE_PROJECT_ID
+        value: eventlane-cd9d2
+      - name: FIREBASE_CREDENTIALS_PATH
+        value: /secrets/firebase-service-account.json
+      - name: MINIO_ENDPOINT
+        value: https://cdn.morcos.tech
+      - name: MINIO_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: MINIO_ACCESS_KEY
+      - name: MINIO_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: MINIO_SECRET_KEY
+      - name: MINIO_BUCKET_NAME
+        value: eventlane
+      - name: RESEND_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: resend-credentials
+            key: RESEND_API_KEY
+      - name: RESEND_FROM_EMAIL
+        value: noreply@eventlane.io
+      - name: EMAIL_FROM_NAME
+        value: EventLane
+      - name: EMAIL_ENABLED
+        value: "true"
+    volumes:
+      - name: firebase-credentials
+        secret:
+          secretName: firebase-credentials
+        mountPath: /secrets
+    ingress:
+      host: api.eventlane.io
+      path: /?(.*)
+      pathType: ImplementationSpecific

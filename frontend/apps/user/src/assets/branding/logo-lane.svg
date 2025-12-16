@@ -1,0 +1,18 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Lane Icon -->
+  <g id="lane-icon">
+    <!-- Top line -->
+    <line x1="10" y1="20" x2="50" y2="20" stroke="#2D5BFF" stroke-width="3" stroke-linecap="round"/>
+    <!-- Bottom line -->
+    <line x1="10" y1="40" x2="50" y2="40" stroke="#2D5BFF" stroke-width="3" stroke-linecap="round"/>
+    <!-- Dashed center line -->
+    <line x1="10" y1="30" x2="20" y2="30" stroke="#2D5BFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="25" y1="30" x2="35" y2="30" stroke="#2D5BFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="40" y1="30" x2="50" y2="30" stroke="#2D5BFF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="65" y="38" font-family="Inter, sans-serif" font-size="24" font-weight="800" fill="#1A1D23">
+    EventLane
+  </text>
+</svg>

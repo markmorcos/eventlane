@@ -23,6 +23,7 @@ app:
   cors:
     allowed-origins:
       - https://eventlane.io
+      - https://admin.eventlane.io
   email:
     from-name: ${EMAIL_FROM_NAME}
     enabled: ${EMAIL_ENABLED}

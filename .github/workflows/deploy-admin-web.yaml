@@ -1,0 +1,26 @@
+name: deploy-admin-web
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger infrastructure deployment
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.INFRASTRUCTURE_PAT }}
+          repository: markmorcos/infrastructure
+          event-type: deploy-eventlane
+          client-payload: |-
+            {
+              "repository": "markmorcos/eventlane",
+              "token": "${{ secrets.DEPLOYMENT_TOKEN }}",
+              "version": "${{ github.sha }}",
+              "config_file": "frontend/apps/admin/deployment.yaml"
+            }

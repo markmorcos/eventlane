@@ -1,0 +1,16 @@
+export const environment = {
+  production: true,
+  firebase: {
+    apiKey: "AIzaSyCA_JV56DejP1o1y1C8uIRJ0YaZ-38fVW0",
+    authDomain: "auth.eventlane.io",
+    projectId: "eventlane-cd9d2",
+    storageBucket: "eventlane-cd9d2.firebasestorage.app",
+    messagingSenderId: "908395301644",
+    appId: "1:908395301644:web:3d71b270365f26970c1729",
+    measurementId: "G-H6RMHDPLRF",
+  },
+  apiBaseUrl: "https://api.eventlane.io/api",
+  wsBaseUrl: "https://api.eventlane.io/ws",
+  googleMapsApiKey: "AIzaSyCA_JV56DejP1o1y1C8uIRJ0YaZ-38fVW0",
+  userUrl: "https://eventlane.io",
+};

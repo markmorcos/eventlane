@@ -1,0 +1,64 @@
+import { Injectable, inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import {
+  EventSeries,
+  CreateEventSeriesRequest,
+  UpdateEventSeriesRequest,
+} from "../models/event-series.model";
+import { ENVIRONMENT } from "../environment.token";
+
+@Injectable({
+  providedIn: "root",
+})
+export class EventSeriesApiService {
+  private http = inject(HttpClient);
+  private environment = inject(ENVIRONMENT);
+  private baseUrl = `${this.environment.apiBaseUrl}/admin/series`;
+
+  listSeries(): Observable<EventSeries[]> {
+    return this.http.get<EventSeries[]>(this.baseUrl);
+  }
+
+  getSeries(slug: string): Observable<EventSeries> {
+    return this.http.get<EventSeries>(`${this.baseUrl}/${slug}`);
+  }
+
+  createSeries(request: CreateEventSeriesRequest): Observable<EventSeries> {
+    return this.http.post<EventSeries>(this.baseUrl, request);
+  }
+
+  updateSeries(
+    slug: string,
+    request: UpdateEventSeriesRequest
+  ): Observable<EventSeries> {
+    return this.http.patch<EventSeries>(`${this.baseUrl}/${slug}`, request);
+  }
+
+  deleteSeries(slug: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${slug}`);
+  }
+
+  addAdmin(slug: string, email: string): Observable<EventSeries> {
+    return this.http.post<EventSeries>(`${this.baseUrl}/${slug}/admins`, {
+      email,
+    });
+  }
+
+  removeAdmin(slug: string, email: string): Observable<EventSeries> {
+    return this.http.delete<EventSeries>(
+      `${this.baseUrl}/${slug}/admins/${email}`
+    );
+  }
+
+  createEvent(
+    seriesSlug: string,
+    payload: { capacity: number; eventDate: string; timezone: string }
+  ): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${seriesSlug}/events`, payload);
+  }
+
+  getEvents(seriesSlug: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${seriesSlug}/events`);
+  }
+}

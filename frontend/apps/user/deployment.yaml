@@ -1,0 +1,15 @@
+version: 0.4.7
+
+namespace: eventlane
+project: frontend-user
+
+services:
+  - name: user-web
+    image: ghcr.io/markmorcos/eventlane-user-web
+    context: frontend
+    dockerfile: apps/user/Dockerfile
+    port: 4000
+    ingress:
+      host: eventlane.io
+      path: /?(.*)
+      pathType: ImplementationSpecific
