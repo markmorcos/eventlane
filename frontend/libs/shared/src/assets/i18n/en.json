@@ -78,6 +78,8 @@
     "interval": "Repeat every",
     "weekly": "Week",
     "biweekly": "2 weeks",
+    "monthly": "Month",
+    "customInterval": "Every {{interval}} days",
     "leadWeeks": "Generate events in advance",
     "leadWeeksHint": "How many weeks ahead to create events (1-52)",
     "setEndDate": "Set end date",

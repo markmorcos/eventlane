@@ -58,6 +58,58 @@
     </div>
 
     <div class="space-y-6">
+      <!-- Share Link Section -->
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>{{ "adminEvent.shareEvent" | translate }}</h3>
+        </div>
+        <div hlmCardContent>
+          <div class="space-y-2">
+            <label class="text-sm font-medium">
+              {{ "adminEvent.publicLink" | translate }}
+            </label>
+            <div class="flex gap-2">
+              <input
+                hlmInput
+                type="text"
+                [value]="getEventLink()"
+                readonly
+                class="flex-1 bg-muted"
+              />
+              <button
+                hlmBtn
+                type="button"
+                variant="outline"
+                (click)="shareEvent()"
+                title="Copy link"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+                  />
+                  <path
+                    d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+                  />
+                </svg>
+                <span class="ml-2">{{
+                  "adminEvent.copyLink" | translate
+                }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Event Metadata Section -->
       <div hlmCard>
         <div hlmCardHeader>

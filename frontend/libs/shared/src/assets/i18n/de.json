@@ -214,6 +214,7 @@
     "weekly": "Wöchentlich",
     "biweekly": "Alle zwei Wochen",
     "monthly": "Monatlich",
+    "customInterval": "Alle {{interval}} Tage",
     "recurring": "Wiederkehrend",
     "backToMyEvents": "Zurück zu meine Veranstaltungen",
     "editSeries": "Serie bearbeiten",

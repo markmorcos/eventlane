@@ -43,6 +43,7 @@ import {
   convertUTCToLocalDateTime,
 } from "@eventlane/shared";
 import { firstValueFrom } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "app-admin-event",
@@ -198,6 +199,31 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     this.store.removeAdmin(evt.slug, action.email);
     this.showRemoveAdminDialog.set(false);
     this.pendingAction.set(null);
+  }
+
+  getEventLink() {
+    const evt = this.event();
+    if (!evt) return "";
+    return `${environment.userUrl}/events/${evt.slug}`;
+  }
+
+  shareEvent() {
+    const evt = this.event();
+    if (!evt) return;
+
+    const url = this.getEventLink();
+    navigator.clipboard.writeText(url).then(
+      () => {
+        this.toastService.success(
+          this.translate.instant("adminEvent.linkCopied")
+        );
+      },
+      () => {
+        this.toastService.error(
+          this.translate.instant("adminEvent.copyFailed")
+        );
+      }
+    );
   }
 
   async deleteEvent() {

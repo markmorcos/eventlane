@@ -26,7 +26,103 @@
       </button>
     </div>
 
-    @if (isAuthenticated()) {
+    @if (isAuthenticated()) { @if (createdEvent(); as evt) {
+    <div hlmCard>
+      <div hlmCardHeader>
+        <div class="text-center">
+          <div
+            class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-primary"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h3 hlmCardTitle class="text-2xl mb-2">
+            {{ "createEvent.eventCreated" | translate }}
+          </h3>
+          <p class="text-muted-foreground">{{ evt.title }}</p>
+        </div>
+      </div>
+      <div hlmCardContent>
+        <div class="space-y-4">
+          <div class="rounded-lg border bg-muted/50 p-4">
+            <label class="text-sm font-medium mb-2 block">
+              {{ "createEvent.shareLabel" | translate }}
+            </label>
+            <div class="flex gap-2">
+              <input
+                hlmInput
+                type="text"
+                [value]="getEventLink()"
+                readonly
+                class="flex-1 bg-background"
+              />
+              <button
+                hlmBtn
+                type="button"
+                variant="outline"
+                (click)="shareEvent()"
+                title="Copy link"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+                  />
+                  <path
+                    d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+                  />
+                </svg>
+                <span class="ml-2">{{
+                  "createEvent.copyLink" | translate
+                }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button
+              hlmBtn
+              type="button"
+              variant="outline"
+              class="flex-1"
+              (click)="createAnother()"
+            >
+              {{ "createEvent.createAnother" | translate }}
+            </button>
+            <button
+              hlmBtn
+              type="button"
+              class="flex-1"
+              (click)="goToAdminView()"
+            >
+              {{ "createEvent.manageEvent" | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    } @else {
     <div hlmCard>
       <div hlmCardHeader>
         <h3 hlmCardTitle class="text-2xl">
@@ -183,7 +279,7 @@
         </form>
       </div>
     </div>
-    } @else {
+    } } @else {
     <div hlmCard>
       <div hlmCardContent class="py-12 text-center">
         <p class="text-muted-foreground">Please sign in to create events.</p>

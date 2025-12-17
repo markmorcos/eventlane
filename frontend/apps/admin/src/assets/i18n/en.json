@@ -78,6 +78,8 @@
     "interval": "Repeat every",
     "weekly": "Week",
     "biweekly": "2 weeks",
+    "monthly": "Month",
+    "customInterval": "Every {{interval}} days",
     "leadWeeks": "Generate events in advance",
     "leadWeeksHint": "How many weeks ahead to create events (1-52)",
     "setEndDate": "Set end date",
@@ -90,7 +92,13 @@
     "eventCreated": "Event created!",
     "eventCreatedDesc": "{{title}} is ready to accept RSVPs.",
     "createFailed": "Failed to create event",
-    "createFailedDesc": "Please try again."
+    "createFailedDesc": "Please try again.",
+    "shareLabel": "Public event link",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied to clipboard!",
+    "copyFailed": "Failed to copy link",
+    "createAnother": "Create another",
+    "manageEvent": "Manage event"
   },
   "eventsList": {
     "title": "Events",
@@ -197,7 +205,12 @@
     "coverImageUploaded": "Cover image uploaded",
     "coverImageUploadFailed": "Failed to upload cover image",
     "coverImageRemoved": "Cover image removed",
-    "coverImageRemoveFailed": "Failed to remove cover image"
+    "coverImageRemoveFailed": "Failed to remove cover image",
+    "shareEvent": "Share event",
+    "publicLink": "Public event link",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied to clipboard!",
+    "copyFailed": "Failed to copy link"
   },
   "adminSeries": {
     "title": "My events",

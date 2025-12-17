@@ -5,6 +5,7 @@ import { Router, RouterLink } from "@angular/router";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { firstValueFrom } from "rxjs";
 
+import { environment } from "../../../environments/environment";
 import { AuthService } from "@eventlane/shared";
 import { EventApiService } from "@eventlane/shared";
 import { SeoService } from "@eventlane/shared";
@@ -48,6 +49,11 @@ export class CreateEventComponent implements OnInit {
 
   isAuthenticated = this.authService.isAuthenticated;
   loading = signal(false);
+  createdEvent = signal<{
+    slug: string;
+    title: string;
+    seriesSlug: string;
+  } | null>(null);
 
   title = "";
   capacity = 8;
@@ -139,13 +145,18 @@ export class CreateEventComponent implements OnInit {
         this.eventApiService.createEvent(payload)
       );
 
+      this.createdEvent.set({
+        slug: result.slug,
+        title: result.title,
+        seriesSlug: result.seriesSlug,
+      });
+
       this.toastService.success(
         this.translate.instant("createEvent.eventCreated"),
         this.translate.instant("createEvent.eventCreatedDesc", {
           title: result.title,
         })
       );
-      this.router.navigate(["/admin/events", result.seriesSlug]);
     } catch (error: any) {
       this.toastService.error(
         this.translate.instant("createEvent.createFailed"),
@@ -156,5 +167,49 @@ export class CreateEventComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  getEventLink() {
+    const evt = this.createdEvent();
+    if (!evt) return "";
+    return `${environment.userUrl}/events/${evt.slug}`;
+  }
+
+  shareEvent() {
+    const evt = this.createdEvent();
+    if (!evt) return;
+
+    const url = this.getEventLink();
+    navigator.clipboard.writeText(url).then(
+      () => {
+        this.toastService.success(
+          this.translate.instant("createEvent.linkCopied")
+        );
+      },
+      () => {
+        this.toastService.error(
+          this.translate.instant("createEvent.copyFailed")
+        );
+      }
+    );
+  }
+
+  goToAdminView() {
+    const evt = this.createdEvent();
+    if (!evt) return;
+    this.router.navigate(["/events", evt.seriesSlug]);
+  }
+
+  createAnother() {
+    this.createdEvent.set(null);
+    this.title = "";
+    this.capacity = 8;
+    this.eventDate = this.getDefaultDate();
+    this.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    this.isRecurring.set(false);
+    this.intervalType = "weekly";
+    this.leadWeeks = 4;
+    this.hasEndDate.set(false);
+    this.endDate = "";
   }
 }

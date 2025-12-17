@@ -92,7 +92,13 @@
     "eventCreated": "Event erstellt!",
     "eventCreatedDesc": "{{title}} ist bereit, Anmeldungen zu empfangen.",
     "createFailed": "Event konnte nicht erstellt werden",
-    "createFailedDesc": "Bitte versuche es erneut."
+    "createFailedDesc": "Bitte versuche es erneut.",
+    "shareLabel": "Öffentlicher Event-Link",
+    "copyLink": "Link kopieren",
+    "linkCopied": "Link in Zwischenablage kopiert!",
+    "copyFailed": "Link konnte nicht kopiert werden",
+    "createAnother": "Weiteres erstellen",
+    "manageEvent": "Event verwalten"
   },
   "eventsList": {
     "title": "Veranstaltungen",
@@ -199,7 +205,12 @@
     "coverImageUploaded": "Titelbild hochgeladen",
     "coverImageUploadFailed": "Titelbild konnte nicht hochgeladen werden",
     "coverImageRemoved": "Titelbild entfernt",
-    "coverImageRemoveFailed": "Titelbild konnte nicht entfernt werden"
+    "coverImageRemoveFailed": "Titelbild konnte nicht entfernt werden",
+    "shareEvent": "Event teilen",
+    "publicLink": "Öffentlicher Event-Link",
+    "copyLink": "Link kopieren",
+    "linkCopied": "Link in Zwischenablage kopiert!",
+    "copyFailed": "Link konnte nicht kopiert werden"
   },
   "adminSeries": {
     "title": "Meine Veranstaltungen",
@@ -214,6 +225,7 @@
     "weekly": "Wöchentlich",
     "biweekly": "Alle zwei Wochen",
     "monthly": "Monatlich",
+    "customInterval": "Alle {{interval}} Tage",
     "recurring": "Wiederkehrend",
     "backToMyEvents": "Zurück zu meine Veranstaltungen",
     "editSeries": "Serie bearbeiten",
