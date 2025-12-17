@@ -85,10 +85,13 @@
       <picture class="block w-full">
         <source media="(max-width: 768px)" [srcset]="evt.coverImages.mobile" />
         <img
+          appOptimizedImage
           [src]="evt.coverImages.desktop"
           [alt]="evt.title + ' cover image'"
           class="w-full h-auto object-cover rounded-t-lg"
           style="aspect-ratio: 16/9"
+          width="1200"
+          height="675"
         />
       </picture>
       }

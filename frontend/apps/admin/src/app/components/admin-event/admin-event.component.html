@@ -316,9 +316,12 @@
                     [srcset]="evt.coverImages.mobile"
                   />
                   <img
+                    appOptimizedImage
                     [src]="evt.coverImages.desktop"
                     alt="Cover"
                     class="w-full rounded-md border"
+                    width="1200"
+                    height="675"
                   />
                 </picture>
                 } @else {

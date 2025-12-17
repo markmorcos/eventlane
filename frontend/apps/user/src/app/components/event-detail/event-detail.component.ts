@@ -20,6 +20,7 @@ import { SeoService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
 import { UserPreferencesService } from "@eventlane/shared";
 import { EventDetail } from "@eventlane/shared";
+import { OptimizedImageDirective } from "@eventlane/shared";
 import { HlmButtonDirective } from "@eventlane/shared";
 import { HlmInputDirective } from "@eventlane/shared";
 import { HlmBadgeDirective } from "@eventlane/shared";
@@ -44,6 +45,7 @@ import {
     RouterLink,
     FormsModule,
     TranslateModule,
+    OptimizedImageDirective,
     HlmButtonDirective,
     HlmInputDirective,
     HlmBadgeDirective,

@@ -20,6 +20,7 @@ import { SeoService } from "@eventlane/shared";
 import { EventApiService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
 import { UserPreferencesService } from "@eventlane/shared";
+import { OptimizedImageDirective } from "@eventlane/shared";
 import { Meta } from "@angular/platform-browser";
 import { HlmButtonDirective } from "@eventlane/shared";
 import { HlmInputDirective } from "@eventlane/shared";
@@ -52,6 +53,7 @@ import { environment } from "../../../environments/environment";
     CommonModule,
     FormsModule,
     TranslateModule,
+    OptimizedImageDirective,
     HlmButtonDirective,
     HlmInputDirective,
     HlmCardDirective,

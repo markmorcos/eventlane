@@ -12,6 +12,9 @@ export * from "./lib/services/seo.service";
 export * from "./lib/services/toast.service";
 export * from "./lib/services/user-preferences.service";
 
+// Directives
+export * from "./lib/directives/optimized-image.directive";
+
 // Models
 export * from "./lib/models/event.model";
 export * from "./lib/models/event-delta.model";
