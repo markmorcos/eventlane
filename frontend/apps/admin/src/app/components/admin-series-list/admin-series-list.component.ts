@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, OnDestroy, signal } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  OnDestroy,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
@@ -34,6 +41,7 @@ import { UserPreferencesService } from "@eventlane/shared";
     TranslateModule,
   ],
   templateUrl: "./admin-series-list.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminSeriesListComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);

@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, OnDestroy, signal } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  OnDestroy,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
@@ -46,6 +53,7 @@ import { UserPreferencesService } from "@eventlane/shared";
     TimezoneSelectorComponent,
   ],
   templateUrl: "./admin-series-detail.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   private seriesApi = inject(EventSeriesApiService);

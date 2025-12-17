@@ -4,7 +4,11 @@ import io.eventlane.application.ports.EventRepository
 import io.eventlane.application.ports.EventSeriesRepository
 import io.eventlane.application.scheduler.RecurrenceGenerationJob
 import io.eventlane.domain.model.EventSeries
+import io.eventlane.domain.model.EventSeriesCreated
+import io.eventlane.domain.model.EventSeriesDeleted
+import io.eventlane.domain.model.EventSeriesUpdated
 import io.eventlane.domain.util.SlugGenerator
+import io.eventlane.websocket.EventSeriesWebSocketPublisher
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -14,6 +18,7 @@ class EventSeriesCommandService(
     private val eventRepository: EventRepository,
     private val eventCommandService: EventCommandService,
     private val recurrenceGenerationJob: RecurrenceGenerationJob,
+    private val seriesWebSocketPublisher: EventSeriesWebSocketPublisher,
 ) {
 
     fun createSeries(
@@ -61,6 +66,23 @@ class EventSeriesCommandService(
             recurrenceGenerationJob.generateEventsForSeries(savedSeries)
         }
 
+        // Publish EventSeriesCreated delta
+        val delta = EventSeriesCreated(
+            version = 1L,
+            timestamp = now,
+            seriesSlug = savedSeries.slug,
+            slug = savedSeries.slug,
+            title = savedSeries.title,
+            anchorDate = savedSeries.anchorDate.toEpochMilli(),
+            timezone = savedSeries.timezone,
+            interval = savedSeries.interval,
+            leadWeeks = savedSeries.leadWeeks,
+            endDate = savedSeries.endDate?.toEpochMilli(),
+            createdAt = savedSeries.createdAt.toEpochMilli(),
+            createdBy = savedSeries.creatorEmail,
+        )
+        seriesWebSocketPublisher.publishSeriesDeltas(savedSeries, listOf(delta))
+
         return savedSeries
     }
 
@@ -95,6 +117,21 @@ class EventSeriesCommandService(
         if (anchorDate != null || interval != null || leadWeeks != null || endDate != null) {
             regenerateFutureEvents(savedSeries)
         }
+
+        // Publish EventSeriesUpdated delta
+        val hasChanges = anchorDate != null || timezone != null || interval != null ||
+            leadWeeks != null || autoGenerate != null || endDate != null
+        val delta = EventSeriesUpdated(
+            version = savedSeries.version ?: 1L,
+            timestamp = savedSeries.updatedAt,
+            seriesSlug = savedSeries.slug,
+            slug = savedSeries.slug,
+            title = if (hasChanges) savedSeries.title else null,
+            interval = interval,
+            leadWeeks = leadWeeks,
+            endDate = endDate?.toEpochMilli(),
+        )
+        seriesWebSocketPublisher.publishSeriesDeltas(savedSeries, listOf(delta))
 
         return savedSeries
     }
@@ -138,6 +175,15 @@ class EventSeriesCommandService(
         }
 
         seriesRepository.deleteBySlug(slug)
+
+        // Publish EventSeriesDeleted delta
+        val delta = EventSeriesDeleted(
+            version = series.version ?: 1L,
+            timestamp = Instant.now(),
+            seriesSlug = series.slug,
+            slug = series.slug,
+        )
+        seriesWebSocketPublisher.publishSeriesDeltas(series, listOf(delta))
     }
 
     fun addAdmin(slug: String, adminEmail: String): EventSeries {

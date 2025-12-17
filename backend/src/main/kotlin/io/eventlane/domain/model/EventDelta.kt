@@ -4,6 +4,13 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.Instant
 
+// Common interface for all deltas
+interface Delta {
+    val type: String
+    val version: Long
+    val timestamp: Instant
+}
+
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
@@ -22,12 +29,17 @@ import java.time.Instant
     JsonSubTypes.Type(value = EventLocationUpdated::class, name = "EventLocationUpdated"),
     JsonSubTypes.Type(value = EventDescriptionUpdated::class, name = "EventDescriptionUpdated"),
     JsonSubTypes.Type(value = EventCoverImageUpdated::class, name = "EventCoverImageUpdated"),
+    JsonSubTypes.Type(value = EventSeriesCreated::class, name = "EventSeriesCreated"),
+    JsonSubTypes.Type(value = EventSeriesUpdated::class, name = "EventSeriesUpdated"),
+    JsonSubTypes.Type(value = EventSeriesDeleted::class, name = "EventSeriesDeleted"),
 )
 sealed class EventDelta(
-    open val version: Long,
-    open val timestamp: Instant,
+    override val version: Long,
+    override val timestamp: Instant,
     open val eventSlug: String,
-)
+) : Delta {
+    override val type: String get() = this::class.simpleName ?: "Unknown"
+}
 
 data class EventCreated(
     override val version: Long,
@@ -118,3 +130,43 @@ data class EventCoverImageUpdated(
     override val eventSlug: String,
     val coverImages: Map<String, String>?,
 ) : EventDelta(version, timestamp, eventSlug)
+
+// EventSeries delta types
+data class EventSeriesCreated(
+    override val version: Long,
+    override val timestamp: Instant,
+    val seriesSlug: String,
+    val slug: String,
+    val title: String,
+    val anchorDate: Long,
+    val timezone: String,
+    val interval: String?,
+    val leadWeeks: Int,
+    val endDate: Long?,
+    val createdAt: Long,
+    val createdBy: String,
+) : Delta {
+    override val type: String = "EventSeriesCreated"
+}
+
+data class EventSeriesUpdated(
+    override val version: Long,
+    override val timestamp: Instant,
+    val seriesSlug: String,
+    val slug: String,
+    val title: String?,
+    val interval: String?,
+    val leadWeeks: Int?,
+    val endDate: Long?,
+) : Delta {
+    override val type: String = "EventSeriesUpdated"
+}
+
+data class EventSeriesDeleted(
+    override val version: Long,
+    override val timestamp: Instant,
+    val seriesSlug: String,
+    val slug: String,
+) : Delta {
+    override val type: String = "EventSeriesDeleted"
+}

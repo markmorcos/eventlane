@@ -6,6 +6,7 @@ import {
   inject,
   effect,
   PLATFORM_ID,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { RouterLink, ActivatedRoute } from "@angular/router";
@@ -54,6 +55,7 @@ import {
     HlmAlertDialogComponent,
   ],
   templateUrl: "./event-detail.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

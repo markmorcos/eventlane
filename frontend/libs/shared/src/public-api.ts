@@ -4,6 +4,7 @@
 
 // Services
 export * from "./lib/services/auth.service";
+export * from "./lib/services/delta-processor.service";
 export * from "./lib/services/event-api.service";
 export * from "./lib/services/event-series-api.service";
 export * from "./lib/services/event-socket.service";

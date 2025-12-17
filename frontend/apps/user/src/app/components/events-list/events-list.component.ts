@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, OnDestroy } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import { environment } from "../../../environments/environment";
 import { RouterLink } from "@angular/router";
@@ -22,6 +28,7 @@ import { formatEventDateTime } from "@eventlane/shared";
     HlmSkeletonCardComponent,
   ],
   templateUrl: "./events-list.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventsListComponent implements OnInit, OnDestroy {
   private store = inject(EventListStore);

@@ -7,6 +7,7 @@ import {
   computed,
   effect,
   untracked,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -65,6 +66,7 @@ import { environment } from "../../../environments/environment";
     ImageUploadComponent,
   ],
   templateUrl: "./admin-event.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminEventComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

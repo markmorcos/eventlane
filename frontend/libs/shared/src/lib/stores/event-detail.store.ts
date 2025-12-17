@@ -29,6 +29,7 @@ import { EventApiService } from "@eventlane/shared";
 import { EventSocketService } from "@eventlane/shared";
 import { AuthService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
+import { DeltaProcessorService } from "../services/delta-processor.service";
 
 @Injectable({ providedIn: "root" })
 export class EventDetailStore {
@@ -39,6 +40,7 @@ export class EventDetailStore {
   private toast = inject(ToastService);
   private transferState = inject(TransferState);
   private platformId = inject(PLATFORM_ID);
+  private deltaProcessor = inject(DeltaProcessorService);
 
   private userEmail = this.auth.userEmail;
   private readonly _event = signal<EventDetail | null>(null);
@@ -148,245 +150,57 @@ export class EventDetailStore {
         d.type !== "EventSeriesDeleted"
     );
 
-    if (eventDeltas[0] && event && eventDeltas[0].version < event.version)
-      return;
     for (const delta of eventDeltas) {
-      event = this.applyDelta(event, delta);
+      const updated = this.deltaProcessor.applyEventDelta(event, delta);
+      if (updated) event = updated;
+
+      event = this.updateRequesterStatus(event, delta);
+
+      if (delta.type === "EventDeleted") {
+        this.route.navigate(["/events"]);
+      }
     }
 
     this._event.set(event);
   }
 
-  private applyDelta(event: EventDetail, delta: EventDelta): EventDetail {
-    // Skip EventSeries deltas
-    if (
-      delta.type === "EventSeriesCreated" ||
-      delta.type === "EventSeriesUpdated" ||
-      delta.type === "EventSeriesDeleted"
-    ) {
-      return event;
-    }
+  /**
+   * Update requesterStatus based on delta - this is user-specific logic
+   * that's not part of the core event state.
+   */
+  private updateRequesterStatus(
+    event: EventDetail,
+    delta: EventDelta
+  ): EventDetail {
+    const userEmail = this.userEmail();
 
     switch (delta.type) {
-      case "EventCapacityUpdated": {
-        const d = delta as EventCapacityUpdatedDelta;
-        return { ...event, capacity: d.newCapacity };
-      }
-
-      case "EventDeleted": {
-        this.route.navigate(["/events"]);
-        return event;
-      }
-
       case "AttendeeAdded": {
         const d = delta as AttendeeAddedDelta;
-        const isAdmin = event.isAdmin === true;
-
-        const requesterStatus =
-          d.attendee.email === this.userEmail()
-            ? d.status
-            : event.requesterStatus;
-
-        if (!isAdmin) {
-          return {
-            ...event,
-            requesterStatus,
-            confirmedCount:
-              d.status === "CONFIRMED"
-                ? event.confirmedCount + 1
-                : event.confirmedCount,
-
-            waitlistedCount:
-              d.status === "WAITLISTED"
-                ? event.waitlistedCount + 1
-                : event.waitlistedCount,
-
-            confirmed: [],
-            waitlisted: [],
-          };
+        if (d.attendee.email === userEmail) {
+          return { ...event, requesterStatus: d.status };
         }
-
-        let confirmed = event.confirmed ?? [];
-        let waitlisted = event.waitlisted ?? [];
-
-        if (d.status === "CONFIRMED") {
-          confirmed = [...confirmed, d.attendee];
-        } else {
-          waitlisted = [...waitlisted, d.attendee];
-        }
-
-        confirmed = confirmed.sort((a, b) =>
-          a.joinedAt.localeCompare(b.joinedAt)
-        );
-        waitlisted = waitlisted.sort((a, b) =>
-          a.joinedAt.localeCompare(b.joinedAt)
-        );
-
-        return {
-          ...event,
-          requesterStatus,
-          confirmed,
-          waitlisted,
-          confirmedCount: confirmed.length,
-          waitlistedCount: waitlisted.length,
-        };
+        break;
       }
 
       case "AttendeeRemoved": {
         const d = delta as AttendeeRemovedDelta;
-        const isAdmin = event.isAdmin === true;
-
-        const requesterStatus =
-          d.attendeeEmail === this.userEmail()
-            ? undefined
-            : event.requesterStatus;
-
-        if (!isAdmin) {
-          const wasConfirmed = event.requesterStatus === "CONFIRMED";
-          const wasWaitlisted = event.requesterStatus === "WAITLISTED";
-
-          return {
-            ...event,
-            requesterStatus,
-            confirmedCount: wasConfirmed
-              ? event.confirmedCount - 1
-              : event.confirmedCount,
-            waitlistedCount: wasWaitlisted
-              ? event.waitlistedCount - 1
-              : event.waitlistedCount,
-            confirmed: [],
-            waitlisted: [],
-          };
+        if (d.attendeeEmail === userEmail) {
+          return { ...event, requesterStatus: undefined };
         }
-
-        let confirmed = (event.confirmed ?? []).filter(
-          (a) => a.email !== d.attendeeEmail
-        );
-
-        let waitlisted = (event.waitlisted ?? []).filter(
-          (a) => a.email !== d.attendeeEmail
-        );
-
-        confirmed = confirmed.sort((a, b) =>
-          a.joinedAt.localeCompare(b.joinedAt)
-        );
-        waitlisted = waitlisted.sort((a, b) =>
-          a.joinedAt.localeCompare(b.joinedAt)
-        );
-
-        return {
-          ...event,
-          requesterStatus,
-          confirmed,
-          waitlisted,
-          confirmedCount: confirmed.length,
-          waitlistedCount: waitlisted.length,
-        };
+        break;
       }
 
       case "AttendeeStatusChanged": {
         const d = delta as AttendeeStatusChangedDelta;
-
-        const isCurrentUser = d.attendeeEmail === this.userEmail();
-        const fromConfirmed = d.oldStatus === "CONFIRMED";
-        const toConfirmed = d.newStatus === "CONFIRMED";
-        const requesterStatus = isCurrentUser
-          ? d.newStatus
-          : event.requesterStatus;
-
-        if (!event.isAdmin) {
-          return {
-            ...event,
-            requesterStatus,
-            confirmedCount: fromConfirmed
-              ? event.confirmedCount - 1
-              : event.confirmedCount + 1,
-            waitlistedCount: fromConfirmed
-              ? event.waitlistedCount + 1
-              : event.waitlistedCount - 1,
-          };
+        if (d.attendeeEmail === userEmail) {
+          return { ...event, requesterStatus: d.newStatus };
         }
-
-        let confirmed = [...event.confirmed!];
-        let waitlisted = [...event.waitlisted!];
-
-        const removeFrom = fromConfirmed ? confirmed : waitlisted;
-        const addTo = toConfirmed ? confirmed : waitlisted;
-
-        const idx = removeFrom.findIndex((a) => a.email === d.attendeeEmail);
-        if (idx === -1) return event;
-
-        const [attendee] = removeFrom.splice(idx, 1);
-        if (fromConfirmed) {
-          addTo.unshift(attendee);
-        } else {
-          addTo.push(attendee);
-        }
-
-        if (fromConfirmed) {
-          confirmed = removeFrom;
-          waitlisted = addTo.sort((a, b) =>
-            a.joinedAt.localeCompare(b.joinedAt)
-          );
-        } else {
-          waitlisted = removeFrom;
-          confirmed = addTo.sort((a, b) =>
-            a.joinedAt.localeCompare(b.joinedAt)
-          );
-        }
-
-        return {
-          ...event,
-          confirmed,
-          waitlisted,
-          requesterStatus,
-          confirmedCount: confirmed.length,
-          waitlistedCount: waitlisted.length,
-        };
+        break;
       }
-
-      case "AdminAdded": {
-        const d = delta as AdminAddedDelta;
-        const admins = event.admins || [];
-        const isAffected = d.adminEmail === this.userEmail();
-        const isAdmin = isAffected ? true : event.isAdmin;
-        return { ...event, isAdmin, admins: [...admins, d.adminEmail] };
-      }
-
-      case "AdminRemoved": {
-        const d = delta as AdminRemovedDelta;
-        const admins = (event.admins || []).filter((a) => a !== d.adminEmail);
-        const isAffected = d.adminEmail === this.userEmail();
-        const isAdmin = isAffected ? false : event.isAdmin;
-        if (isAffected) {
-          this.route.navigate(["/events", event.slug]);
-        }
-        return { ...event, isAdmin, admins };
-      }
-
-      case "EventDateTimeUpdated": {
-        const d = delta as EventDateTimeUpdatedDelta;
-        return { ...event, eventDate: d.eventDate, timezone: d.timezone };
-      }
-
-      case "EventLocationUpdated": {
-        const d = delta as EventLocationUpdatedDelta;
-        return { ...event, location: d.location || undefined };
-      }
-
-      case "EventDescriptionUpdated": {
-        const d = delta as EventDescriptionUpdatedDelta;
-        return { ...event, description: d.description || undefined };
-      }
-
-      case "EventCoverImageUpdated": {
-        const d = delta as EventCoverImageUpdatedDelta;
-        return { ...event, coverImages: d.coverImages || undefined };
-      }
-
-      default:
-        return event;
     }
+
+    return event;
   }
 
   async attend(slug: string, name: string): Promise<void> {

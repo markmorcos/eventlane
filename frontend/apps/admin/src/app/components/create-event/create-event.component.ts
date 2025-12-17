@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
@@ -38,6 +44,7 @@ import { TimezoneSelectorComponent } from "@eventlane/shared";
     TimezoneSelectorComponent,
   ],
   templateUrl: "./create-event.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateEventComponent implements OnInit {
   private authService = inject(AuthService);
