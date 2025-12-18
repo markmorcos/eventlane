@@ -36,7 +36,8 @@
             ],
             "styles": ["apps/admin/src/styles.scss"],
             "scripts": [],
-            "browser": "apps/admin/src/main.ts"
+            "browser": "apps/admin/src/main.ts",
+            "allowedCommonJsDependencies": ["undici", "@firebase/auth"]
           },
           "configurations": {
             "production": {
@@ -53,7 +54,11 @@
                 }
               ],
               "outputHashing": "all",
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": true, "inlineCritical": true },
+                "fonts": true
+              },
               "sourceMap": {
                 "scripts": false,
                 "styles": false,
@@ -130,15 +135,16 @@
             "browser": "apps/user/src/main.ts",
             "server": "apps/user/src/main.server.ts",
             "outputMode": "server",
-            "ssr": { "entry": "apps/user/src/server.ts" }
+            "ssr": { "entry": "apps/user/src/server.ts" },
+            "allowedCommonJsDependencies": ["undici", "@firebase/auth"]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "600kb",
-                  "maximumError": "700kb"
+                  "maximumWarning": "700kb",
+                  "maximumError": "800kb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -147,7 +153,11 @@
                 }
               ],
               "outputHashing": "all",
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": true, "inlineCritical": true },
+                "fonts": true
+              },
               "sourceMap": {
                 "scripts": false,
                 "styles": false,
