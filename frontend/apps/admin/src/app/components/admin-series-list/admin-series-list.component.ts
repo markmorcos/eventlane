@@ -16,6 +16,7 @@ import { EventSeriesApiService } from "@eventlane/shared";
 import { EventSocketService } from "@eventlane/shared";
 import { EventSeries } from "@eventlane/shared";
 import { EventDelta } from "@eventlane/shared";
+import { DeltaProcessorService } from "@eventlane/shared";
 import {
   HlmCardDirective,
   HlmCardContentDirective,
@@ -50,6 +51,7 @@ export class AdminSeriesListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private preferencesService = inject(UserPreferencesService);
   private translate = inject(TranslateService);
+  private deltaProcessor = inject(DeltaProcessorService);
 
   language = this.preferencesService.language;
   userEmail = this.authService.userEmail;
@@ -87,96 +89,21 @@ export class AdminSeriesListComponent implements OnInit, OnDestroy {
   }
 
   private handleDelta(delta: EventDelta) {
-    switch (delta.type) {
-      case "EventSeriesCreated":
-        this.handleSeriesCreated(delta);
-        break;
-      case "EventSeriesUpdated":
-        this.handleSeriesUpdated(delta);
-        break;
-      case "EventSeriesDeleted":
-        this.handleSeriesDeleted(delta);
-        break;
-      default:
-        // Ignore event-specific deltas (they're handled in detail views)
-        console.log("Ignoring delta type:", delta.type);
-    }
-  }
-
-  private handleSeriesCreated(delta: EventDelta) {
-    if (delta.type !== "EventSeriesCreated") return;
-
-    const newSeries: EventSeries = {
-      slug: delta.slug,
-      title: delta.title,
-      interval: delta.interval,
-      leadWeeks: delta.leadWeeks,
-      autoGenerate: delta.interval !== null,
-      anchorDate: delta.anchorDate,
-      timezone: delta.timezone,
-      endDate: delta.endDate,
-      nextEventDate: null,
-      nextEventSlug: null,
-      upcomingEventsCount: 0,
-      creatorEmail: delta.createdBy,
-      admins: [delta.createdBy],
-      createdAt: delta.createdAt,
-      updatedAt: delta.createdAt,
-      version: delta.version,
-    };
-
-    const current = this.series();
-    // Insert-sort by createdAt (newest first)
-    const newList = [...current, newSeries].sort(
-      (a, b) => b.createdAt - a.createdAt
-    );
-    this.series.set(newList);
-  }
-
-  private handleSeriesUpdated(delta: EventDelta) {
-    if (delta.type !== "EventSeriesUpdated") return;
-
-    const current = this.series();
-    const index = current.findIndex((s) => s.slug === delta.slug);
-    if (index === -1) return;
-
-    const existingSeries = current[index];
-
-    // Version check - ignore stale updates
-    if (delta.version <= existingSeries.version) {
-      console.log(
-        "Ignoring stale delta",
-        delta.version,
-        "<=",
-        existingSeries.version
-      );
+    if (
+      ![
+        "EventSeriesCreated",
+        "EventSeriesUpdated",
+        "EventSeriesDeleted",
+      ].includes(delta.type)
+    )
       return;
-    }
-
-    const updated: EventSeries = {
-      ...existingSeries,
-      version: delta.version,
-      title: delta.title ?? existingSeries.title,
-      interval:
-        delta.interval !== undefined ? delta.interval : existingSeries.interval,
-      leadWeeks: delta.leadWeeks ?? existingSeries.leadWeeks,
-      endDate:
-        delta.endDate !== undefined ? delta.endDate : existingSeries.endDate,
-    };
-
-    const newList = [...current];
-    newList[index] = updated;
-    // Re-sort after update
-    newList.sort((a, b) => b.createdAt - a.createdAt);
-    this.series.set(newList);
-  }
-
-  private handleSeriesDeleted(delta: EventDelta) {
-    if (delta.type !== "EventSeriesDeleted") return;
 
     const current = this.series();
-    const filtered = current.filter((s) => s.slug !== delta.slug);
-    this.series.set(filtered);
+    const updated = this.deltaProcessor.applySeriesListDelta(current, delta);
+
+    if (updated) {
+      this.series.set(updated);
+    }
   }
 
   loadSeries() {

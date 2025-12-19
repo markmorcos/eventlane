@@ -99,7 +99,33 @@ export class EventSocketService implements OnDestroy {
     const dest = `/topic/events/${slug}`;
 
     const sub = this.client.subscribe(dest, (msg: IMessage) => {
-      subject.next(JSON.parse(msg.body));
+      try {
+        const parsed = JSON.parse(msg.body);
+        if (!Array.isArray(parsed)) {
+          console.error(
+            `Invalid message format from ${dest}: expected array, got`,
+            typeof parsed
+          );
+          return;
+        }
+        const validDeltas = parsed.filter((delta) => {
+          if (
+            !delta ||
+            typeof delta !== "object" ||
+            !delta.type ||
+            typeof delta.version !== "number"
+          ) {
+            console.warn(`Invalid delta format from ${dest}:`, delta);
+            return false;
+          }
+          return true;
+        });
+        if (validDeltas.length > 0) {
+          subject.next(validDeltas);
+        }
+      } catch (error) {
+        console.error(`Failed to parse message from ${dest}:`, error, msg.body);
+      }
     });
 
     this.subscriptions.set(slug, () => sub.unsubscribe());
@@ -137,7 +163,33 @@ export class EventSocketService implements OnDestroy {
     const dest = `/topic/series/${seriesSlug}`;
 
     const sub = this.client.subscribe(dest, (msg: IMessage) => {
-      subject.next(JSON.parse(msg.body));
+      try {
+        const parsed = JSON.parse(msg.body);
+        if (!Array.isArray(parsed)) {
+          console.error(
+            `Invalid message format from ${dest}: expected array, got`,
+            typeof parsed
+          );
+          return;
+        }
+        const validDeltas = parsed.filter((delta) => {
+          if (
+            !delta ||
+            typeof delta !== "object" ||
+            !delta.type ||
+            typeof delta.version !== "number"
+          ) {
+            console.warn(`Invalid delta format from ${dest}:`, delta);
+            return false;
+          }
+          return true;
+        });
+        if (validDeltas.length > 0) {
+          subject.next(validDeltas);
+        }
+      } catch (error) {
+        console.error(`Failed to parse message from ${dest}:`, error, msg.body);
+      }
     });
 
     this.seriesSubscriptions.set(seriesSlug, () => sub.unsubscribe());
@@ -179,7 +231,33 @@ export class EventSocketService implements OnDestroy {
     const dest = `/topic/users/${email}`;
 
     const sub = this.client.subscribe(dest, (msg: IMessage) => {
-      subject.next(JSON.parse(msg.body));
+      try {
+        const parsed = JSON.parse(msg.body);
+        if (!Array.isArray(parsed)) {
+          console.error(
+            `Invalid message format from ${dest}: expected array, got`,
+            typeof parsed
+          );
+          return;
+        }
+        const validDeltas = parsed.filter((delta) => {
+          if (
+            !delta ||
+            typeof delta !== "object" ||
+            !delta.type ||
+            typeof delta.version !== "number"
+          ) {
+            console.warn(`Invalid delta format from ${dest}:`, delta);
+            return false;
+          }
+          return true;
+        });
+        if (validDeltas.length > 0) {
+          subject.next(validDeltas);
+        }
+      } catch (error) {
+        console.error(`Failed to parse message from ${dest}:`, error, msg.body);
+      }
     });
 
     this.userSubscription = () => sub.unsubscribe();

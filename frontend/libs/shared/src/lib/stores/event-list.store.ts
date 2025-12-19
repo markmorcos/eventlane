@@ -15,13 +15,13 @@ import { ToastService } from "@eventlane/shared";
 import { AuthService } from "@eventlane/shared";
 import {
   EventDelta,
-  EventCapacityUpdatedDelta,
   AttendeeAddedDelta,
   AttendeeRemovedDelta,
   AdminAddedDelta,
   AdminRemovedDelta,
   AttendeeStatusChangedDelta,
 } from "@eventlane/shared";
+import { DeltaProcessorService } from "../services/delta-processor.service";
 
 @Injectable({ providedIn: "root" })
 export class EventListStore {
@@ -30,6 +30,7 @@ export class EventListStore {
   private auth = inject(AuthService);
   private toast = inject(ToastService);
   private platformId = inject(PLATFORM_ID);
+  private deltaProcessor = inject(DeltaProcessorService);
 
   private userEmail = this.auth.userEmail;
 
@@ -84,68 +85,56 @@ export class EventListStore {
         d.type !== "EventSeriesDeleted"
     );
 
-    const deltasByEvent = eventDeltas.reduce((result, delta) => {
-      // Type guard: at this point we know it has eventSlug
-      if ("eventSlug" in delta) {
-        if (!result[delta.eventSlug]) result[delta.eventSlug] = [];
-        result[delta.eventSlug].push(delta);
-      }
-      return result;
-    }, {} as Record<string, EventDelta[]>);
+    let events = this._events();
 
-    for (const eventSlug of Object.keys(deltasByEvent)) {
-      const eventDeltas = deltasByEvent[eventSlug];
-      const event = this._events().find((e) => e.slug === eventSlug);
+    for (const delta of eventDeltas) {
+      if (
+        [
+          "EventSeriesCreated",
+          "EventSeriesUpdated",
+          "EventSeriesDeleted",
+        ].includes(delta.type)
+      )
+        continue;
 
-      if (eventDeltas[0] && event && eventDeltas[0].version < event.version) {
+      if (!("eventSlug" in delta)) continue;
+
+      if (delta.type === "AdminAdded" || delta.type === "AdminRemoved") {
+        await this.handleAdminDelta(delta);
         continue;
       }
 
-      for (const delta of eventDeltas) {
-        await this.applyDelta(delta);
+      const updated = this.deltaProcessor.applyEventSummaryListDelta(
+        events,
+        delta
+      );
+
+      if (updated) {
+        events = updated;
+        events = this.updateRequesterStatus(events, delta);
+        this.showAttendeeDeltaToast(delta, events);
       }
     }
+
+    this._events.set(events);
   }
 
-  private async applyDelta(delta: EventDelta): Promise<void> {
-    // Skip EventSeries deltas
-    if (
-      delta.type === "EventSeriesCreated" ||
-      delta.type === "EventSeriesUpdated" ||
-      delta.type === "EventSeriesDeleted"
-    ) {
-      return;
-    }
-
-    // Type guard: at this point we know it has eventSlug
+  private async handleAdminDelta(delta: EventDelta): Promise<void> {
     if (!("eventSlug" in delta)) return;
 
     const events = this._events();
     const event = events.find((e) => e.slug === delta.eventSlug);
 
-    if (!event) {
-      // Event not in our list, ignore delta
-      return;
-    }
-
-    let updated: EventSummary | null = null;
+    if (!event) return;
 
     switch (delta.type) {
-      case "EventCapacityUpdated": {
-        const d = delta as EventCapacityUpdatedDelta;
-        updated = { ...event, capacity: d.newCapacity };
-        break;
-      }
-
       case "AdminAdded": {
         const d = delta as AdminAddedDelta;
-        if (d.adminEmail !== this.userEmail()) break;
+        if (d.adminEmail !== this.userEmail()) return;
 
         // Reload the full list since we may have new access
         await this.loadAttendingEvents();
-
         this.toast.info(`You've been added as an admin to "${event.title}"`);
-
         break;
       }
 
@@ -161,70 +150,83 @@ export class EventListStore {
         }
         break;
       }
+    }
+  }
 
+  private updateRequesterStatus(
+    events: EventSummary[],
+    delta: EventDelta
+  ): EventSummary[] {
+    const userEmail = this.userEmail();
+    if (!("eventSlug" in delta)) return events;
+
+    const event = events.find((e) => e.slug === delta.eventSlug);
+    if (!event) return events;
+
+    switch (delta.type) {
       case "AttendeeAdded": {
         const d = delta as AttendeeAddedDelta;
-        const isCurrentUser = d.attendee.email === this.userEmail();
-
-        updated = {
-          ...event,
-          requesterStatus: isCurrentUser ? d.status : event.requesterStatus,
-          confirmedCount:
-            d.status === "CONFIRMED"
-              ? event.confirmedCount + 1
-              : event.confirmedCount,
-          waitlistedCount:
-            d.status === "WAITLISTED"
-              ? event.waitlistedCount + 1
-              : event.waitlistedCount,
-        };
+        if (d.attendee.email === userEmail) {
+          return events.map((e) =>
+            e.slug === delta.eventSlug ? { ...e, requesterStatus: d.status } : e
+          );
+        }
         break;
       }
 
       case "AttendeeRemoved": {
         const d = delta as AttendeeRemovedDelta;
-
-        const isCurrentUser = d.attendeeEmail === this.userEmail();
-        const wasConfirmed = event.requesterStatus === "CONFIRMED";
-        const wasWaitlisted = event.requesterStatus === "WAITLISTED";
-
-        updated = {
-          ...event,
-          requesterStatus: isCurrentUser ? undefined : event.requesterStatus,
-          confirmedCount: wasConfirmed
-            ? event.confirmedCount - 1
-            : event.confirmedCount,
-          waitlistedCount: wasWaitlisted
-            ? event.waitlistedCount - 1
-            : event.waitlistedCount,
-        };
-
-        if (isCurrentUser) {
-          this.toast.info(
-            `You have been removed from the event "${event.title}"`
+        if (d.attendeeEmail === userEmail) {
+          return events.map((e) =>
+            e.slug === delta.eventSlug
+              ? { ...e, requesterStatus: undefined }
+              : e
           );
         }
-
         break;
       }
 
       case "AttendeeStatusChanged": {
         const d = delta as AttendeeStatusChangedDelta;
-        const isCurrentUser = d.attendeeEmail === this.userEmail();
-        const fromConfirmed = d.oldStatus === "CONFIRMED";
+        if (d.attendeeEmail === userEmail) {
+          return events.map((e) =>
+            e.slug === delta.eventSlug
+              ? { ...e, requesterStatus: d.newStatus }
+              : e
+          );
+        }
+        break;
+      }
+    }
 
-        updated = {
-          ...event,
-          requesterStatus: isCurrentUser ? d.newStatus : event.requesterStatus,
-          confirmedCount: fromConfirmed
-            ? event.confirmedCount - 1
-            : event.confirmedCount + 1,
-          waitlistedCount: fromConfirmed
-            ? event.waitlistedCount + 1
-            : event.waitlistedCount - 1,
-        };
+    return events;
+  }
 
-        if (isCurrentUser) {
+  private showAttendeeDeltaToast(
+    delta: EventDelta,
+    events: EventSummary[]
+  ): void {
+    if (!("eventSlug" in delta)) return;
+
+    const event = events.find((e) => e.slug === delta.eventSlug);
+    if (!event) return;
+
+    const userEmail = this.userEmail();
+
+    switch (delta.type) {
+      case "AttendeeRemoved": {
+        const d = delta as AttendeeRemovedDelta;
+        if (d.attendeeEmail === userEmail) {
+          this.toast.info(
+            `You have been removed from the event "${event.title}"`
+          );
+        }
+        break;
+      }
+
+      case "AttendeeStatusChanged": {
+        const d = delta as AttendeeStatusChangedDelta;
+        if (d.attendeeEmail === userEmail) {
           this.toast.info(
             `Your status for the event "${
               event.title
@@ -233,19 +235,6 @@ export class EventListStore {
         }
         break;
       }
-
-      case "EventDeleted": {
-        this._events.update((events) =>
-          events.filter((e) => e.slug !== delta.eventSlug)
-        );
-        return;
-      }
-    }
-
-    if (updated) {
-      this._events.update((events) => {
-        return events.map((e) => (e.slug === delta.eventSlug ? updated! : e));
-      });
     }
   }
 

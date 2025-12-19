@@ -16,7 +16,7 @@ import {
   EventSeriesUpdatedDelta,
   EventSeriesDeletedDelta,
 } from "../models/event-delta.model";
-import { EventDetail } from "../models/event.model";
+import { EventDetail, EventSummary } from "../models/event.model";
 import { EventSeries } from "../models/event-series.model";
 
 type DeltaHandler<T> = (state: T, delta: EventDelta) => T | null;
@@ -48,27 +48,17 @@ function isSeriesDelta(
   return "seriesSlug" in delta;
 }
 
-/**
- * Centralized service for processing event and series deltas.
- * Implements version checking to prevent applying stale updates.
- * Returns null if delta is stale (version conflict).
- */
 @Injectable({
   providedIn: "root",
 })
 export class DeltaProcessorService {
-  /**
-   * Apply a delta to a single event.
-   * Returns updated event or null if delta should be ignored (version conflict).
-   */
   applyEventDelta(
     event: EventDetail | null,
     delta: EventDelta
   ): EventDetail | null {
     if (!event) return null;
 
-    // Version check: ignore stale deltas
-    if (delta.version <= event.version) {
+    if (delta.version < event.version) {
       console.warn(
         `Ignoring stale delta for ${event.slug}: delta version ${delta.version} <= event version ${event.version}`
       );
@@ -84,10 +74,6 @@ export class DeltaProcessorService {
     return handler(event, delta);
   }
 
-  /**
-   * Apply a delta to an array of events.
-   * Returns updated array or null if no changes.
-   */
   applyEventListDelta(
     events: EventDetail[],
     delta: EventDelta
@@ -101,21 +87,42 @@ export class DeltaProcessorService {
     return handler(events, delta);
   }
 
-  /**
-   * Apply a delta to a series.
-   * Returns updated series or null if delta should be ignored.
-   */
+  applyEventSummaryListDelta(
+    events: EventSummary[],
+    delta: EventDelta
+  ): EventSummary[] | null {
+    const eventsAsDetail: EventDetail[] = events.map((e) => ({
+      ...e,
+      confirmed: undefined,
+      waitlisted: undefined,
+      admins: undefined,
+    }));
+
+    const handler = this.eventListDeltaHandlers[delta.type];
+    if (!handler) {
+      console.warn(`Unknown delta type for list: ${delta.type}`);
+      return null;
+    }
+
+    const result = handler(eventsAsDetail, delta);
+    if (!result) return null;
+
+    return result.map((e) => {
+      const { confirmed, waitlisted, admins, ...summary } = e;
+      return summary;
+    });
+  }
+
   applySeriesDelta(
     series: EventSeries | null,
     delta: EventDelta
   ): EventSeries | null {
     if (!series) return null;
 
-    // Version check for series deltas
     if (
       "version" in delta &&
       typeof delta.version === "number" &&
-      delta.version <= series.version
+      delta.version < series.version
     ) {
       console.warn(
         `Ignoring stale series delta: delta version ${delta.version} <= series version ${series.version}`
@@ -131,9 +138,6 @@ export class DeltaProcessorService {
     return handler(series, delta);
   }
 
-  /**
-   * Apply a delta to a list of series.
-   */
   applySeriesListDelta(
     seriesList: EventSeries[],
     delta: EventDelta
@@ -145,8 +149,6 @@ export class DeltaProcessorService {
 
     return handler(seriesList, delta);
   }
-
-  // ===== EVENT DELTA HANDLERS (single event) =====
 
   private eventDeltaHandlers: Record<string, DeltaHandler<EventDetail>> = {
     EventCapacityUpdated: (event, delta) => {
@@ -299,8 +301,6 @@ export class DeltaProcessorService {
     },
   };
 
-  // ===== EVENT LIST DELTA HANDLERS (array of events) =====
-
   private eventListDeltaHandlers: Record<string, DeltaHandler<EventDetail[]>> =
     {
       EventCreated: (events, delta) => {
@@ -334,8 +334,7 @@ export class DeltaProcessorService {
         if (!isEventDelta(delta)) return events;
         const d = delta as EventCapacityUpdatedDelta;
         return events.map((e) => {
-          if (e.slug !== delta.eventSlug || delta.version <= e.version)
-            return e;
+          if (e.slug !== delta.eventSlug || delta.version < e.version) return e;
           return { ...e, capacity: d.newCapacity, version: delta.version };
         });
       },
@@ -344,8 +343,7 @@ export class DeltaProcessorService {
         if (!isEventDelta(delta)) return events;
         const d = delta as EventDateTimeUpdatedDelta;
         const updated = events.map((e) => {
-          if (e.slug !== delta.eventSlug || delta.version <= e.version)
-            return e;
+          if (e.slug !== delta.eventSlug || delta.version < e.version) return e;
           return {
             ...e,
             eventDate: d.eventDate,
@@ -360,8 +358,7 @@ export class DeltaProcessorService {
         if (!isEventDelta(delta)) return events;
         const d = delta as AttendeeAddedDelta;
         return events.map((e) => {
-          if (e.slug !== delta.eventSlug || delta.version <= e.version)
-            return e;
+          if (e.slug !== delta.eventSlug || delta.version < e.version) return e;
 
           return {
             ...e,
@@ -381,8 +378,7 @@ export class DeltaProcessorService {
       AttendeeRemoved: (events, delta) => {
         if (!isEventDelta(delta)) return events;
         return events.map((e) => {
-          if (e.slug !== delta.eventSlug || delta.version <= e.version)
-            return e;
+          if (e.slug !== delta.eventSlug || delta.version < e.version) return e;
 
           return {
             ...e,
@@ -396,8 +392,7 @@ export class DeltaProcessorService {
         if (!isEventDelta(delta)) return events;
         const d = delta as AttendeeStatusChangedDelta;
         return events.map((e) => {
-          if (e.slug !== delta.eventSlug || delta.version <= e.version)
-            return e;
+          if (e.slug !== delta.eventSlug || delta.version < e.version) return e;
 
           const confirmedDelta = d.newStatus === "CONFIRMED" ? 1 : -1;
           const waitlistedDelta = d.newStatus === "WAITLISTED" ? 1 : -1;
@@ -411,8 +406,6 @@ export class DeltaProcessorService {
         });
       },
     };
-
-  // ===== SERIES DELTA HANDLERS (single series) =====
 
   private seriesDeltaHandlers: Record<string, DeltaHandler<EventSeries>> = {
     EventSeriesUpdated: (series, delta) => {
@@ -469,7 +462,7 @@ export class DeltaProcessorService {
       EventSeriesUpdated: (seriesList, delta) => {
         const d = delta as EventSeriesUpdatedDelta;
         return seriesList.map((s) => {
-          if (s.slug !== d.slug || delta.version <= s.version) return s;
+          if (s.slug !== d.slug || delta.version < s.version) return s;
 
           return {
             ...s,

@@ -16,14 +16,8 @@ import { EventSocketService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
 import { EventSeries, UpdateEventSeriesRequest } from "@eventlane/shared";
 import { EventDetail } from "@eventlane/shared";
-import {
-  EventDelta,
-  EventCreatedDelta,
-  EventCapacityUpdatedDelta,
-  EventDateTimeUpdatedDelta,
-  AttendeeAddedDelta,
-  AttendeeStatusChangedDelta,
-} from "@eventlane/shared";
+import { EventDelta } from "@eventlane/shared";
+import { DeltaProcessorService } from "@eventlane/shared";
 import {
   HlmCardDirective,
   HlmCardContentDirective,
@@ -63,6 +57,7 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
   private translate = inject(TranslateService);
   private preferencesService = inject(UserPreferencesService);
+  private deltaProcessor = inject(DeltaProcessorService);
 
   language = this.preferencesService.language;
 
@@ -135,139 +130,77 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   }
 
   handleDeltas(deltas: EventDelta[]) {
-    for (const delta of deltas) {
-      this.applyDelta(delta);
-    }
-  }
+    const seriesDeltas = deltas.filter(
+      (d) =>
+        d.type === "EventSeriesCreated" ||
+        d.type === "EventSeriesUpdated" ||
+        d.type === "EventSeriesDeleted"
+    );
 
-  applyDelta(delta: EventDelta) {
-    const currentEvents = this.events();
-
-    switch (delta.type) {
-      case "EventCreated": {
-        const series = this.series();
-        const lastEvent = currentEvents[currentEvents.length - 1];
-
-        if (!series || !lastEvent) {
-          this.loadEvents();
-          break;
+    for (const delta of seriesDeltas) {
+      const currentSeries = this.series();
+      if (currentSeries) {
+        const updated = this.deltaProcessor.applySeriesDelta(
+          currentSeries,
+          delta
+        );
+        if (updated) {
+          this.series.set(updated);
         }
-
-        const d = delta as EventCreatedDelta;
-
-        const newEvent: EventDetail = {
-          slug: delta.eventSlug,
-          title: series.title,
-          capacity: d.capacity,
-          eventDate: new Date(d.eventDate).getTime(),
-          timezone: d.timezone,
-          location: undefined,
-          description: undefined,
-          coverImages: undefined,
-          confirmedCount: 0,
-          waitlistedCount: 0,
-          creatorEmail: series.creatorEmail,
-          isAdmin: true,
-          seriesSlug: series.slug,
-          createdAt: new Date().toISOString(),
-          version: 0,
-        };
-
-        const updated = [...currentEvents, newEvent].sort(
-          (a, b) => a.eventDate - b.eventDate
-        );
-        this.events.set(updated);
-
-        const subscription = this.socket
-          .subscribeToEvent(newEvent.slug)
-          .subscribe({
-            next: (deltas) => this.handleDeltas(deltas),
-          });
-        this.eventSubscriptions.set(newEvent.slug, subscription);
-        break;
-      }
-
-      case "EventDeleted": {
-        const updated = currentEvents.filter((e) => e.slug !== delta.eventSlug);
-        this.events.set(updated);
-
-        this.eventSubscriptions.get(delta.eventSlug)?.unsubscribe();
-        this.eventSubscriptions.delete(delta.eventSlug);
-        break;
-      }
-
-      case "EventCapacityUpdated": {
-        const d = delta as EventCapacityUpdatedDelta;
-        const updated = currentEvents.map((e) =>
-          e.slug === delta.eventSlug ? { ...e, capacity: d.newCapacity } : e
-        );
-        this.events.set(updated);
-        break;
-      }
-
-      case "EventDateTimeUpdated": {
-        const d = delta as EventDateTimeUpdatedDelta;
-        const updated = currentEvents.map((e) =>
-          e.slug === delta.eventSlug
-            ? { ...e, eventDate: d.eventDate, timezone: d.timezone }
-            : e
-        );
-        this.events.set(updated.sort((a, b) => a.eventDate - b.eventDate));
-        break;
-      }
-
-      case "AttendeeAdded": {
-        const d = delta as AttendeeAddedDelta;
-        const updated = currentEvents.map((e) => {
-          if (e.slug !== delta.eventSlug) return e;
-
-          return {
-            ...e,
-            confirmedCount:
-              d.status === "CONFIRMED"
-                ? e.confirmedCount + 1
-                : e.confirmedCount,
-            waitlistedCount:
-              d.status === "WAITLISTED"
-                ? e.waitlistedCount + 1
-                : e.waitlistedCount,
-          };
-        });
-        this.events.set(updated);
-        break;
-      }
-
-      case "AttendeeRemoved": {
-        const updated = currentEvents.map((e) => {
-          if (e.slug !== delta.eventSlug) return e;
-
-          return {
-            ...e,
-            confirmedCount: Math.max(0, e.confirmedCount - 1),
-          };
-        });
-        this.events.set(updated);
-        break;
-      }
-
-      case "AttendeeStatusChanged": {
-        const d = delta as AttendeeStatusChangedDelta;
-        const updated = currentEvents.map((e) => {
-          if (e.slug !== delta.eventSlug) return e;
-
-          const confirmedDelta = d.newStatus === "CONFIRMED" ? 1 : -1;
-          const waitlistedDelta = d.newStatus === "WAITLISTED" ? 1 : -1;
-
-          return {
-            ...e,
-            confirmedCount: Math.max(0, e.confirmedCount + confirmedDelta),
-            waitlistedCount: Math.max(0, e.waitlistedCount + waitlistedDelta),
-          };
-        });
-        this.events.set(updated);
-        break;
       }
     }
+
+    const eventDeltas = deltas.filter(
+      (d) =>
+        d.type !== "EventSeriesCreated" &&
+        d.type !== "EventSeriesUpdated" &&
+        d.type !== "EventSeriesDeleted"
+    );
+
+    let currentEvents = this.events();
+    for (const delta of eventDeltas) {
+      if (delta.type === "EventCreated" && "eventSlug" in delta) {
+        const series = this.series();
+        if (series) {
+          const updated = this.deltaProcessor.applyEventListDelta(
+            currentEvents,
+            delta
+          );
+          if (updated) {
+            currentEvents = updated;
+            const newEvent = updated.find((e) => e.slug === delta.eventSlug);
+            if (newEvent && !this.eventSubscriptions.has(newEvent.slug)) {
+              const subscription = this.socket
+                .subscribeToEvent(newEvent.slug)
+                .subscribe({
+                  next: (deltas) => this.handleDeltas(deltas),
+                });
+              this.eventSubscriptions.set(newEvent.slug, subscription);
+            }
+          }
+        }
+      } else if (delta.type === "EventDeleted" && "eventSlug" in delta) {
+        const updated = this.deltaProcessor.applyEventListDelta(
+          currentEvents,
+          delta
+        );
+        if (updated) {
+          currentEvents = updated;
+          this.eventSubscriptions.get(delta.eventSlug)?.unsubscribe();
+          this.eventSubscriptions.delete(delta.eventSlug);
+        }
+      } else {
+        const updated = this.deltaProcessor.applyEventListDelta(
+          currentEvents,
+          delta
+        );
+        if (updated) {
+          currentEvents = updated;
+        }
+      }
+    }
+
+    this.events.set(currentEvents);
   }
 
   ngOnDestroy() {

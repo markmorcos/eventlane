@@ -142,7 +142,6 @@ export class EventDetailStore {
     let event = this._event();
     if (!event) return;
 
-    // Filter out EventSeries deltas - they're not handled here
     const eventDeltas = deltas.filter(
       (d) =>
         d.type !== "EventSeriesCreated" &&
@@ -151,23 +150,26 @@ export class EventDetailStore {
     );
 
     for (const delta of eventDeltas) {
+      let event = this._event();
+      if (!event) break;
+
       const updated = this.deltaProcessor.applyEventDelta(event, delta);
-      if (updated) event = updated;
 
-      event = this.updateRequesterStatus(event, delta);
+      if (updated && updated !== event) {
+        event = updated;
 
-      if (delta.type === "EventDeleted") {
-        this.route.navigate(["/events"]);
+        event = this.updateRequesterStatus(event, delta);
+
+        this._event.set(event);
+
+        if (delta.type === "EventDeleted") {
+          this.route.navigate(["/events"]);
+          return;
+        }
       }
     }
-
-    this._event.set(event);
   }
 
-  /**
-   * Update requesterStatus based on delta - this is user-specific logic
-   * that's not part of the core event state.
-   */
   private updateRequesterStatus(
     event: EventDetail,
     delta: EventDelta
@@ -195,6 +197,22 @@ export class EventDetailStore {
         const d = delta as AttendeeStatusChangedDelta;
         if (d.attendeeEmail === userEmail) {
           return { ...event, requesterStatus: d.newStatus };
+        }
+        break;
+      }
+
+      case "AdminAdded": {
+        const d = delta as AdminAddedDelta;
+        if (d.adminEmail === userEmail) {
+          return { ...event, isAdmin: true };
+        }
+        break;
+      }
+
+      case "AdminRemoved": {
+        const d = delta as AdminRemovedDelta;
+        if (d.adminEmail === userEmail) {
+          return { ...event, isAdmin: false };
         }
         break;
       }
