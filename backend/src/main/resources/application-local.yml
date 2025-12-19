@@ -1,0 +1,39 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@0.0.0.0:27017/eventlane?authSource=admin
+  security:
+    filter:
+      order: 10
+
+server:
+  port: 8080
+
+firebase:
+  project-id: eventlane-cd9d2
+  credentials-path: firebase-service-account.json
+
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: eventlane
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+      - http://localhost:4201
+      - http://localhost:8080
+  email:
+    from-name: EventLane
+    enabled: false
+
+resend:
+  api-key: resend-api-key
+  from-email: noreply@eventlane.io
+
+logging:
+  level:
+    "[io.eventlane]": DEBUG
+    "[org.springframework.data.mongodb]": DEBUG
