@@ -75,7 +75,7 @@ class EmailNotificationService(
                                 <!-- Header with Logo -->
                                 <tr>
                                     <td style="padding: 32px 40px; text-align: center; background: linear-gradient(135deg, #2D5BFF 0%, #1e40bf 100%); border-radius: 12px 12px 0 0;">
-                                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjYwIiB2aWV3Qm94PSIwIDAgMjAwIDYwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDwhLS0gRUwgTW9ub2dyYW0gLS0+CiAgPGcgaWQ9Im1vbm9ncmFtIj4KICAgIDxyZWN0IHg9IjEwIiB5PSIxNSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1IiByeD0iNiIgZmlsbD0iI2ZmZmZmZiIvPgogICAgPHRleHQgeD0iMTgiIHk9IjQwIiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiMyRDVCRkYiPgogICAgICBFTAogICAgPC90ZXh0PgogIDwvZz4KICAKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iNjAiIHk9IjM4IiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiNmZmZmZmYiPgogICAgRXZlbnRMYW5lCiAgPC90ZXh0Pgo8L3N2Zz4K" alt="EventLane" style="height: 40px; display: block; margin: 0 auto;">
+                                        <h1 style="margin: 0; font-size: 32px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">EventLane</h1>
                                     </td>
                                 </tr>
 
@@ -193,7 +193,7 @@ class EmailNotificationService(
                                 <!-- Header with Logo -->
                                 <tr>
                                     <td style="padding: 32px 40px; text-align: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 12px 12px 0 0;">
-                                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjYwIiB2aWV3Qm94PSIwIDAgMjAwIDYwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDwhLS0gRUwgTW9ub2dyYW0gLS0+CiAgPGcgaWQ9Im1vbm9ncmFtIj4KICAgIDxyZWN0IHg9IjEwIiB5PSIxNSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1IiByeD0iNiIgZmlsbD0iI2ZmZmZmZiIvPgogICAgPHRleHQgeD0iMTgiIHk9IjQwIiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiMxMGI5ODEiPgogICAgICBFTAogICAgPC90ZXh0PgogIDwvZz4KICAKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iNjAiIHk9IjM4IiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiNmZmZmZmYiPgogICAgRXZlbnRMYW5lCiAgPC90ZXh0Pgo8L3N2Zz4K" alt="EventLane" style="height: 40px; display: block; margin: 0 auto;">
+                                        <h1 style="margin: 0; font-size: 32px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">EventLane</h1>
                                     </td>
                                 </tr>
 
@@ -306,7 +306,7 @@ class EmailNotificationService(
                                 <!-- Header with Logo -->
                                 <tr>
                                     <td style="padding: 32px 40px; text-align: center; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 12px 12px 0 0;">
-                                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjYwIiB2aWV3Qm94PSIwIDAgMjAwIDYwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDwhLS0gRUwgTW9ub2dyYW0gLS0+CiAgPGcgaWQ9Im1vbm9ncmFtIj4KICAgIDxyZWN0IHg9IjEwIiB5PSIxNSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1IiByeD0iNiIgZmlsbD0iI2ZmZmZmZiIvPgogICAgPHRleHQgeD0iMTgiIHk9IjQwIiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiNmNTllMGIiPgogICAgICBFTAogICAgPC90ZXh0PgogIDwvZz4KICAKICA8IS0tIFRleHQgLS0+CiAgPHRleHQgeD0iNjAiIHk9IjM4IiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiNmZmZmZmYiPgogICAgRXZlbnRMYW5lCiAgPC90ZXh0Pgo8L3N2Zz4K" alt="EventLane" style="height: 40px; display: block; margin: 0 auto;">
+                                        <h1 style="margin: 0; font-size: 32px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">EventLane</h1>
                                     </td>
                                 </tr>
 
@@ -366,6 +366,123 @@ class EmailNotificationService(
                                 <tr>
                                     <td style="padding: 24px 40px; text-align: center; background-color: #f8fafc; border-radius: 0 0 12px 12px; border-top: 1px solid #e2e8f0;">
                                         <p style="margin: 0; font-size: 13px; color: #94a3b8;">© ${java.time.Year.now().value} EventLane. ${if (language == "de") "Alle Rechte vorbehalten." else "All rights reserved."}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        """.trimIndent()
+
+        sendEmail(attendee.email, subject, htmlContent)
+    }
+
+    fun sendEventCancellationEmail(attendee: Attendee, event: Event, title: String, language: String = "en") {
+        val subject = when (language) {
+            "de" -> "Veranstaltung abgesagt: $title"
+            else -> "Event cancelled: $title"
+        }
+
+        val formattedDate = formatEventDate(event, language)
+
+        val htmlContent = """
+            <!DOCTYPE html>
+            <html lang="${if (language == "de") "de" else "en"}">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>$subject</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa; line-height: 1.6;">
+                <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 40px 20px;">
+                            <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <!-- Header with Logo -->
+                                <tr>
+                                    <td style="padding: 32px 40px; text-align: center; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border-radius: 12px 12px 0 0;">
+                                        <h1 style="margin: 0; font-size: 32px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">EventLane</h1>
+                                    </td>
+                                </tr>
+
+                                <!-- Content -->
+                                <tr>
+                                    <td style="padding: 40px;">
+                                        <h1 style="margin: 0 0 24px 0; font-size: 28px; font-weight: 700; color: #1a1d23; line-height: 1.3;">${if (language == "de") "Veranstaltung abgesagt" else "Event Cancelled"}</h1>
+
+                                        <p style="margin: 0 0 20px 0; font-size: 16px; color: #4a5568;">${if (language == "de") "Hallo" else "Hello"} ${attendee.name},</p>
+
+                                        <p style="margin: 0 0 28px 0; font-size: 16px; color: #4a5568;">${if (language == "de") "Leider müssen wir dir mitteilen, dass" else "Unfortunately, we have to inform you that"} <strong style="color: #1a1d23;">$title</strong> ${if (language == "de") "abgesagt wurde" else "has been cancelled"}.</p>
+
+                                        <!-- Event Details Card -->
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f8fafc; border-radius: 8px; margin-bottom: 28px;">
+                                            <tr>
+                                                <td style="padding: 24px;">
+                                                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                                        <tr>
+                                                            <td style="padding: 8px 0; font-size: 14px; color: #64748b; font-weight: 600;">${if (language == "de") "VERANSTALTUNG" else "EVENT"}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="padding: 0 0 16px 0; font-size: 18px; color: #1a1d23; font-weight: 600;">$title</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="padding: 8px 0; border-top: 1px solid #e2e8f0;">
+                                                                <table role="presentation" style="width: 100%;">
+                                                                    <tr>
+                                                                        <td style="font-size: 14px; color: #64748b; padding: 4px 0;">${if (language == "de") "Geplant für" else "Was scheduled for"}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="font-size: 15px; color: #1a1d23; padding: 4px 0;">$formattedDate</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        ${event.location?.let {
+            """
+                                                        <tr>
+                                                            <td style="padding: 8px 0; border-top: 1px solid #e2e8f0;">
+                                                                <table role="presentation" style="width: 100%;">
+                                                                    <tr>
+                                                                        <td style="font-size: 14px; color: #64748b; padding: 4px 0;">${if (language == "de") "Ort" else "Location"}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="font-size: 15px; color: #1a1d23; padding: 4px 0;">${it.formatted}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        """
+        } ?: ""}
+                                                        <tr>
+                                                            <td style="padding: 12px 0 0 0; border-top: 1px solid #e2e8f0;">
+                                                                <span style="display: inline-block; padding: 6px 12px; background-color: #fee2e2; color: #991b1b; border-radius: 6px; font-size: 13px; font-weight: 600;">
+                                                                    ✕ ${if (language == "de") "ABGESAGT" else "CANCELLED"}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <p style="margin: 0 0 24px 0; font-size: 16px; color: #4a5568; background-color: #fef2f2; padding: 16px; border-radius: 8px; border-left: 4px solid #dc2626;">
+                                            ${if (language == "de") "Wir entschuldigen uns für etwaige Unannehmlichkeiten. Schau dir gerne unsere anderen Veranstaltungen an." else "We apologize for any inconvenience. Feel free to check out our other events."}
+                                        </p>
+
+                                        <p style="margin: 0; font-size: 16px; color: #4a5568;">
+                                            ${if (language == "de") "Bei Fragen stehen wir dir gerne zur Verfügung." else "If you have any questions, please feel free to reach out."}
+                                        </p>
+                                    </td>
+                                </tr>
+
+                                <!-- Footer -->
+                                <tr>
+                                    <td style="padding: 24px 40px; background-color: #f8fafc; border-radius: 0 0 12px 12px; text-align: center;">
+                                        <p style="margin: 0; font-size: 13px; color: #94a3b8;">
+                                            © ${java.time.Year.now().value} EventLane. ${if (language == "de") "Alle Rechte vorbehalten." else "All rights reserved."}
+                                        </p>
                                     </td>
                                 </tr>
                             </table>

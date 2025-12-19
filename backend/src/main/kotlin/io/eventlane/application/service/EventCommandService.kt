@@ -117,6 +117,7 @@ class EventCommandService(
         val now = Instant.now()
 
         val event = repository.findBySlug(slug)
+        val series = seriesRepository.findById(event.seriesId)
 
         val delta = EventDeleted(
             version = (event.version ?: 0L) + 1,
@@ -125,6 +126,12 @@ class EventCommandService(
         )
 
         publisher.publish(event, listOf(delta))
+
+        // Send cancellation emails to all attendees
+        val allAttendees = event.confirmedList + event.waitingList
+        allAttendees.forEach { attendee ->
+            emailService.sendEventCancellationEmail(attendee, event, series.title, attendee.language)
+        }
 
         // Delete associated cover images from MinIO
         if (event.coverImageUrl != null) {
