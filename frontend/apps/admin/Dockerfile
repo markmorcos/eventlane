@@ -2,7 +2,7 @@ FROM node:22-alpine AS deps
 WORKDIR /app
 
 # Copy workspace root files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmrc ./
 
 # Copy all workspace package.json files
 COPY apps/admin/package.json ./apps/admin/
@@ -15,7 +15,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Copy workspace root files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmrc ./
 
 # Copy installed dependencies
 COPY --from=deps /app/node_modules ./node_modules
