@@ -27,6 +27,7 @@ class AttendancesController(private val attendance: AttendanceService) {
             slug = slug,
             name = body.name,
             email = user.email,
+            language = body.language,
         )
 
         val attendee = (delta as AttendeeAdded).attendee

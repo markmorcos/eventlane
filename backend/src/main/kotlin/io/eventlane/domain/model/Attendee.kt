@@ -7,6 +7,7 @@ data class Attendee(
     val email: String,
     val status: AttendeeStatus,
     val joinedAt: Instant = Instant.now(),
+    val language: String = "en",
 )
 
 enum class AttendeeStatus {

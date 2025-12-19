@@ -13,6 +13,7 @@ import { EventSummary } from "@eventlane/shared";
 import { EventSocketService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
 import { AuthService } from "@eventlane/shared";
+import { TranslateService } from "@ngx-translate/core";
 import {
   EventDelta,
   EventCapacityUpdatedDelta,
@@ -29,6 +30,7 @@ export class EventListStore {
   private socket = inject(EventSocketService);
   private auth = inject(AuthService);
   private toast = inject(ToastService);
+  private translate = inject(TranslateService);
   private platformId = inject(PLATFORM_ID);
 
   private userEmail = this.auth.userEmail;
@@ -142,7 +144,9 @@ export class EventListStore {
         // Reload the full list since we may have new access
         await this.loadAttendingEvents();
 
-        this.toast.info(`You've been added as an admin to "${event.title}"`);
+        this.toast.info(
+          this.translate.instant("toast.addedAsAdmin", { title: event.title })
+        );
 
         break;
       }
@@ -154,7 +158,9 @@ export class EventListStore {
             events.filter((e) => e.slug !== delta.eventSlug)
           );
           this.toast.info(
-            `You've been removed as an admin from "${event.title}"`
+            this.translate.instant("toast.removedAsAdmin", {
+              title: event.title,
+            })
           );
         }
         break;
@@ -199,7 +205,9 @@ export class EventListStore {
 
         if (isCurrentUser) {
           this.toast.info(
-            `You have been removed from the event "${event.title}"`
+            this.translate.instant("toast.removedFromEvent", {
+              title: event.title,
+            })
           );
         }
 
@@ -224,9 +232,10 @@ export class EventListStore {
 
         if (isCurrentUser) {
           this.toast.info(
-            `Your status for the event "${
-              event.title
-            }" has been changed to ${d.newStatus.toLowerCase()}`
+            this.translate.instant("toast.statusChanged", {
+              title: event.title,
+              status: d.newStatus.toLowerCase(),
+            })
           );
         }
         break;

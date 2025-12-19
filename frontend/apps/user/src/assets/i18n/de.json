@@ -249,6 +249,18 @@
     "eventCreated": "Veranstaltung erstellt",
     "eventCreationFailed": "Veranstaltung konnte nicht erstellt werden"
   },
+  "toast": {
+    "eventRegistered": "Erfolgreich für Veranstaltung angemeldet!",
+    "rsvpCancelled": "RSVP erfolgreich abgesagt",
+    "capacityUpdated": "Kapazität erfolgreich aktualisiert",
+    "adminAdded": "Administrator erfolgreich hinzugefügt",
+    "adminRemoved": "Administrator erfolgreich entfernt",
+    "eventDeleted": "Veranstaltung erfolgreich gelöscht",
+    "addedAsAdmin": "Du wurdest als Administrator zu \"{{title}}\" hinzugefügt",
+    "removedAsAdmin": "Du wurdest als Administrator von \"{{title}}\" entfernt",
+    "removedFromEvent": "Du wurdest von der Veranstaltung \"{{title}}\" entfernt",
+    "statusChanged": "Dein Status für die Veranstaltung \"{{title}}\" wurde auf {{status}} geändert"
+  },
   "cookie": {
     "message": "Wir verwenden Cookies, um deine Erfahrung zu verbessern. Wenn du diese Website weiter besuchst, stimmst du unserer Verwendung von Cookies zu.",
     "accept": "Akzeptieren",

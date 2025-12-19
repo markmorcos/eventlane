@@ -18,16 +18,16 @@ class AttendanceService(
     private val emailService: EmailNotificationService,
 ) {
 
-    fun attend(slug: String, name: String, email: String): EventDelta {
+    fun attend(slug: String, name: String, email: String, language: String = "en"): EventDelta {
         val (saved, delta) = retry.run(slug) { event ->
-            EventBehavior.addAttendee(event, name, email)
+            EventBehavior.addAttendee(event, name, email, language)
         }
 
         publisher.publish(saved, listOf(delta))
 
         if (delta is AttendeeAdded) {
             val series = seriesRepository.findById(saved.seriesId)
-            emailService.sendJoinConfirmation(delta.attendee, saved, series.title)
+            emailService.sendJoinConfirmation(delta.attendee, saved, series.title, language)
         }
 
         return delta
@@ -52,7 +52,7 @@ class AttendanceService(
         deltas.filterIsInstance<AttendeeStatusChanged>().forEach { delta ->
             val promotedAttendee = saved.findAttendeeByEmail(delta.attendeeEmail)
             if (promotedAttendee != null) {
-                emailService.sendPromotionEmail(promotedAttendee, saved, series.title)
+                emailService.sendPromotionEmail(promotedAttendee, saved, series.title, promotedAttendee.language)
             }
         }
 

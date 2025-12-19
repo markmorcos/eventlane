@@ -42,4 +42,5 @@ data class AttendeeDocument(
     val email: String,
     val status: String,
     val joinedAt: Instant,
+    val language: String = "en",
 )

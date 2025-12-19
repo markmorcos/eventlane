@@ -93,8 +93,18 @@ class EventCommandService(
             val attendee = saved.findAttendeeByEmail(delta.attendeeEmail)
             if (attendee != null) {
                 when (delta.newStatus) {
-                    AttendeeStatus.CONFIRMED -> emailService.sendPromotionEmail(attendee, saved, series.title)
-                    AttendeeStatus.WAITLISTED -> emailService.sendDowngradeEmail(attendee, saved, series.title)
+                    AttendeeStatus.CONFIRMED -> emailService.sendPromotionEmail(
+                        attendee,
+                        saved,
+                        series.title,
+                        attendee.language,
+                    )
+                    AttendeeStatus.WAITLISTED -> emailService.sendDowngradeEmail(
+                        attendee,
+                        saved,
+                        series.title,
+                        attendee.language,
+                    )
                     else -> {} // No email for other statuses
                 }
             }

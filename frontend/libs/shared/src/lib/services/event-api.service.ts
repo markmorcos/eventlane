@@ -8,11 +8,13 @@ import {
   Location,
 } from "../models/event.model";
 import { ENVIRONMENT } from "../environment.token";
+import { UserPreferencesService } from "./user-preferences.service";
 
 @Injectable({ providedIn: "root" })
 export class EventApiService {
   private http = inject(HttpClient);
   private environment = inject(ENVIRONMENT);
+  private userPreferences = inject(UserPreferencesService);
   private adminsBaseUrl = `${this.environment.apiBaseUrl}/admin/events`;
   private eventsBaseUrl = `${this.environment.apiBaseUrl}/events`;
   private attendancesBaseUrl = `${this.environment.apiBaseUrl}/attendances`;
@@ -40,7 +42,7 @@ export class EventApiService {
   attend(slug: string, name: string) {
     return this.http.post<{ status: string; attendee: Attendee }>(
       `${this.attendancesBaseUrl}/${slug}/attend`,
-      { name }
+      { name, language: this.userPreferences.language() }
     );
   }
 

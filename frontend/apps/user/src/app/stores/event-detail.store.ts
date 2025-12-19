@@ -29,6 +29,7 @@ import { EventApiService } from "@eventlane/shared";
 import { EventSocketService } from "@eventlane/shared";
 import { AuthService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({ providedIn: "root" })
 export class EventDetailStore {
@@ -37,6 +38,7 @@ export class EventDetailStore {
   private auth = inject(AuthService);
   private route = inject(Router);
   private toast = inject(ToastService);
+  private translate = inject(TranslateService);
   private transferState = inject(TransferState);
   private platformId = inject(PLATFORM_ID);
 
@@ -373,31 +375,31 @@ export class EventDetailStore {
 
   async attend(slug: string, name: string): Promise<void> {
     await firstValueFrom(this.api.attend(slug, name));
-    this.toast.success("Successfully registered for event!");
+    this.toast.success(this.translate.instant("toast.eventRegistered"));
   }
 
   async cancel(slug: string, email: string): Promise<void> {
     await firstValueFrom(this.api.cancelAttendance(slug, email));
-    this.toast.success("RSVP cancelled successfully");
+    this.toast.success(this.translate.instant("toast.rsvpCancelled"));
   }
 
   async updateCapacity(slug: string, capacity: number): Promise<void> {
     await firstValueFrom(this.api.updateCapacity(slug, capacity));
-    this.toast.success("Capacity updated successfully");
+    this.toast.success(this.translate.instant("toast.capacityUpdated"));
   }
 
   async addAdmin(slug: string, email: string): Promise<void> {
     await firstValueFrom(this.api.addAdmin(slug, email));
-    this.toast.success("Admin added successfully");
+    this.toast.success(this.translate.instant("toast.adminAdded"));
   }
 
   async removeAdmin(slug: string, email: string): Promise<void> {
     await firstValueFrom(this.api.removeAdmin(slug, email));
-    this.toast.success("Admin removed successfully");
+    this.toast.success(this.translate.instant("toast.adminRemoved"));
   }
 
   async deleteEvent(slug: string): Promise<void> {
     await firstValueFrom(this.api.deleteEvent(slug));
-    this.toast.success("Event deleted successfully");
+    this.toast.success(this.translate.instant("toast.eventDeleted"));
   }
 }

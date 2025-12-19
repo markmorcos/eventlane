@@ -47,6 +47,7 @@ object EventPersistenceMapper {
         email = doc.email,
         status = io.eventlane.domain.model.AttendeeStatus.valueOf(doc.status),
         joinedAt = doc.joinedAt,
+        language = doc.language,
     )
 
     fun toDocumentAttendee(attendee: Attendee): AttendeeDocument = AttendeeDocument(
@@ -54,6 +55,7 @@ object EventPersistenceMapper {
         email = attendee.email,
         status = attendee.status.name,
         joinedAt = attendee.joinedAt,
+        language = attendee.language,
     )
 
     fun toDomainLocation(doc: LocationDocument): Location = Location(

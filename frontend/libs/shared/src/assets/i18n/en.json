@@ -252,12 +252,23 @@
   "cookie": {
     "message": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
     "accept": "Accept",
-    "decline": "Decline",
     "learnMore": "Learn more"
   },
   "legal": {
     "cookiePolicy": "Cookie policy",
     "privacyPolicy": "Privacy policy",
     "termsOfService": "Terms of service"
+  },
+  "toast": {
+    "eventRegistered": "Successfully registered for event!",
+    "rsvpCancelled": "RSVP cancelled successfully",
+    "capacityUpdated": "Capacity updated successfully",
+    "adminAdded": "Admin added successfully",
+    "adminRemoved": "Admin removed successfully",
+    "eventDeleted": "Event deleted successfully",
+    "addedAsAdmin": "You've been added as an admin to \"{{title}}\"",
+    "removedAsAdmin": "You've been removed as an admin from \"{{title}}\"",
+    "removedFromEvent": "You have been removed from the event \"{{title}}\"",
+    "statusChanged": "Your status for the event \"{{title}}\" has been changed to {{status}}"
   }
 }
