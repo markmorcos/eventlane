@@ -98,7 +98,11 @@
     "linkCopied": "Link in Zwischenablage kopiert!",
     "copyFailed": "Link konnte nicht kopiert werden",
     "createAnother": "Weiteres erstellen",
-    "manageEvent": "Event verwalten"
+    "manageEvent": "Event verwalten",
+    "coverImage": "Titelbild",
+    "addCoverImage": "Titelbild hinzufügen",
+    "changeCoverImage": "Bild ändern",
+    "removeCoverImage": "Bild entfernen"
   },
   "eventsList": {
     "title": "Veranstaltungen",
@@ -195,6 +199,7 @@
     "removeAdminDesc": "Diese Person wird keinen Admin-Zugriff mehr auf dieses Event haben.",
     "deleteEventTitle": "{{title}} löschen?",
     "deleteEventDesc": "Diese Aktion kann nicht rückgängig gemacht werden. Alle Teilnehmerdaten und Event-Informationen werden dauerhaft gelöscht.",
+    "deleteOneOffEventDesc": "Diese Aktion kann nicht rückgängig gemacht werden. Alle Teilnehmerdaten und Event-Informationen werden dauerhaft gelöscht. Dies wird auch die Event-Serie löschen.",
     "deleteEventConfirm": "Event löschen",
     "dateTimeUpdated": "Datum & Uhrzeit aktualisiert",
     "dateTimeUpdateFailed": "Datum & Uhrzeit konnte nicht aktualisiert werden",

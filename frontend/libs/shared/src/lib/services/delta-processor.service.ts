@@ -202,15 +202,27 @@ export class DeltaProcessorService {
       const newEvent = { ...event, version: delta.version };
 
       if (d.status === "CONFIRMED") {
-        newEvent.confirmedCount = event.confirmedCount + 1;
-        if (event.confirmed) {
-          newEvent.confirmed = [...event.confirmed, d.attendee];
-        }
+        const existing = event.confirmed || [];
+        const uniqueAttendees = [
+          ...existing.filter((a) => a.email !== d.attendee.email),
+          d.attendee,
+        ].sort(
+          (a, b) =>
+            new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime()
+        );
+        newEvent.confirmed = uniqueAttendees;
+        newEvent.confirmedCount = uniqueAttendees.length;
       } else {
-        newEvent.waitlistedCount = event.waitlistedCount + 1;
-        if (event.waitlisted) {
-          newEvent.waitlisted = [...event.waitlisted, d.attendee];
-        }
+        const existing = event.waitlisted || [];
+        const uniqueAttendees = [
+          ...existing.filter((a) => a.email !== d.attendee.email),
+          d.attendee,
+        ].sort(
+          (a, b) =>
+            new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime()
+        );
+        newEvent.waitlisted = uniqueAttendees;
+        newEvent.waitlistedCount = uniqueAttendees.length;
       }
 
       return newEvent;

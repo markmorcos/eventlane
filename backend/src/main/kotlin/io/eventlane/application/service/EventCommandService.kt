@@ -17,6 +17,7 @@ import io.eventlane.domain.model.EventDescriptionUpdated
 import io.eventlane.domain.model.EventLocationUpdated
 import io.eventlane.domain.model.Location
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -28,6 +29,7 @@ class EventCommandService(
     private val publisher: EventDeltaPublisher,
     private val imageService: ImageStorageService,
     private val emailService: EmailNotificationService,
+    @Lazy private val seriesCommandService: EventSeriesCommandService,
 ) {
     private val logger = LoggerFactory.getLogger(EventCommandService::class.java)
 
@@ -147,6 +149,14 @@ class EventCommandService(
             updatedAt = now,
         )
         repository.save(deletedEvent)
+
+        if (series.isOneOff()) {
+            val remainingEvents = repository.findActiveBySeriesId(series.id!!)
+            if (remainingEvents.isEmpty()) {
+                // No active events remain, delete the series
+                seriesCommandService.deleteSeries(series.slug)
+            }
+        }
 
         return delta
     }

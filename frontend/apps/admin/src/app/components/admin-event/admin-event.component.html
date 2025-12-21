@@ -622,7 +622,11 @@
     'adminEvent.deleteEventTitle'
       | translate : { title: event()?.title || 'event' }
   "
-  [description]="'adminEvent.deleteEventDesc' | translate"
+  [description]="
+    isOneOff()
+      ? ('adminEvent.deleteOneOffEventDesc' | translate)
+      : ('adminEvent.deleteEventDesc' | translate)
+  "
   [confirmText]="'adminEvent.deleteEventConfirm' | translate"
   [cancelText]="'adminEvent.cancel' | translate"
   [destructive]="true"

@@ -31,6 +31,7 @@
           {{ getRecurrenceLabel(series()!.interval) }}
         </p>
       </div>
+      @if (!isOneOff()) {
       <div class="flex gap-2">
         <button
           hlmBtn
@@ -49,10 +50,12 @@
           {{ "adminSeries.deleteSeries" | translate }}
         </button>
       </div>
+      }
     </div>
   </div>
 
-  <!-- Series Info Card -->
+  <!-- Series Info Card - Hidden for one-off events -->
+  @if (!isOneOff()) {
   <div hlmCard class="mb-8">
     <div hlmCardHeader>
       <h3 hlmCardTitle>{{ "adminSeries.seriesInformation" | translate }}</h3>
@@ -123,8 +126,9 @@
       }
     </div>
   </div>
+  }
 
-  @if (editingSettings()) {
+  @if (editingSettings() && !isOneOff()) {
   <div hlmCard class="mb-8">
     <div hlmCardHeader>
       <h3 hlmCardTitle>{{ "adminSeries.editSeriesSettings" | translate }}</h3>
@@ -185,7 +189,7 @@
       </div>
     </div>
   </div>
-  } @if (creatingEvent()) {
+  } @if (creatingEvent() && !isOneOff()) {
   <div hlmCard class="mb-8">
     <div hlmCardHeader>
       <h3 hlmCardTitle>{{ "createEvent.title" | translate }}</h3>
@@ -241,9 +245,11 @@
         <h2 class="text-2xl font-semibold">
           {{ "adminSeries.upcomingEvents" | translate }}
         </h2>
+        @if (!isOneOff()) {
         <button hlmBtn variant="outline" (click)="openCreateEvent()">
           {{ "adminSeries.createEvent" | translate }}
         </button>
+        }
       </div>
       <div class="space-y-3">
         @for (event of futureEvents; track event.slug) {
@@ -288,12 +294,14 @@
       <h3 class="text-lg font-semibold">
         {{ "adminSeries.noUpcomingEvents" | translate }}
       </h3>
+      @if (!isOneOff()) {
       <p class="mt-2 text-muted-foreground">
         {{ "adminSeries.createNewEventOccurrence" | translate }}
       </p>
       <button hlmBtn class="mt-4" (click)="openCreateEvent()">
         {{ "adminSeries.createEvent" | translate }}
       </button>
+      }
     </div>
     }
 

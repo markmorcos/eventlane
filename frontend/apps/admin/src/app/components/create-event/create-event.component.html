@@ -184,6 +184,55 @@
             [hint]="'createEvent.timezoneHint' | translate"
           />
 
+          <div class="space-y-2">
+            @if (!showCoverImageUpload() && !coverImage()) {
+            <button
+              hlmBtn
+              type="button"
+              variant="outline"
+              (click)="showImageUpload()"
+            >
+              {{ "createEvent.addCoverImage" | translate }}
+            </button>
+            } @else if (showCoverImageUpload() && !coverImage()) {
+            <app-image-upload
+              [currentImageUrl]="undefined"
+              (imageUploaded)="onImageUploaded($event)"
+              (imageRemoved)="onImageRemoved()"
+            />
+            } @else if (coverImageUrl()) {
+            <div class="space-y-3">
+              <div class="rounded-md border overflow-hidden">
+                <img
+                  [src]="coverImageUrl()!"
+                  alt="Cover image preview"
+                  class="w-full h-auto"
+                />
+              </div>
+              <div class="flex gap-2">
+                <button
+                  hlmBtn
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  (click)="showImageUpload()"
+                >
+                  {{ "createEvent.changeCoverImage" | translate }}
+                </button>
+                <button
+                  hlmBtn
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  (click)="onImageRemoved()"
+                >
+                  {{ "createEvent.removeCoverImage" | translate }}
+                </button>
+              </div>
+            </div>
+            }
+          </div>
+
           <div class="space-y-4 rounded-lg border p-4">
             <div class="flex items-center gap-3">
               <input

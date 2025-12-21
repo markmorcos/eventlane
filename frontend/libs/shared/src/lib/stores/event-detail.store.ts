@@ -6,6 +6,8 @@ import {
   PLATFORM_ID,
   TransferState,
   makeStateKey,
+  effect,
+  EffectRef,
 } from "@angular/core";
 import { isPlatformBrowser, isPlatformServer } from "@angular/common";
 import { Router } from "@angular/router";
@@ -17,13 +19,9 @@ import {
   AttendeeAddedDelta,
   AttendeeRemovedDelta,
   AttendeeStatusChangedDelta,
-  EventCapacityUpdatedDelta,
   AdminAddedDelta,
   AdminRemovedDelta,
-  EventDateTimeUpdatedDelta,
-  EventLocationUpdatedDelta,
-  EventDescriptionUpdatedDelta,
-  EventCoverImageUpdatedDelta,
+  EventSeriesDeletedDelta,
 } from "@eventlane/shared";
 import { EventApiService } from "@eventlane/shared";
 import { EventSocketService } from "@eventlane/shared";
@@ -48,41 +46,63 @@ export class EventDetailStore {
   private readonly _error = signal<string | null>(null);
 
   private deltaSub?: Subscription;
+  private userDeltaSub?: Subscription;
   private currentSlug?: string;
+  private userEmailEffect?: EffectRef;
 
   readonly event = computed(() => this._event());
   readonly loading = computed(() => this._loading());
   readonly error = computed(() => this._error());
 
+  constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.userEmailEffect = effect(() => {
+        const userEmail = this.userEmail();
+        const slug = this.currentSlug;
+
+        if (userEmail && slug && !this.userDeltaSub) {
+          const userDelta$ =
+            this.socket.subscribeToUserNotifications(userEmail);
+          this.userDeltaSub = userDelta$.subscribe((deltas) => {
+            this.applyDeltas(deltas);
+          });
+        }
+      });
+    }
+  }
+
   async init(slug: string): Promise<void> {
     this.currentSlug = slug;
 
-    // Create a unique key for this specific event
     const STATE_KEY = makeStateKey<EventDetail>(`event-${slug}`);
 
-    // Check if we have transferred state from SSR
     const transferredEvent = this.transferState.get(STATE_KEY, null);
 
     if (transferredEvent) {
-      // We have data from SSR, use it immediately
       this._event.set(transferredEvent);
       this._loading.set(false);
 
-      // Remove the transferred state to free memory
       this.transferState.remove(STATE_KEY);
 
-      // Subscribe to WebSocket for real-time updates (browser only)
       if (isPlatformBrowser(this.platformId)) {
         const delta$ = this.socket.subscribeToEvent(slug);
         this.deltaSub = delta$.subscribe((deltas) => {
           this.applyDeltas(deltas);
         });
+
+        const userEmail = this.userEmail();
+        if (userEmail) {
+          const userDelta$ =
+            this.socket.subscribeToUserNotifications(userEmail);
+          this.userDeltaSub = userDelta$.subscribe((deltas) => {
+            this.applyDeltas(deltas);
+          });
+        }
       }
 
       return;
     }
 
-    // No transferred state, fetch from API
     this._event.set(null);
     this._loading.set(true);
     this._error.set(null);
@@ -91,17 +111,24 @@ export class EventDetailStore {
       const data = await firstValueFrom(this.api.getEvent(slug));
       this._event.set(data);
 
-      // On server, store the data for transfer to client
       if (isPlatformServer(this.platformId)) {
         this.transferState.set(STATE_KEY, data);
       }
 
-      // Subscribe to WebSocket (browser only)
       if (isPlatformBrowser(this.platformId)) {
         const delta$ = this.socket.subscribeToEvent(slug);
         this.deltaSub = delta$.subscribe((deltas) => {
           this.applyDeltas(deltas);
         });
+
+        const userEmail = this.userEmail();
+        if (userEmail) {
+          const userDelta$ =
+            this.socket.subscribeToUserNotifications(userEmail);
+          this.userDeltaSub = userDelta$.subscribe((deltas) => {
+            this.applyDeltas(deltas);
+          });
+        }
       }
     } catch (err) {
       this._error.set("Failed to load event");
@@ -136,11 +163,26 @@ export class EventDetailStore {
     }
     this.deltaSub?.unsubscribe();
     this.deltaSub = undefined;
+    this.userDeltaSub?.unsubscribe();
+    this.userDeltaSub = undefined;
+    this.socket.unsubscribeFromUserNotifications();
+    this.userEmailEffect?.destroy();
+    this.userEmailEffect = undefined;
   }
 
   private applyDeltas(deltas: EventDelta[]) {
     let event = this._event();
     if (!event) return;
+
+    for (const delta of deltas) {
+      if (delta.type === "EventSeriesDeleted") {
+        const seriesDeleted = delta as EventSeriesDeletedDelta;
+        if (seriesDeleted.seriesSlug === event.seriesSlug) {
+          this.route.navigate(["/events"]);
+          return;
+        }
+      }
+    }
 
     const eventDeltas = deltas.filter(
       (d) =>

@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { shareReplay } from "rxjs/operators";
 
 import {
   EventDetail,
@@ -27,16 +28,36 @@ export class EventApiService {
     return this.http.get<EventDetail>(`${this.eventsBaseUrl}/${slug}`);
   }
 
-  createEvent(payload: {
-    title: string;
-    capacity: number;
-    eventDate: string;
-    timezone: string;
-    interval?: string | null;
-    leadWeeks?: number;
-    endDate?: string | null;
-  }) {
-    return this.http.post<EventDetail>(this.eventsBaseUrl, payload);
+  createEvent(
+    payload: {
+      title: string;
+      capacity: number;
+      eventDate: string;
+      timezone: string;
+      interval?: string | null;
+      leadWeeks?: number;
+      endDate?: string | null;
+    },
+    coverImage?: Blob
+  ) {
+    const createObservable = this.http
+      .post<EventDetail>(this.eventsBaseUrl, payload)
+      .pipe(shareReplay(1));
+
+    if (coverImage) {
+      createObservable.subscribe({
+        next: (event) => {
+          this.uploadCoverImage(event.slug, coverImage).catch((error) => {
+            console.error("Failed to upload cover image:", error);
+          });
+        },
+        error: (error) => {
+          console.error("Failed to create event:", error);
+        },
+      });
+    }
+
+    return createObservable;
   }
 
   attend(slug: string, name: string) {

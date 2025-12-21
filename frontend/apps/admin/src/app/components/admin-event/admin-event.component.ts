@@ -18,8 +18,10 @@ import { EventDetailStore } from "@eventlane/shared";
 import { AuthService } from "@eventlane/shared";
 import { SeoService } from "@eventlane/shared";
 import { EventApiService } from "@eventlane/shared";
+import { EventSeriesApiService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
 import { UserPreferencesService } from "@eventlane/shared";
+import { EventSeries } from "@eventlane/shared";
 import { OptimizedImageDirective } from "@eventlane/shared";
 import { Meta } from "@angular/platform-browser";
 import { HlmButtonDirective } from "@eventlane/shared";
@@ -78,6 +80,7 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   private meta = inject(Meta);
   private authService = inject(AuthService);
   private eventApiService = inject(EventApiService);
+  private seriesApiService = inject(EventSeriesApiService);
   private toastService = inject(ToastService);
   private preferencesService = inject(UserPreferencesService);
   private translate = inject(TranslateService);
@@ -89,6 +92,11 @@ export class AdminEventComponent implements OnInit, OnDestroy {
   admins = computed(() => this.store.event()?.admins || []);
   loading = this.store.loading;
   seriesSlug = signal<string | null>(null);
+  series = signal<EventSeries | null>(null);
+  isOneOff = computed(() => {
+    const s = this.series();
+    return s ? s.interval === null : false;
+  });
 
   eventCapacity = computed(() => this.store.event()?.capacity || 0);
 
@@ -141,6 +149,18 @@ export class AdminEventComponent implements OnInit, OnDestroy {
     if (!evt) return;
 
     this.newCapacity.set(evt.capacity);
+
+    // Load series information to check if it's one-off
+    if (evt.seriesSlug) {
+      try {
+        const seriesData = await firstValueFrom(
+          this.seriesApiService.getSeries(evt.seriesSlug)
+        );
+        this.series.set(seriesData);
+      } catch (error) {
+        console.error("Failed to load series:", error);
+      }
+    }
   }
 
   ngOnDestroy() {

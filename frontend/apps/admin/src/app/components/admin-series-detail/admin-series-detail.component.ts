@@ -4,6 +4,7 @@ import {
   OnInit,
   OnDestroy,
   signal,
+  computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -67,6 +68,11 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   editingSettings = signal(false);
   creatingEvent = signal(false);
   slug = "";
+
+  isOneOff = computed(() => {
+    const s = this.series();
+    return s ? s.interval === null : false;
+  });
 
   editLeadWeeks = 0;
   editAutoGenerate = false;

@@ -27,6 +27,7 @@ import {
   HlmCardContentDirective,
 } from "@eventlane/shared";
 import { TimezoneSelectorComponent } from "@eventlane/shared";
+import { ImageUploadComponent } from "@eventlane/shared";
 
 @Component({
   selector: "app-create-event",
@@ -42,6 +43,7 @@ import { TimezoneSelectorComponent } from "@eventlane/shared";
     HlmCardTitleDirective,
     HlmCardContentDirective,
     TimezoneSelectorComponent,
+    ImageUploadComponent,
   ],
   templateUrl: "./create-event.component.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,12 +69,15 @@ export class CreateEventComponent implements OnInit {
   eventDate = "";
   timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  // Recurrence options
   isRecurring = signal(false);
   intervalType = "weekly";
   leadWeeks = 4;
   hasEndDate = signal(false);
   endDate = "";
+
+  coverImage = signal<Blob | null>(null);
+  coverImageUrl = signal<string | null>(null);
+  showCoverImageUpload = signal(false);
 
   getDefaultDate() {
     const tomorrow = new Date();
@@ -149,7 +154,10 @@ export class CreateEventComponent implements OnInit {
       };
 
       const result = await firstValueFrom(
-        this.eventApiService.createEvent(payload)
+        this.eventApiService.createEvent(
+          payload,
+          this.coverImage() || undefined
+        )
       );
 
       this.createdEvent.set({
@@ -164,6 +172,8 @@ export class CreateEventComponent implements OnInit {
           title: result.title,
         })
       );
+
+      this.coverImage.set(null);
     } catch (error: any) {
       this.toastService.error(
         this.translate.instant("createEvent.createFailed"),
@@ -218,5 +228,27 @@ export class CreateEventComponent implements OnInit {
     this.leadWeeks = 4;
     this.hasEndDate.set(false);
     this.endDate = "";
+    this.coverImage.set(null);
+  }
+
+  onImageUploaded(blob: Blob) {
+    this.coverImage.set(blob);
+    const url = URL.createObjectURL(blob);
+    this.coverImageUrl.set(url);
+    this.showCoverImageUpload.set(false);
+  }
+
+  onImageRemoved() {
+    const url = this.coverImageUrl();
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
+    this.coverImage.set(null);
+    this.coverImageUrl.set(null);
+    this.showCoverImageUpload.set(false);
+  }
+
+  showImageUpload() {
+    this.showCoverImageUpload.set(true);
   }
 }
