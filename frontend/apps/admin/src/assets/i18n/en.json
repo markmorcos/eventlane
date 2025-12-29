@@ -199,6 +199,7 @@
     "removeAdminDesc": "This person will no longer have admin access to this event.",
     "deleteEventTitle": "Delete {{title}}?",
     "deleteEventDesc": "This action cannot be undone. All attendee data and event information will be permanently deleted.",
+    "deleteOneOffEventDesc": "This action cannot be undone. All attendee data and event information will be permanently deleted. This will also delete the event series.",
     "deleteEventConfirm": "Delete event",
     "dateTimeUpdated": "Date & time updated",
     "dateTimeUpdateFailed": "Failed to update date & time",

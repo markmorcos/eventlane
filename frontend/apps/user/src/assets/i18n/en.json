@@ -125,7 +125,9 @@
     "yourStatus": "Your status",
     "cancelRsvp": "Cancel RSVP",
     "keepRsvp": "Keep RSVP",
-    "cancelConfirm": "Are you sure you want to cancel your RSVP?"
+    "cancelConfirm": "Are you sure you want to cancel your RSVP?",
+    "linkCopied": "Link copied to clipboard!",
+    "linkCopyFailed": "Failed to copy link"
   },
   "adminEvent": {
     "title": "Event admin",

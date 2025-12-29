@@ -125,7 +125,9 @@
     "yourStatus": "Dein Status",
     "cancelRsvp": "Anmeldung stornieren",
     "keepRsvp": "Anmeldung behalten",
-    "cancelConfirm": "Möchtest du deine Anmeldung wirklich stornieren?"
+    "cancelConfirm": "Möchtest du deine Anmeldung wirklich stornieren?",
+    "linkCopied": "Link in Zwischenablage kopiert!",
+    "linkCopyFailed": "Link konnte nicht kopiert werden"
   },
   "adminEvent": {
     "title": "Event-Verwaltung",
