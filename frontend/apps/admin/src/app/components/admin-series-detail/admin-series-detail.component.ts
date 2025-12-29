@@ -138,7 +138,7 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
         this.events.set(events);
         this.loading.set(false);
         this.subscribeToEventUpdates(events);
-        
+
         // If there's exactly one event, load it in EventDetailStore for inline display
         if (events.length === 1) {
           this.eventStore.init(events[0].slug);
@@ -433,7 +433,7 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   getEventLink() {
     const evt = this.singleEvent();
     if (!evt) return "";
-    return `${environment.userUrl}/${evt.slug}`;
+    return `${environment.userUrl}/events/${evt.slug}`;
   }
 
   shareEvent() {

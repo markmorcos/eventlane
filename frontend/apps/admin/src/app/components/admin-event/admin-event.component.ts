@@ -290,10 +290,10 @@ export class AdminEventComponent implements OnInit, OnDestroy {
           timezone: this.newTimezone,
         })
       );
+      this.editingDateTime.set(false);
       this.toastService.success(
         this.translate.instant("adminEvent.dateTimeUpdated")
       );
-      this.editingDateTime.set(false);
     } catch (err) {
       this.toastService.error(
         this.translate.instant("adminEvent.dateTimeUpdateFailed")

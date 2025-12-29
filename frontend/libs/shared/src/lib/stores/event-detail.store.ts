@@ -195,13 +195,16 @@ export class EventDetailStore {
       let event = this._event();
       if (!event) break;
 
+      // Only process deltas for the current event
+      if (delta.eventSlug !== event.slug) {
+        continue;
+      }
+
       const updated = this.deltaProcessor.applyEventDelta(event, delta);
 
       if (updated && updated !== event) {
         event = updated;
-
         event = this.updateRequesterStatus(event, delta);
-
         this._event.set(event);
 
         if (delta.type === "EventDeleted") {

@@ -1,5 +1,7 @@
 package io.eventlane.domain.model
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.Instant
@@ -46,6 +48,7 @@ data class EventCreated(
     override val timestamp: Instant,
     override val eventSlug: String,
     val capacity: Int,
+    @JsonSerialize(using = InstantMillisSerializer::class)
     val eventDate: Instant,
     val timezone: String,
 ) : EventDelta(version, timestamp, eventSlug)
@@ -106,6 +109,7 @@ data class EventDateTimeUpdated(
     override val version: Long,
     override val timestamp: Instant,
     override val eventSlug: String,
+    @JsonSerialize(using = InstantMillisSerializer::class)
     val eventDate: Instant,
     val timezone: String,
 ) : EventDelta(version, timestamp, eventSlug)
