@@ -60,7 +60,7 @@ export class DeltaProcessorService {
 
     if (delta.version < event.version) {
       console.warn(
-        `Ignoring stale delta for ${event.slug}: delta version ${delta.version} <= event version ${event.version}`
+        `Ignoring stale delta for ${event.slug}: delta version ${delta.version} < event version ${event.version}`
       );
       return event;
     }
@@ -263,27 +263,58 @@ export class DeltaProcessorService {
       const d = delta as AttendeeStatusChangedDelta;
       const newEvent = { ...event, version: delta.version };
 
-      if (event.confirmed && event.waitlisted) {
-        const attendee =
-          event.confirmed.find((a) => a.email === d.attendeeEmail) ||
-          event.waitlisted.find((a) => a.email === d.attendeeEmail);
+      const confirmed = event.confirmed || [];
+      const waitlisted = event.waitlisted || [];
 
-        if (!attendee) return event;
+      const attendee =
+        confirmed.find((a) => a.email === d.attendeeEmail) ||
+        waitlisted.find((a) => a.email === d.attendeeEmail);
 
-        if (d.newStatus === "CONFIRMED") {
-          newEvent.confirmed = [...event.confirmed, attendee];
-          newEvent.waitlisted = event.waitlisted.filter(
-            (a) => a.email !== d.attendeeEmail
+      if (!attendee) return event;
+
+      if (d.newStatus === "CONFIRMED") {
+        // Remove from waitlist and add to confirmed (only if not already there)
+        const alreadyConfirmed = confirmed.some(
+          (a) => a.email === d.attendeeEmail
+        );
+        newEvent.waitlisted = waitlisted.filter(
+          (a) => a.email !== d.attendeeEmail
+        );
+        newEvent.waitlistedCount = Math.max(0, newEvent.waitlistedCount - 1);
+
+        if (!alreadyConfirmed) {
+          newEvent.confirmed = [
+            ...confirmed.filter((a) => a.email !== d.attendeeEmail),
+            attendee,
+          ].sort(
+            (a, b) =>
+              new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime()
           );
-          newEvent.confirmedCount = event.confirmedCount + 1;
-          newEvent.waitlistedCount = Math.max(0, event.waitlistedCount - 1);
+          newEvent.confirmedCount = (event.confirmedCount || 0) + 1;
         } else {
-          newEvent.waitlisted = [...event.waitlisted, attendee];
-          newEvent.confirmed = event.confirmed.filter(
-            (a) => a.email !== d.attendeeEmail
+          newEvent.confirmed = confirmed;
+        }
+      } else {
+        // Remove from confirmed and add to waitlist (only if not already there)
+        const alreadyWaitlisted = waitlisted.some(
+          (a) => a.email === d.attendeeEmail
+        );
+        newEvent.confirmed = confirmed.filter(
+          (a) => a.email !== d.attendeeEmail
+        );
+        newEvent.confirmedCount = Math.max(0, (event.confirmedCount || 0) - 1);
+
+        if (!alreadyWaitlisted) {
+          newEvent.waitlisted = [
+            ...waitlisted.filter((a) => a.email !== d.attendeeEmail),
+            attendee,
+          ].sort(
+            (a, b) =>
+              new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime()
           );
-          newEvent.waitlistedCount = event.waitlistedCount + 1;
-          newEvent.confirmedCount = Math.max(0, event.confirmedCount - 1);
+          newEvent.waitlistedCount = (event.waitlistedCount || 0) + 1;
+        } else {
+          newEvent.waitlisted = waitlisted;
         }
       }
 
