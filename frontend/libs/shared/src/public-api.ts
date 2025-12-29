@@ -52,6 +52,8 @@ export * from "./lib/utils/timezones";
 // Stores
 export * from "./lib/stores/event-detail.store";
 export * from "./lib/stores/event-list.store";
+export * from "./lib/stores/event-series-detail.store";
+export * from "./lib/stores/event-series-list.store";
 
 // UI Components
 export * from "./lib/ui";

@@ -19,6 +19,7 @@ import { EventSeries, UpdateEventSeriesRequest } from "@eventlane/shared";
 import { EventDetail } from "@eventlane/shared";
 import { EventDelta } from "@eventlane/shared";
 import { DeltaProcessorService } from "@eventlane/shared";
+import { EventDetailStore } from "@eventlane/shared";
 import {
   HlmCardDirective,
   HlmCardContentDirective,
@@ -30,6 +31,7 @@ import { HlmBadgeDirective } from "@eventlane/shared";
 import { TimezoneSelectorComponent } from "@eventlane/shared";
 import { formatEventDateTime } from "@eventlane/shared";
 import { UserPreferencesService } from "@eventlane/shared";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "app-admin-series-detail",
@@ -59,12 +61,15 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private preferencesService = inject(UserPreferencesService);
   private deltaProcessor = inject(DeltaProcessorService);
+  private eventStore = inject(EventDetailStore);
 
   language = this.preferencesService.language;
 
   series = signal<EventSeries | null>(null);
   events = signal<EventDetail[]>([]);
   loading = signal(true);
+  eventDetail = this.eventStore.event;
+  eventLoading = this.eventStore.loading;
   editingSettings = signal(false);
   creatingEvent = signal(false);
   slug = "";
@@ -72,6 +77,18 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
   isOneOff = computed(() => {
     const s = this.series();
     return s ? s.interval === null : false;
+  });
+
+  hasSingleEvent = computed(() => {
+    return this.isOneOff() && this.events().length === 1;
+  });
+
+  singleEvent = computed(() => {
+    const evts = this.events();
+    if (this.isOneOff() && evts.length === 1) {
+      return evts[0];
+    }
+    return null;
   });
 
   editLeadWeeks = 0;
@@ -102,7 +119,30 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
     this.seriesApi.getSeries(this.slug).subscribe({
       next: (series) => {
         this.series.set(series);
-        this.loadEvents();
+        // If it's a one-off event, load events and redirect to the event page
+        if (series.interval === null) {
+          this.loadEventsForOneOff();
+        } else {
+          this.loadEvents();
+        }
+      },
+      error: () => {
+        this.loading.set(false);
+      },
+    });
+  }
+
+  loadEventsForOneOff() {
+    this.seriesApi.getEvents(this.slug).subscribe({
+      next: (events) => {
+        this.events.set(events);
+        this.loading.set(false);
+        this.subscribeToEventUpdates(events);
+        
+        // If there's exactly one event, load it in EventDetailStore for inline display
+        if (events.length === 1) {
+          this.eventStore.init(events[0].slug);
+        }
       },
       error: () => {
         this.loading.set(false);
@@ -214,6 +254,10 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
     this.eventSubscriptions.clear();
     this.seriesSubscription?.unsubscribe();
     this.socket.unsubscribeFromSeries(this.slug);
+    // Clean up event store if we loaded an event for one-off display
+    if (this.isOneOff() && this.events().length === 1) {
+      this.eventStore.destroy();
+    }
   }
 
   navigateToEvent(eventSlug: string) {
@@ -228,8 +272,11 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
     const s = this.series();
     if (!s) return;
 
-    this.editLeadWeeks = s.leadWeeks;
-    this.editAutoGenerate = s.autoGenerate;
+    // Only set leadWeeks and autoGenerate for recurring series
+    if (!this.isOneOff()) {
+      this.editLeadWeeks = s.leadWeeks;
+      this.editAutoGenerate = s.autoGenerate;
+    }
     this.editEndDate = s.endDate
       ? new Date(s.endDate).toISOString().split("T")[0]
       : "";
@@ -238,10 +285,14 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
 
   saveSettings() {
     const payload: UpdateEventSeriesRequest = {
-      leadWeeks: this.editLeadWeeks,
-      autoGenerate: this.editAutoGenerate,
       endDate: this.editEndDate ? new Date(this.editEndDate).getTime() : null,
     };
+
+    // Only include leadWeeks and autoGenerate for recurring series
+    if (!this.isOneOff()) {
+      payload.leadWeeks = this.editLeadWeeks;
+      payload.autoGenerate = this.editAutoGenerate;
+    }
 
     this.seriesApi.updateSeries(this.slug, payload).subscribe({
       next: (updated) => {
@@ -268,12 +319,22 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
       (e) => e.eventDate > Date.now()
     ).length;
 
-    if (
-      confirm(`Delete this event series and ${futureCount} future event(s)?`)
-    ) {
+    const confirmMessage = this.translate.instant("adminSeries.deleteConfirm", {
+      count: futureCount,
+    });
+
+    if (confirm(confirmMessage)) {
       this.seriesApi.deleteSeries(this.slug).subscribe({
         next: () => {
-          this.router.navigate(["/admin/events"]);
+          this.toastService.success(
+            this.translate.instant("adminSeries.seriesDeleted")
+          );
+          this.router.navigate(["/events"]);
+        },
+        error: () => {
+          this.toastService.error(
+            this.translate.instant("adminSeries.seriesDeleteFailed")
+          );
         },
       });
     }
@@ -367,5 +428,17 @@ export class AdminSeriesDetailComponent implements OnInit, OnDestroy {
 
   formatEventDateTime(timestamp: number, timezone: string) {
     return formatEventDateTime(timestamp, timezone, this.language());
+  }
+
+  getEventLink() {
+    const evt = this.singleEvent();
+    if (!evt) return "";
+    return `${environment.userUrl}/${evt.slug}`;
+  }
+
+  shareEvent() {
+    const url = this.getEventLink();
+    navigator.clipboard.writeText(url);
+    this.toastService.success(this.translate.instant("adminEvent.linkCopied"));
   }
 }

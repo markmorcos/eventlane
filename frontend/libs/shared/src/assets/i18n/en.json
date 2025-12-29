@@ -247,7 +247,11 @@
     "attendees": "attendees",
     "deleteConfirm": "Delete this event series and {{count}} future event(s)?",
     "eventCreated": "Event created",
-    "eventCreationFailed": "Failed to create event"
+    "eventCreationFailed": "Failed to create event",
+    "seriesDeleted": "Series deleted successfully",
+    "seriesDeleteFailed": "Failed to delete series",
+    "viewFullEventDetails": "View full event details",
+    "createNewEventOccurrence": "Create a new event occurrence for this series"
   },
   "cookie": {
     "message": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",

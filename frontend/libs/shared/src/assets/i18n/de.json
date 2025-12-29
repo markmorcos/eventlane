@@ -247,7 +247,11 @@
     "attendees": "Teilnehmer",
     "deleteConfirm": "Diese Veranstaltungsserie und {{count}} zukünftige Veranstaltung(en) löschen?",
     "eventCreated": "Veranstaltung erstellt",
-    "eventCreationFailed": "Veranstaltung konnte nicht erstellt werden"
+    "eventCreationFailed": "Veranstaltung konnte nicht erstellt werden",
+    "seriesDeleted": "Serie erfolgreich gelöscht",
+    "seriesDeleteFailed": "Serie konnte nicht gelöscht werden",
+    "viewFullEventDetails": "Vollständige Event-Details anzeigen",
+    "createNewEventOccurrence": "Erstelle einen neuen Termin für diese Serie"
   },
   "cookie": {
     "message": "Wir verwenden Cookies, um deine Erfahrung zu verbessern. Wenn du diese Website weiter besuchst, stimmst du unserer Verwendung von Cookies zu.",

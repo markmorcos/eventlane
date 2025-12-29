@@ -3,6 +3,7 @@ import {
   OnInit,
   OnDestroy,
   signal,
+  computed,
   inject,
   effect,
   PLATFORM_ID,
@@ -16,6 +17,7 @@ import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "@eventlane/shared";
 import { EventDetailStore } from "@eventlane/shared";
+import { EventSeriesDetailStore } from "@eventlane/shared";
 import { SeoService } from "@eventlane/shared";
 import { ToastService } from "@eventlane/shared";
 import { UserPreferencesService } from "@eventlane/shared";
@@ -63,6 +65,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private store = inject(EventDetailStore);
+  private seriesStore = inject(EventSeriesDetailStore);
   private seoService = inject(SeoService);
   private toastService = inject(ToastService);
   private preferencesService = inject(UserPreferencesService);
@@ -72,6 +75,11 @@ export class EventDetailComponent implements OnInit, OnDestroy {
 
   event = this.store.event;
   loading = this.store.loading;
+  series = this.seriesStore.series;
+  isOneOff = computed(() => {
+    const s = this.series();
+    return s ? s.interval === null : false;
+  });
 
   isAuthenticated = this.authService.isAuthenticated;
   email = this.authService.userEmail;
@@ -100,10 +108,22 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     const slug = this.route.snapshot.params["slug"];
     await this.store.init(slug);
+
+    // Only load series information if user is admin (needed for admin link)
+    const evt = this.event();
+    if (evt?.seriesSlug && evt.isAdmin) {
+      try {
+        await this.seriesStore.init(evt.seriesSlug);
+      } catch (error) {
+        // Silently fail - user might not have admin access
+        console.error("Failed to load series:", error);
+      }
+    }
   }
 
   ngOnDestroy() {
     this.store.destroy();
+    this.seriesStore.destroy();
     this.seoService.removeStructuredData();
   }
 
@@ -205,8 +225,17 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     return getRelativeTime(timestamp, this.language());
   }
 
-  getAdminUrl(seriesSlug: string): string {
-    return `${environment.adminUrl}/events/${seriesSlug}`;
+  getAdminUrl(): string {
+    const evt = this.event();
+    if (!evt) return "";
+
+    const s = this.series();
+    // If series is loaded and it's one-off, link to event admin page
+    if (s && this.isOneOff()) {
+      return `${environment.adminUrl}/events/${s.slug}/${evt.slug}`;
+    }
+    // Otherwise, link to series admin page (or event page if series not loaded yet)
+    return `${environment.adminUrl}/events/${evt.seriesSlug}`;
   }
 
   // URL encoding for template

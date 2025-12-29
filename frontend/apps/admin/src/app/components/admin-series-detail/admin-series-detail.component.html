@@ -33,22 +33,14 @@
       </div>
       @if (!isOneOff()) {
       <div class="flex gap-2">
-        <button
-          hlmBtn
-          variant="outline"
-          (click)="editSeries()"
-          *ngIf="!editingSettings()"
-        >
+        @if (!editingSettings()) {
+        <button hlmBtn variant="outline" (click)="editSeries()">
           {{ "adminSeries.editSeries" | translate }}
         </button>
-        <button
-          hlmBtn
-          variant="destructive"
-          (click)="deleteSeries()"
-          *ngIf="!editingSettings()"
-        >
+        <button hlmBtn variant="destructive" (click)="deleteSeries()">
           {{ "adminSeries.deleteSeries" | translate }}
         </button>
+        }
       </div>
       }
     </div>
@@ -128,13 +120,14 @@
   </div>
   }
 
-  @if (editingSettings() && !isOneOff()) {
+  @if (editingSettings()) {
   <div hlmCard class="mb-8">
     <div hlmCardHeader>
       <h3 hlmCardTitle>{{ "adminSeries.editSeriesSettings" | translate }}</h3>
     </div>
     <div hlmCardContent>
       <div class="space-y-4">
+        @if (!isOneOff()) {
         <div>
           <label class="block text-sm font-medium mb-2">{{
             "adminSeries.leadWeeksLabel" | translate
@@ -163,6 +156,7 @@
             {{ "adminSeries.autoGenerateLabel" | translate }}
           </label>
         </div>
+        }
 
         <div>
           <label class="block text-sm font-medium mb-2">{{
@@ -239,7 +233,114 @@
   }
 
   <div class="space-y-8">
-    @if (futureEvents.length > 0) {
+    @if (hasSingleEvent() && singleEvent(); as evt) {
+    <!-- For one-off events with a single event, render event details inline -->
+    <div class="space-y-6">
+      <!-- Share Link Section -->
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>{{ "adminEvent.shareEvent" | translate }}</h3>
+        </div>
+        <div hlmCardContent>
+          <div class="space-y-2">
+            <label class="text-sm font-medium">
+              {{ "adminEvent.publicLink" | translate }}
+            </label>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                [value]="getEventLink()"
+                readonly
+                class="flex-1 rounded-md border border-input bg-muted px-3 py-2 text-sm"
+              />
+              <button
+                hlmBtn
+                type="button"
+                variant="outline"
+                (click)="shareEvent()"
+                title="Copy link"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+                  />
+                  <path
+                    d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+                  />
+                </svg>
+                <span class="ml-2">{{
+                  "adminEvent.copyLink" | translate
+                }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Details -->
+      <div hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>{{ "adminEvent.metadata" | translate }}</h3>
+        </div>
+        <div hlmCardContent class="space-y-4">
+          <div>
+            <span class="text-sm text-muted-foreground">{{
+              "adminEvent.dateTime" | translate
+            }}</span>
+            <p class="font-medium">
+              {{ formatEventDateTime(evt.eventDate, evt.timezone) }}
+            </p>
+            <p class="text-xs text-muted-foreground">{{ evt.timezone }}</p>
+          </div>
+          @if (evt.location) {
+          <div>
+            <span class="text-sm text-muted-foreground">{{
+              "adminEvent.location" | translate
+            }}</span>
+            <p class="font-medium">{{ evt.location.formatted }}</p>
+          </div>
+          }
+          @if (evt.description) {
+          <div>
+            <span class="text-sm text-muted-foreground">{{
+              "adminEvent.description" | translate
+            }}</span>
+            <p class="font-medium">{{ evt.description }}</p>
+          </div>
+          }
+          <div>
+            <span class="text-sm text-muted-foreground">{{
+              "adminEvent.capacity" | translate
+            }}</span>
+            <p class="font-medium">
+              {{ evt.confirmedCount }} / {{ evt.capacity }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Link to full event admin page -->
+      <div class="flex justify-center">
+        <button
+          hlmBtn
+          variant="outline"
+          (click)="navigateToEvent(evt.slug)"
+        >
+          {{ "adminSeries.viewFullEventDetails" | translate }}
+        </button>
+      </div>
+    </div>
+    } @else if (futureEvents.length > 0) {
     <div>
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-2xl font-semibold">

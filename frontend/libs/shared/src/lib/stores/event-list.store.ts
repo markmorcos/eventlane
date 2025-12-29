@@ -77,7 +77,6 @@ export class EventListStore {
   }
 
   private async applyDeltas(deltas: EventDelta[]): Promise<void> {
-    // Filter out EventSeries deltas - they're not handled here
     const eventDeltas = deltas.filter(
       (d) =>
         d.type !== "EventSeriesCreated" &&
