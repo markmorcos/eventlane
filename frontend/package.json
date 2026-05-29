@@ -1,6 +1,7 @@
 {
   "name": "@eventlane/workspace",
   "version": "0.0.1",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "ng": "ng",
     "start": "pnpm run start:user",
