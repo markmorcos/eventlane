@@ -1,4 +1,4 @@
-version: 0.5.0
+version: 0.6.0
 
 namespace: eventlane
 project: frontend-admin
@@ -9,6 +9,35 @@ services:
     context: frontend
     dockerfile: apps/admin/Dockerfile
     port: 80
+    resources:
+      requests:
+        cpu: 25m
+        memory: 32Mi
+      limits:
+        cpu: 200m
+        memory: 64Mi
+    startupProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 2
+      periodSeconds: 2
+      failureThreshold: 15
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    terminationGracePeriodSeconds: 15
     ingress:
       host: admin.eventlane.io
       path: /?(.*)
