@@ -1,4 +1,4 @@
-version: 0.5.0
+version: 0.6.0
 
 namespace: eventlane
 project: backend
@@ -9,6 +9,8 @@ services:
     context: backend
     port: 8080
     env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=75 -XX:InitialRAMPercentage=50 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError"
       - name: MONGODB_URI
         valueFrom:
           secretKeyRef:
@@ -48,6 +50,35 @@ services:
         secret:
           secretName: firebase-credentials
         mountPath: /secrets
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1500m
+        memory: 1Gi
+    startupProbe:
+      httpGet:
+        path: /actuator/health/liveness
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      failureThreshold: 24
+    livenessProbe:
+      httpGet:
+        path: /actuator/health/liveness
+        port: 8080
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /actuator/health/readiness
+        port: 8080
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+    terminationGracePeriodSeconds: 30
     ingress:
       host: api.eventlane.io
       path: /?(.*)

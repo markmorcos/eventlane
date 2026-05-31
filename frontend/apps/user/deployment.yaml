@@ -1,4 +1,4 @@
-version: 0.5.0
+version: 0.6.0
 
 namespace: eventlane
 project: frontend-user
@@ -9,6 +9,33 @@ services:
     context: frontend
     dockerfile: apps/user/Dockerfile
     port: 4000
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 384Mi
+    startupProbe:
+      tcpSocket:
+        port: 4000
+      initialDelaySeconds: 5
+      periodSeconds: 3
+      failureThreshold: 20
+    livenessProbe:
+      tcpSocket:
+        port: 4000
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 4000
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    terminationGracePeriodSeconds: 30
     ingress:
       host: eventlane.io
       path: /?(.*)

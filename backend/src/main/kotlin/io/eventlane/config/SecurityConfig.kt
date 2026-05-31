@@ -36,6 +36,8 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { authorize ->
                 authorize
+                    // Kubelet probes
+                    .requestMatchers("/actuator/health/liveness", "/actuator/health/readiness").permitAll()
                     // Public endpoints
                     .requestMatchers(HttpMethod.GET, "/api/events").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/events/{slug}").permitAll()
